@@ -3,6 +3,8 @@ body{
 }
 .settings{
     margin: 20px 0;
+    background: rgba(0, 0, 0, 0.19);
+    padding: 10px 0 0 0;
 }
 .settings .title{
     display: inline-block;
@@ -47,7 +49,10 @@ body{
 .menu .nav .active{
     background: #485563;
 }
-
+.menu .nav .text{
+    display: inline-block;
+    margin-left: 10px;
+}
 .logo{
     margin: 5px 5px 0 0;
     display: inline-block;

@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="css/style.css"/>
 </head>
 <body>
-
 <header>
     <div class="container navbar-default navbar-fixed-top">
 
@@ -32,10 +31,24 @@
 <div class="container">
 <div class="row ">
 <div class="col-xs-3 menu">
-    <ul class="nav ">
-        <li class="active"><a href="#">Account</a></li>
-        <li class=""><a href="#">Tags</a></li>
-        <li class=""><a href="#">Logout</a></li>
+    <ul class="nav sidebar">
+        <li class="active">
+            <a href="#">
+                <span class="glyphicon glyphicon-user"></span>
+                <span class="text">Account</span>
+            </a></li>
+        <li class="">
+            <a href="#">
+                <span class="glyphicon glyphicon-tags"></span>
+                <span class="text">Tags</span>
+            </a>
+        </li>
+        <li class="">
+            <a href="#">
+                <span class="glyphicon glyphicon-log-out"></span>
+                <span class="text">Logout</span>
+            </a>
+        </li>
     </ul>
 </div>
 <div class="col-xs-12 col-sm-9 content">
@@ -82,7 +95,7 @@
     <div class="main">
         <div class="total">
             <div class="page-header">
-                Totals by tag
+                Totals: 5000
             </div>
             <table class="table table-hover budget-table table-striped">
                 <thead>
@@ -140,6 +153,12 @@
                     </td>
                     <td>50</td>
                     <td>14 June, 2014</td>
+                    <!--<td>
+                        <button type="button" class="btn btn-danger btn-sm">X</button>
+                        <button type="button" class="btn btn-warning  btn-sm">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </button>
+                    </td>-->
                 </tr>
                 <tr>
                     <td>
