@@ -1,150 +1,148 @@
 module.exports = function(grunt) {
 
+    // load all grunt tasks
+    require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
-    /*var karmaConfig = function(configFile, customOptions) {
-        var options = {
-            configFile: configFile,
-            keepalive: true
-        };
-        var travisOptions = process.env.TRAVIS && { browsers: ['Firefox'], reporters: 'dots' };
-        return grunt.util._.extend(options, customOptions, travisOptions);
-    };*/
+    // configurable paths
+    var configPath = {
+        public_temp_web: 'public',
+        public_web: './server',
 
+        public_temp_mobile: 'www',
+        public_mobile: './mobile',
+
+        dev: 'frontend_dev'
+    };
+
+
+    // Project configuration.
     grunt.initConfig({
 
-        stylus : {
-            compile : {
-                files : {
-                    'css/style.css' : 'css/stylus/style.styl',
-                    'sections/dashboard/pie.chart.module/css/style.css' : 'sections/dashboard/pie.chart.module/css/style.styl',
-                    'sections/dashboard/topCountry.chart.module/css/style.css' : 'sections/dashboard/topCountry.chart.module/css/style.styl',
-                    'sections/dashboard/medianInterval.chart.module/css/style.css' : 'sections/dashboard/medianInterval.chart.module/css/style.styl',
-                    'sections/dashboard/medianDuration.chart.module/css/style.css' : 'sections/dashboard/medianDuration.chart.module/css/style.styl',
-                    'sections/dashboard/line.chart.module/css/style.css' : 'sections/dashboard/line.chart.module/css/style.styl',
-                    'sections/dashboard/lineOsVers.chart.module/css/style.css' : 'sections/dashboard/lineOsVers.chart.module/css/style.styl',
-                    'sections/dashboard/new.widget.module/css/style.css' : 'sections/dashboard/new.widget.module/css/style.styl',
-                    'sections/base-report/chart-module/css/style.css' : 'sections/base-report/chart-module/css/style.styl',
-                    'sections/base-report/table-module/css/style.css' : 'sections/base-report/table-module/css/style.styl',
-                    'sections/base-report/filters-module/css/style.css' : 'sections/base-report/filters-module/css/style.styl',
-                    'sections/headerFilter/css/style.css' : 'sections/headerFilter/css/style.styl',
-                    'sections/sidebar-menu/css/style.css' : 'sections/sidebar-menu/css/style.styl',
-                    'css/style_promo-page.css' : 'css/promo-page/stylus/style.styl',
-                    'css/htmlError-page/style.css' : 'css/htmlError-page/stylus/style.styl'
-                },
+        configPath: configPath,
+
+        clean: {
+            public_temp_web: '<%= configPath.public_temp_web %>',
+            public_temp_mobile: '<%= configPath.public_temp_mobile %>'
+        },
+
+        copy: {
+            web: {
+                files: [
+                    {expand: true, src: ['<%= configPath.dev %>' + '/css/style.css'], dest: '<%= configPath.public_temp_web %>', flatten: true}
+                ]
+            },
+
+            web_finish: {
+                files: [
+                    {expand: true, src: ['<%= configPath.public_temp_web %>' + '/**'], dest: '<%= configPath.public_web %>'}
+                ]
+            },
+
+            mobile: {
+                files: [
+                    {expand: true, src: ['<%= configPath.dev %>' + '/css/style.css'], dest: '<%= configPath.public_temp_mobile %>', flatten: true}
+                ]
+            },
+
+            mobile_finish: {
+                files: [
+                    {expand: true, src: ['<%= configPath.public_temp_mobile %>' + '/**'], dest: '<%= configPath.public_mobile %>'}
+                ]
+            }
+        },
+
+        // Configuration to be run (and then tested).
+        stylus: {
+            compile: {
                 options: {
-                    paths: ['css/import']
+                    compress: false
+                },
+                files: {
+                    '<%= configPath.dev %>/css/style.css': '<%= configPath.dev %>/css/stylus/style.styl'
                 }
             }
         },
 
-        concat: {
-            options: {
-                separator: '\n'
+        watch: {
+            all: {
+                tasks: ['build_all'],
+                files: [
+                    '<%= configPath.dev %>'+'/css/stylus/*.styl',
+                    '<%= configPath.dev %>/js/**/*.js',
+                    '<%= configPath.dev %>/js/**/*.html',
+                    '<%= configPath.dev %>/index.html'
+                ]
             },
-            dist: {
-                src: [
-                    'libs/bootstrap/css/bootstrap.min.css',
-                    'plugins/jquery.datepicker/datepicker.css',
-                    'plugins/mCustomScrollbar/jquery.mCustomScrollbar.css',
 
-                    'css/style.css',
-                    'css/sprite.css',
-                    'css/animate.css',
+            web: {
+                tasks: ['build_web'],
+                files: [
+                    '<%= configPath.dev %>'+'/css/stylus/*.styl',
+                    '<%= configPath.dev %>/js/**/*.js',
+                    '<%= configPath.dev %>/js/**/*.html',
+                    '<%= configPath.dev %>/index.html'
+                ]
+            },
 
-                    'sections/sidebar-menu/css/style.css',
-                    'sections/headerFilter/css/style.css',
-                    'sections/base-report/chart-module/css/style.css',
-                    'sections/base-report/table-module/css/style.css',
-                    'sections/base-report/filters-module/css/style.css',
-                    'libs/morris/css/morris.css',
-
-                    'sections/dashboard/pie.chart.module/css/style.css',
-                    'sections/dashboard/line.chart.module/css/style.css',
-                    'sections/dashboard/lineOsVers.chart.module/css/style.css',
-                    'sections/dashboard/topCountry.chart.module/css/style.css',
-                    'sections/dashboard/medianInterval.chart.module/css/style.css',
-                    'sections/dashboard/medianDuration.chart.module/css/style.css',
-                    'sections/dashboard/new.widget.module/css/style.css',
-
-                    'css/htmlError-page/style.css'
-
-                ],
-                dest: 'css/style_prod.css'
-            }
-        },
-
-        watch : {
-            scripts : {
-            	tasks: ['stylus', 'concat'],
-                files : [
-                    'css/import/*styl',
-                    'css/stylus/*.styl',
-                    'css/promo-page/stylus/*.styl',
-                    'css/htmlError-page/stylus/*.styl',
-                    'sections/dashboard/pie.chart.module/css/*.styl',
-                    'sections/dashboard/line.chart.module/css/*.styl',
-                    'sections/dashboard/lineOsVers.chart.module/css/*.styl',
-                    'sections/dashboard/topCountry.chart.module/css/*.styl',
-                    'sections/dashboard/medianInterval.chart.module/css/*.styl',
-                    'sections/dashboard/medianDuration.chart.module/css/*.styl',
-                    'sections/base-report/chart-module/css/style.styl',
-					'sections/base-report/table-module/css/style.styl',
-					'sections/base-report/filters-module/css/style.styl',
-					'sections/headerFilter/css/style.styl',
-					'sections/sidebar-menu/css/style.styl',
-                    'sections/dashboard/new.widget.module/css/*.styl',
-                    'css/sprite.css'
-				]
+            mobile: {
+                tasks: ['build_mobile'],
+                files: [
+                    '<%= configPath.dev %>'+'/css/stylus/*.styl',
+                    '<%= configPath.dev %>/js/**/*.js',
+                    '<%= configPath.dev %>/js/**/*.html',
+                    '<%= configPath.dev %>/index.html'
+                ]
             }
         },
 
         requirejs: {
-            reports: {
+            web: {
                 options: {
                     baseUrl: ".",
                     mainConfigFile: "config.js",
-                    name: "js_marionette/apps/analytics/main.js",
-                    out: "toDeploy/reports.js"
+                    name: "./frontend_dev/js/apps/web.js",
+                    out: '<%= configPath.public_temp_web %>' + "/script.js",
+                    optimize: "none"
                 }
             },
-            projects: {
+
+            mobile: {
                 options: {
                     baseUrl: ".",
                     mainConfigFile: "config.js",
-                    name: "js_marionette/apps/projects/main.js",
-                    out: "toDeploy/product.js"
-                }
-            },
-            conversion: {
-                options: {
-                    baseUrl: ".",
-                    mainConfigFile: "config.js",
-                    name: "js_marionette/apps/conversion/main.js",
-                    out: "toDeploy/conversion.js"
-                }
-            },
-            settings: {
-                options: {
-                    baseUrl: ".",
-                    mainConfigFile: "config.js",
-                    name: "js_marionette/apps/settings/main.js",
-                    out: "toDeploy/settings.js"
+                    name: "./frontend_dev/js/apps/mobile.js",
+                    out: '<%= configPath.public_temp_mobile %>' + "/script.js",
+                    optimize: "none"
                 }
             }
         }
-    })
-    //grunt.loadNpmTasks('grunt-jslint');
-    grunt.loadNpmTasks('grunt-contrib-stylus');
-    grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('grunt-contrib-concat');
-    grunt.loadNpmTasks('grunt-contrib-requirejs');
 
-    /*don't use*/
-    grunt.loadNpmTasks('grunt-contrib-clean');
+    });
 
-    // Задача по умолчанию
-    grunt.registerTask('default', ['watch'])
-    grunt.registerTask('production', ['stylus', 'concat', 'requirejs']);
-    grunt.registerTask('karmat', ['karma:unit'])
+    // By default, lint and run all tests.
+    grunt.registerTask('default', ['watch']);
+
+    grunt.registerTask('build_web', [
+        'stylus',
+        'clean:public_temp_web',
+        'requirejs:web',
+        'copy:web',
+        'copy:web_finish',
+        'clean:public_temp_web'
+    ]);
+
+    grunt.registerTask('build_mobile', [
+        'stylus',
+        'clean:public_temp_mobile',
+        'requirejs:mobile',
+        'copy:mobile',
+        'copy:mobile_finish',
+        'clean:public_temp_mobile'
+    ]);
+
+    grunt.registerTask('build_all', [
+        'build_web',
+        'build_mobile'
+    ]);
 
 };
