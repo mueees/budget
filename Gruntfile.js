@@ -20,6 +20,19 @@ module.exports = function(grunt) {
 
         configPath: configPath,
 
+        concat: {
+            options: {},
+            dist: {
+                src: [
+                        '<%= configPath.dev %>' + '/vendor/libs/bootstrap/css/bootstrap.min.css',
+                        '<%= configPath.dev %>' + '/vendor/libs/bootstrap/css/superhero.css',
+                        '<%= configPath.dev %>' + '/import/animate.css',
+                        '<%= configPath.dev %>' + '/css/style.css'
+                ],
+                dest: '<%= configPath.dev %>' + '/css/style.css'
+            }
+        },
+
         clean: {
             public_temp_web: '<%= configPath.public_temp_web %>',
             public_temp_mobile: '<%= configPath.public_temp_mobile %>'
@@ -28,7 +41,13 @@ module.exports = function(grunt) {
         copy: {
             web: {
                 files: [
-                    {expand: true, src: ['<%= configPath.dev %>' + '/css/style.css'], dest: '<%= configPath.public_temp_web %>', flatten: true}
+                    {expand: true, src: ['<%= configPath.dev %>' + '/img'], dest: '<%= configPath.public_temp_web %>', flatten: true},
+                    {expand: true, src: ['<%= configPath.dev %>' + '/img/*'], dest: '<%= configPath.public_temp_web %>/img', flatten: true},
+                    {expand: true, src: ['<%= configPath.dev %>' + '/css'], dest: '<%= configPath.public_temp_web %>', flatten: true},
+                    {expand: true, src: ['<%= configPath.dev %>' + '/css/style.css'], dest: '<%= configPath.public_temp_web %>/css', flatten: true},
+                    {expand: true, src: ['<%= configPath.dev %>' + '/index.html'], dest: '<%= configPath.public_temp_web %>', flatten: true},
+                    {expand: true, src: ['<%= configPath.dev %>' + '/fonts'], dest: '<%= configPath.public_temp_web %>', flatten: true},
+                    {expand: true, src: ['<%= configPath.dev %>' + '/fonts/*'], dest: '<%= configPath.public_temp_web %>/fonts', flatten: true}
                 ]
             },
 
@@ -40,7 +59,13 @@ module.exports = function(grunt) {
 
             mobile: {
                 files: [
-                    {expand: true, src: ['<%= configPath.dev %>' + '/css/style.css'], dest: '<%= configPath.public_temp_mobile %>', flatten: true}
+                    {expand: true, src: ['<%= configPath.dev %>' + '/img'], dest: '<%= configPath.public_temp_mobile %>', flatten: true},
+                    {expand: true, src: ['<%= configPath.dev %>' + '/img/*'], dest: '<%= configPath.public_temp_mobile %>/img', flatten: true},
+                    {expand: true, src: ['<%= configPath.dev %>' + '/css'], dest: '<%= configPath.public_temp_mobile %>', flatten: true},
+                    {expand: true, src: ['<%= configPath.dev %>' + '/css/style.css'], dest: '<%= configPath.public_temp_mobile %>/css', flatten: true},
+                    {expand: true, src: ['<%= configPath.dev %>' + '/index.html'], dest: '<%= configPath.public_temp_mobile %>', flatten: true},
+                    {expand: true, src: ['<%= configPath.dev %>' + '/fonts'], dest: '<%= configPath.public_temp_mobile %>', flatten: true},
+                    {expand: true, src: ['<%= configPath.dev %>' + '/fonts/*'], dest: '<%= configPath.public_temp_mobile %>/fonts', flatten: true}
                 ]
             },
 
@@ -67,7 +92,7 @@ module.exports = function(grunt) {
             all: {
                 tasks: ['build_all'],
                 files: [
-                    '<%= configPath.dev %>'+'/css/stylus/*.styl',
+                        '<%= configPath.dev %>'+'/css/stylus/*.styl',
                     '<%= configPath.dev %>/js/**/*.js',
                     '<%= configPath.dev %>/js/**/*.html',
                     '<%= configPath.dev %>/index.html'
@@ -77,7 +102,7 @@ module.exports = function(grunt) {
             web: {
                 tasks: ['build_web'],
                 files: [
-                    '<%= configPath.dev %>'+'/css/stylus/*.styl',
+                        '<%= configPath.dev %>'+'/css/stylus/*.styl',
                     '<%= configPath.dev %>/js/**/*.js',
                     '<%= configPath.dev %>/js/**/*.html',
                     '<%= configPath.dev %>/index.html'
@@ -87,7 +112,7 @@ module.exports = function(grunt) {
             mobile: {
                 tasks: ['build_mobile'],
                 files: [
-                    '<%= configPath.dev %>'+'/css/stylus/*.styl',
+                        '<%= configPath.dev %>'+'/css/stylus/*.styl',
                     '<%= configPath.dev %>/js/**/*.js',
                     '<%= configPath.dev %>/js/**/*.html',
                     '<%= configPath.dev %>/index.html'
@@ -124,6 +149,7 @@ module.exports = function(grunt) {
 
     grunt.registerTask('build_web', [
         'stylus',
+        'concat',
         'clean:public_temp_web',
         'requirejs:web',
         'copy:web',
@@ -133,6 +159,7 @@ module.exports = function(grunt) {
 
     grunt.registerTask('build_mobile', [
         'stylus',
+        'concat',
         'clean:public_temp_mobile',
         'requirejs:mobile',
         'copy:mobile',

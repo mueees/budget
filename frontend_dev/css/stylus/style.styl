@@ -1,2 +1,146 @@
-body
-    font-size 5px
+body{
+  padding-top: 50px;
+}
+.sign
+  background rgba(78, 93, 108, 0.8)
+  position relative
+
+.landingLogo
+  width: 30%
+
+  @media (max-width: 768px)
+    width: 60%
+
+.settings{
+  margin: 20px 0;
+  background: rgba(0, 0, 0, 0.19);
+  padding: 10px 0 0 0;
+}
+.settings .title{
+  display: inline-block;
+  margin: 0 5px 0 0;
+  width: 60px;
+}
+
+.settings .setting-item{
+  margin-bottom: 10px;
+}
+.row-no-padding [class*="col-"] {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+.budget-table td{
+  padding: 15px 5px !important;
+}
+.budget-pager{
+  margin: 15px 0;
+}
+.budget-pager li>a, .budget-pager li>span{
+  border-radius: 0;
+}
+.page-header{
+  margin-top: 10px;
+}
+.menu{
+  position: fixed;
+  left: 0;
+  top: 0;
+  display: none;
+}
+.menu .nav{
+  background:  #4e5d6c;
+}
+.menu .nav a{
+  color: white;
+}
+.menu .nav li a:hover{
+  background: #485563;
+}
+.menu .nav .active{
+  background: #485563;
+}
+.menu .nav .text{
+  display: inline-block;
+  margin-left: 10px;
+}
+.logo{
+  margin: 5px 5px 0 0;
+  display: inline-block;
+}
+.content{
+  /*background:  #4e5d6c;*/
+  min-height: 150px;
+}
+.form-horizontal{
+
+}
+.navbar-nav{
+  margin: 0;
+}
+.menu-toggle {
+  position: relative;
+  padding: 12px 10px 6px 10px;
+  background-color: transparent;
+  background-image: none;
+  border: 1px solid transparent;
+  border-radius: 0;
+  display: none;
+}
+.budget-list li{
+  overflow: hidden;
+  margin: 15px 0 15px;
+}
+.budget-list .inner{
+  margin: 10px 0;
+  padding: 5px 9px;
+  background: rgba(0, 0, 0, 0.10);
+}
+.budget-list .list-group-item:last-child{
+
+}
+.add .tags{
+  padding: 0;
+}
+.add .tags li{
+  display: inline-block;
+  list-style: none;
+  cursor: pointer;
+  margin-right: 8px;
+  margin-bottom: 10px;
+}
+.add .tags li .text{
+  display: inline-block;
+  margin-right: 10px;
+}
+.add .tags li.active{
+  background: #2E3841;
+}
+.menu-toggle .icon-bar{
+  width: 22px;
+  height: 2px;
+  border-radius: 1px;
+  background-color: #FFF;
+  margin: 0 0 5px;
+  display: block;
+}
+
+@media (max-width: 768px){
+  .menu-toggle{
+    display: block;
+  }
+}
+@media (min-width: 768px){
+  .menu {
+    position: relative;
+    display: block;
+    padding-left: 0;
+  }
+}
+
+
+/*
+@media (min-width: 768px) and (max-width: 979px) {
+    .row .span4 {
+        width:46%;
+    }
+}*/
