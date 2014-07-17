@@ -1,0 +1,10 @@
+cd /vagrant/server
+export NODE_SITE=development
+export NODE_PATH=/vagrant/server
+node server.js
+
+
+cd /vagrant/server
+export NODE_SITE=development
+export NODE_PATH=/vagrant/server
+supervisor test.js

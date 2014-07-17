@@ -1,0 +1,25 @@
+SERVER:
+
+users
+-----
+id  email pass
+
+tag
+---
+id userId tagName
+
+transaction
+-----------
+id  user count tags( [id, id, id] );
+
+
+MOBILE CLIENT:
+
+localStorage
+____________
+userEmail : mue.miv@gmail.com
+tags: [<tagName>, <tagName>];
+
+transaction
+-----------
+id count tags( [ id, id, id ] );

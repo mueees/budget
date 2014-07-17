@@ -1,0 +1,19 @@
+vagrant box add lucid32 http://files.vagrantup.com/lucid32.box
+
+#Debian Wheezy 7.2 amd64 (VirtualBox Guest Additions 4.3.0) (2013/10/19)
+vagrant box add debian-72 https://dl.dropboxusercontent.com/u/197673519/debian-7.2.0.box
+
+vagrant plugin install vagrant-vbguest
+vagrant up
+vagrant provision
+vagrant ssh
+vagrant suspend | halt | destroy
+
+не забыть прописать сайт в hosts
+
+cd /vagrant
+export NODE_ENV=development
+export NODE_SITE=development
+export NODE_PATH=.
+supervisor server.js
+node server.js

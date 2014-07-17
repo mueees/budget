@@ -46,6 +46,7 @@ module.exports = function(grunt) {
                     {expand: true, src: ['<%= configPath.dev %>' + '/css'], dest: '<%= configPath.public_temp_web %>', flatten: true},
                     {expand: true, src: ['<%= configPath.dev %>' + '/css/style.css'], dest: '<%= configPath.public_temp_web %>/css', flatten: true},
                     {expand: true, src: ['<%= configPath.dev %>' + '/index.html'], dest: '<%= configPath.public_temp_web %>', flatten: true},
+                    {expand: true, src: ['<%= configPath.dev %>' + '/landing.html'], dest: '<%= configPath.public_temp_web %>', flatten: true},
                     {expand: true, src: ['<%= configPath.dev %>' + '/fonts'], dest: '<%= configPath.public_temp_web %>', flatten: true},
                     {expand: true, src: ['<%= configPath.dev %>' + '/fonts/*'], dest: '<%= configPath.public_temp_web %>/fonts', flatten: true}
                 ]
@@ -64,6 +65,7 @@ module.exports = function(grunt) {
                     {expand: true, src: ['<%= configPath.dev %>' + '/css'], dest: '<%= configPath.public_temp_mobile %>', flatten: true},
                     {expand: true, src: ['<%= configPath.dev %>' + '/css/style.css'], dest: '<%= configPath.public_temp_mobile %>/css', flatten: true},
                     {expand: true, src: ['<%= configPath.dev %>' + '/index.html'], dest: '<%= configPath.public_temp_mobile %>', flatten: true},
+                    {expand: true, src: ['<%= configPath.dev %>' + '/landing.html'], dest: '<%= configPath.public_temp_mobile %>', flatten: true},
                     {expand: true, src: ['<%= configPath.dev %>' + '/fonts'], dest: '<%= configPath.public_temp_mobile %>', flatten: true},
                     {expand: true, src: ['<%= configPath.dev %>' + '/fonts/*'], dest: '<%= configPath.public_temp_mobile %>/fonts', flatten: true}
                 ]

@@ -1,0 +1,11 @@
+{
+    "port": 5001,
+
+    "db": {
+        "ip": "127.0.0.1",
+        "port": "27017",
+        "nameDatabase": "budget_dev"
+    },
+
+    "host": "budget_dev"
+}

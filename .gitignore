@@ -1,4 +1,6 @@
 .idea
+.vagrant
 node_modules
 server/public
+server/node_modules
 mobile/www
