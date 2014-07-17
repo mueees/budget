@@ -31,3 +31,12 @@
 {"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-17T16:01:08.265Z"}
 {"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-17T16:02:31.147Z"}
 {"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-17T16:02:31.209Z"}
+{"level":"info","message":"Message sent: undefined","timestamp":"2014-07-17T16:57:49.174Z"}
+{"level":"info","message":"Message sent: undefined","timestamp":"2014-07-17T16:58:44.960Z"}
+{"level":"info","message":"Message sent: undefined","timestamp":"2014-07-17T16:59:39.668Z"}
+{"level":"info","message":"Message sent: undefined","timestamp":"2014-07-17T17:00:26.304Z"}
+{"level":"info","message":"Message sent: undefined","timestamp":"2014-07-17T17:00:55.829Z"}
+{"level":"info","message":"Message sent: undefined","timestamp":"2014-07-17T17:02:07.627Z"}
+{"level":"info","message":"Message sent: undefined","timestamp":"2014-07-17T17:11:54.127Z"}
+{"level":"info","message":"Message sent: undefined","timestamp":"2014-07-17T17:12:23.245Z"}
+{"level":"info","message":"Message sent: undefined","timestamp":"2014-07-17T17:12:46.760Z"}

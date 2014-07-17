@@ -46,7 +46,7 @@ var controller = {
 
             var emailAction = new EmailAction({
                 to: user.email,
-                template: './views/email/registerConfirmation.hbs',
+                template: './views/email/registerConfirmation.jade',
                 subject: "Confirmation account",
                 data: {
                     confirmationId: user.confirmationId
@@ -96,7 +96,7 @@ var controller = {
 
                 var emailAction = new EmailAction({
                     to: user.email,
-                    template: './views/email/successConfirmation.hbs',
+                    template: './views/email/successConfirmation.jade',
                     subject: "Confirmation success",
                     data: {}
                 });

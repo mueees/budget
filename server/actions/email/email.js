@@ -6,7 +6,7 @@ var BaseModel = require('../base/action'),
     async = require('async'),
     jade = require('jade'),
 
-    simpleTextTemp = require('views/email/simpleText.hbs'),
+    simpleTextTemp = require('views/email/simpleText.jade'),
     _ = require('underscore');
 
 function EmailAction(options){
@@ -33,19 +33,8 @@ _.extend(EmailAction.prototype, {
 
     makeHtml: function(cb){
         var _this = this;
-
-        _this.settings.html = jade.renderFile(_this.settings.template, merge({}, _this.settings.data));
+        _this.settings.html = jade.renderFile(_this.settings.template, _this.settings.data);
         cb(null);
-
-        /*hbs.render(_this.settings.template, _this.settings.data, function(err, html){
-            if( err ){
-                _this.settings.html = "";
-                cb(err);
-                return false;
-            }
-            _this.settings.html = html;
-            cb(null);
-        })*/
     },
 
     send: function(cb){
