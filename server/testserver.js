@@ -1,7 +1,7 @@
 var EmailAction = require("actions/email/email")
 
 var emailAction = new EmailAction({
-    to: 'mue@zeoalliance.com',
+    to: 'mue.miv@gmail.com',
     template: './views/email/registerConfirmation.jade',
     subject: "Confirmation account",
     data: {

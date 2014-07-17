@@ -7,7 +7,6 @@ var passport = require('passport')
     , config = require("config");
 
 passport.serializeUser(function(id, done) {
-    console.log("serializeUser")
     done(null, id);
 });
 

@@ -1,7 +1,7 @@
 cd /vagrant/server
 export NODE_SITE=development
 export NODE_PATH=/vagrant/server
-node server.js
+supervisor -i 'node_modules' server.js
 
 
 cd /vagrant/server

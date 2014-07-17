@@ -1,15 +1,23 @@
+//tag
+
+$.ajax({
+    type: "post",
+    url: "/api/tag/create",
+    data: JSON.stringify({
+        userId: "userId",
+        tagName: "tagName"
+    })
+})
+
+
+//user
+
 $.ajax({
     type: "post",
     url: "/api/user/signup",
     data: JSON.stringify({
-        email: "mue@zeoalliance.com",
-        password: "123123",
-        success: function(){
-            alert(1)
-        },
-        error: function(){
-            alert(2)
-        }
+        email: "mue.miv@gmail.com",
+        password: "123123"
     })
 })
 
@@ -17,13 +25,7 @@ $.ajax({
     type: "post",
     url: "/api/user/signin",
     data: JSON.stringify({
-        email: "test@gmail.com",
-        password: "test@gmail.com",
-        success: function(){
-            alert(1)
-        },
-        error: function(){
-            alert(2)
-        }
+        email: "mue.miv@gmail.com",
+        password: "123123"
     })
 })
