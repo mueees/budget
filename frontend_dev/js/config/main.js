@@ -1,5 +1,4 @@
 define([], function(){
-    var serverConfig = Budget.config;
 
     return {
         data: {},
@@ -13,4 +12,5 @@ define([], function(){
 
         showLog: false
     }
+
 })
