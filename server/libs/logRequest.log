@@ -40,3 +40,9 @@
 {"level":"info","message":"Message sent: undefined","timestamp":"2014-07-17T17:11:54.127Z"}
 {"level":"info","message":"Message sent: undefined","timestamp":"2014-07-17T17:12:23.245Z"}
 {"level":"info","message":"Message sent: undefined","timestamp":"2014-07-17T17:12:46.760Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-18T07:03:23.330Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-18T07:03:23.378Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-18T07:04:14.003Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-18T07:04:14.037Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-18T07:04:45.046Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-18T07:04:45.080Z"}
