@@ -1,0 +1,38 @@
+<% if(showCloseButton == true) { %>
+<div class="close-notice">
+    <div class="icon-close-window"></div>
+</div>
+<% }%>
+<div class="header">
+    <div class="icon-notice-<%= icon %> notice-icon"></div>
+    <div class="title"><%= title %></div>
+    <close></close>
+</div>
+<div class="main">
+    <div class="content">
+        <div class="wrapper">
+            <%= text %>
+        </div>
+    </div>
+    <div class="buttons">
+        <div class="wrapper">
+
+            <a href="#" class="<%= classFirstBtn %>">
+                <% if(iconFirstBtn == true && classFirstIcon) { %>
+                <span class="<%= classFirstIcon%>"></span>
+                <% }%>
+                <span class="text"><%= firstBtnText%></span>
+            </a>
+
+            <% if(showSecondBtn == true && secondBtnText) { %>
+            <a href="#" class="<%= classSecondBtn %>">
+                <% if(iconSecondBtn == true && classSecondIcon) { %>
+                <span class="<%= classSecondIcon%>"></span>
+                <% }%>
+                <span class="text"><%= secondBtnText%></span>
+            </a>
+            <% }%>
+
+        </div>
+    </div>
+</div>

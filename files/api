@@ -1,0 +1,30 @@
+//transaction
+$.ajax({
+    type: "post",
+    data: JSON.stringify({
+        period: {
+            first: {
+                start: '18-06-2014',
+                end: '18-06-2014'
+            }
+        },
+        tags: [ids] || []
+    })
+})
+
+response
+{
+    data: [
+        {
+            date: '18-06-2014',
+            tags: [
+                {
+                    idTag: <tagId>,
+                    nameTag: <nameTag>,
+                    count: <count>
+                }
+            ],
+            countByTag: <count>
+        }
+    ]
+}

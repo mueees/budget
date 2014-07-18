@@ -1,5 +1,5 @@
 define([
-    'backbone.wreqr.js',
+    'backbone.wreqr',
     'backbone.babysitter',
     'backbone.queryparam',
     'backbone.routefilter',
