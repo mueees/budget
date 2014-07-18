@@ -9,6 +9,7 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     session = require('express-session'),
     cookieParser = require('cookie-parser'),
+    MongoStore = require('connect-mongo')(express),
     config = require("config");
 
 require("mongooseDb");
@@ -16,7 +17,12 @@ require("mongooseDb");
 // Passport configuration
 require('modules/auth');
 
-app.use(session({secret: 'keyboard cat'}));
+app.use(session({
+    secret: 'keyboard cat',
+    store : new MongoStore({
+        db: config.get('db:nameDatabase')
+    })
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 
