@@ -40,13 +40,48 @@ var controller = {
             res.send({
                 _id: transaction._id
             });
+            next(transaction);
         })
 
     },
 
-    edit: function(req, res, next){},
+    edit: function(req, res, next){
+        var data = req.body;
 
-    remove: function(req, res, next){},
+        TransactionModel.findById( data._id, function ( err, transaction ){
+            transaction.tagName = data.tagName;
+
+            if( data.count ) transaction.count = data.count;
+            if( data.tags ) transaction.tags = data.tags;
+            transaction.updated_at = Date.now();
+
+            transaction.save( function ( err, transaction, count ){
+                if(err){
+                    logger.error(err);
+                    return next(new HttpError(400, err.errors));
+                }
+
+                res.send({
+                    _id: transaction._id
+                });
+                next(transaction);
+            });
+        });
+    },
+
+    remove: function(req, res, next){
+        var data = req.body;
+
+        TransactionModel.deleteById(data._id, function(err, transaction){
+            if(err){
+                logger.error(err);
+                return next(new HttpError(400, err.errors));
+            }
+
+            res.send();
+            next();
+        })
+    },
 
     get: function(req, res, next){
 

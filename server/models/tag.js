@@ -12,6 +12,11 @@ var Tag = new Schema({
     tagName: {
         type: String,
         required: true
+    },
+
+    updated_at: {
+        type: Date,
+        default: new Date()
     }
 });
 

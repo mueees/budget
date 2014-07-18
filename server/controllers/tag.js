@@ -34,6 +34,7 @@ var controller = {
             }
         ], function(err, tag){
             if(err){
+                logger.error(err);
                 return next(new HttpError(400, err.errors));
             }
 
@@ -41,36 +42,53 @@ var controller = {
                 _id: tag._id,
                 tagName: tag.tagName
             });
+            next(tag);
         })
 
     },
-    edit: function(req, res, next){},
+    edit: function(req, res, next){
+        var data = req.body;
 
+        TagModel.findById( data._id, function ( err, tag ){
+            tag.tagName = data.tagName;
+            tag.updated_at = Date.now();
+            tag.save( function ( err, tag, count ){
+                if(err){
+                    logger.error(err);
+                    return next(new HttpError(400, err.errors));
+                }
+
+                res.send({
+                    _id: tag._id
+                });
+                next(tag);
+            });
+        });
+    },
     remove: function(req, res, next){
         var data = req.body;
 
         async.waterfall([
-
             //remove from tags
             function(cb){
                 TagModel.deleteById(data._id, function(err, tag){
-                    if(err) return new HttpError(400, err.errors);
+                    if(err){
+                        cb(err);
+                    }
                     cb(null, tag);
                 })
             },
-
-            //remove from all transactions
             function(tag, cb){
-                TransactionModel.removeTag(tag._id, function(err){
-
-                })
+                TransactionModel.removeTagById(data._id, req.user._id, cb);
             }
         ], function(err){
             if(err){
+                logger.error(err);
                 return next(new HttpError(400, err.errors));
             }
 
             res.send();
+            next();
         })
 
     },
@@ -86,6 +104,7 @@ var controller = {
                 return next(new HttpError(400, "Server error"));
             }
             res.send(tags);
+            next(tags);
 
         });
     }

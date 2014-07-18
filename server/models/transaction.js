@@ -14,16 +14,60 @@ var Transaction = new Schema({
         required: true
     },
 
-    tags: [Schema.Types.ObjectId]
+    tags: [Schema.Types.ObjectId],
+
+    updated_at: {
+        type: Date,
+        default: new Date()
+    }
 });
 
-Transaction.statics.removeTag = function(id, cb){
-    this.findById( id, function ( err, tag ){
-        tag.remove( function ( err, tag ){
+Transaction.statics.removeTagById = function(tagId, userId, cb){
+
+    this.update(
+        {
+            userId: userId,
+            tags: {
+                $in: [tagId]
+            }
+        },
+
+        { $pull: { tags: tagId } },
+
+        {multi: true},
+
+        function ( err ){
+            if(err){
+                return cb(err);
+            }
+            console.log("removeTagById");
+            cb(null);
+        }
+    )
+
+
+    /*this.find({
+        userId: userId,
+        tags: {
+        $in: [tagId]
+        }
+    }, function ( err, transactions ){
+        if(err){
+        return cb(err);
+        }
+    console.log("removeTagById");
+
+        cb(null);
+    });*/
+}
+
+Transaction.statics.deleteById = function(id, cb){
+    this.findById( id, function ( err, transaction ){
+        transaction.remove( function ( err, transaction ){
             if( err ) {
                 return cb(err);
             }else{
-                return cb(null, tag);
+                return cb(null, transaction);
             }
         });
     });
