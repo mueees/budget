@@ -5,32 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c625e517-fb65-47ed-8714-6d10f315644c" name="Default" comment="adding api">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/views/error.jade" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/controllers/tag.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/models/tag.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/testScript/test.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/controllers/transaction.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/models/transaction.js" />
-      <change type="DELETED" beforePath="D:\internal\budget\Vagrantdata\map-debug.conf" afterPath="" />
-      <change type="DELETED" beforePath="D:\internal\budget\Vagrantdata\nginx\nginx.conf" afterPath="" />
-      <change type="DELETED" beforePath="D:\internal\budget\Vagrantdata\nginx\vhosts\map-web.conf" afterPath="" />
-      <change type="DELETED" beforePath="D:\internal\budget\server\test.js" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/frontend_dev/js/apps/App.js" afterPath="$PROJECT_DIR$/frontend_dev/js/apps/App.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/budget.iml" afterPath="$PROJECT_DIR$/.idea/budget.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/files/data" afterPath="$PROJECT_DIR$/files/data" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/files/database" afterPath="$PROJECT_DIR$/files/database" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/views/header.jade" afterPath="$PROJECT_DIR$/server/views/header.jade" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/modules/auth/index.js" afterPath="$PROJECT_DIR$/server/modules/auth/index.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/libs/logRequest.log" afterPath="$PROJECT_DIR$/server/libs/logRequest.log" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/package.json" afterPath="$PROJECT_DIR$/server/package.json" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/routes/route.js" afterPath="$PROJECT_DIR$/server/routes/route.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/server.js" afterPath="$PROJECT_DIR$/server/server.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/controllers/tag.js" afterPath="$PROJECT_DIR$/server/controllers/tag.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/models/tag.js" afterPath="$PROJECT_DIR$/server/models/tag.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/testScript/test.js" afterPath="$PROJECT_DIR$/server/testScript/test.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/controllers/transaction.js" afterPath="$PROJECT_DIR$/server/controllers/transaction.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/models/transaction.js" afterPath="$PROJECT_DIR$/server/models/transaction.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MOVED" beforePath="D:\internal\budget\server\testserver.js" afterPath="$PROJECT_DIR$/server/testScript/testserver.js" />
     </list>
     <ignored path="budget.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/Dummy.txt" changelist="c625e517-fb65-47ed-8714-6d10f315644c" time="1405676793178" ignored="false" />
+    <file path="/Dummy.txt" changelist="c625e517-fb65-47ed-8714-6d10f315644c" time="1405676802072" ignored="false" />
     <file path="/index.html" changelist="c625e517-fb65-47ed-8714-6d10f315644c" time="1405599462042" ignored="false" />
     <file path="/setup.sh" changelist="c625e517-fb65-47ed-8714-6d10f315644c" time="1405668582992" ignored="false" />
     <file path="/links" changelist="c625e517-fb65-47ed-8714-6d10f315644c" time="1405589632843" ignored="false" />
@@ -96,7 +83,7 @@
           <file leaf-file-name="tag.js" pinned="false" current="true" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/server/controllers/tag.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="76" column="34" selection-start="2084" selection-end="2084" vertical-scroll-proportion="0.7318573">
+                <state line="72" column="23" selection-start="2030" selection-end="2030" vertical-scroll-proportion="0.6482165">
                   <folding />
                 </state>
               </provider>
@@ -386,13 +373,18 @@
       <created>1405617225082</created>
       <updated>1405617225082</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="adding api">
+      <created>1405676809654</created>
+      <updated>1405676809654</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1257" height="1010" extended-state="0" />
     <editor active="true" />
     <layout>
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3298122" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -408,7 +400,6 @@
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Grunt" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -597,7 +588,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/server/controllers/tag.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="76" column="34" selection-start="2084" selection-end="2084" vertical-scroll-proportion="0.7318573">
+        <state line="72" column="23" selection-start="2030" selection-end="2030" vertical-scroll-proportion="0.6482165">
           <folding />
         </state>
       </provider>

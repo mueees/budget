@@ -10,7 +10,7 @@ id userId tagName
 
 transaction
 -----------
-id  user count tags( [id, id, id] );
+id  userId count tags( [id, id, id] );
 
 
 MOBILE CLIENT:
