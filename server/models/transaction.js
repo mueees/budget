@@ -61,6 +61,16 @@ Transaction.statics.removeTagById = function(tagId, userId, cb){
     });*/
 }
 
+Transaction.static.getTransactions = function(options, cb){
+    this.find(options, function(err, transactions){
+        if(err) {
+            return cb(err);
+        }
+
+        cb(null, transactions);
+    })
+}
+
 Transaction.statics.deleteById = function(id, cb){
     this.findById( id, function ( err, transaction ){
         transaction.remove( function ( err, transaction ){

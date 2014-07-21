@@ -26,9 +26,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-
-app.use(express.static(__dirname + '/public/'));
+app.use(express.static(__dirname + '/frontend_dev/'));
 app.use(bodyParser.json({type: 'application/x-www-form-urlencoded'}));
 app.use(cookieParser());
 app.set('views', __dirname + "/views");
@@ -42,8 +40,8 @@ route(app);
 //404
 app.use(function(req, res, next){
     logger.log('warn', { status: 404, url: req.url });
-    res.render('error', { status: 404, url: req.url });
     res.status(404);
+    res.render('error', { status: 404, url: req.url });
 });
 
 
