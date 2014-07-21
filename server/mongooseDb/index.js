@@ -5,6 +5,7 @@ var mongoose = require('mongoose'),
 mongoose.connect('mongodb://' + config.get('db:ip') + '/' + config.get('db:nameDatabase'));
 
 mongoose.connection.on('error', function (err) {
+    console.log(err);
     logger.error(err)
 });
 

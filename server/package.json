@@ -23,6 +23,7 @@
         "connect-mongo": "",
         "passport": "",
         "passport-local": "",
+        "q": "",
         "mocha": ""
     }
 }

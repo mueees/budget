@@ -2,6 +2,7 @@ var rootController = require('../controllers/root'),
     userController = require('../controllers/user'),
     tagController = require('../controllers/tag'),
     transactionController = require('../controllers/transaction'),
+    syncController = require('../controllers/sync'),
     checkoAuth = require('middleware/checkAuth'),
     passport = require('passport');
 
@@ -27,4 +28,9 @@ module.exports = function(app) {
     app.get('/api/transaction/get', middleware, transactionController.get);
     app.post('/api/transaction/edit', middleware, transactionController.edit);
     app.post('/api/transaction/remove', middleware, transactionController.remove);
+
+    //sync
+    app.post('/api/sync/clientserver', middleware, syncController.clientServer);
+    app.post('/api/sync/serverclient', middleware, syncController.serverClient);
+
 }

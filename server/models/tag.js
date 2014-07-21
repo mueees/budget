@@ -20,6 +20,27 @@ var Tag = new Schema({
     }
 });
 
+Tag.statics.isHasTag = function(id, userId, cb){
+    var query = {
+        _id: id,
+        userId: userId
+    }
+
+    this.find(query, null, function(err, tags){
+        if( err ){
+            logger.error(err);
+            cb("Server error");
+            return false;
+        }
+
+        if( tags.length === 0 ){
+            cb(null, false);
+        }else{
+            cb(null, tags[0]);
+        }
+    });
+}
+
 Tag.statics.deleteById = function(id, cb){
     this.findById( id, function ( err, tag ){
         tag.remove( function ( err, tag ){
