@@ -19,7 +19,7 @@ requirejs.config({
         bootstrap: "frontend_dev/vendor/libs/bootstrap/js/bootstrap.min",
 
         /*plugins*/
-        moment: "frontend_dev/vendor/plugins/moment.min",
+        moment: "frontend_dev/vendor/plugins/moment.mifn",
         cookie: "frontend_dev/vendor/plugins/jquery.cookie",
         config: "frontend_dev/js/config/main"
     },

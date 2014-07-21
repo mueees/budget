@@ -84,6 +84,25 @@ var controller = {
     },
 
     get: function(req, res, next){
+        var data = req.body;
+        var period = data.period;
+        var userId = req.user.id;
+        var tags = data.tags || [];
+
+
+        TransactionModel.getTransactions({
+            period: period,
+            userId: userId,
+            tags: tags
+        }, function(err, transactions){
+            if(err){
+                logger.error(err);
+                return next(new HttpError(400, err.errors));
+            }
+
+            res.send(transactions);
+        })
+
 
     }
 }
