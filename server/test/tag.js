@@ -55,7 +55,6 @@ describe('Tag', function(){
                 userId: userId
             }, function(err, tags){
                 if(err) {
-                    console.log(err);
                     return;
                 }
                 if(tags[0] && tags[0].tagName == tagName){
@@ -123,16 +122,13 @@ describe('Tag', function(){
 
             async.waterfall([
                 function(cb){
-                    TagModel.find({
-                        tagName: tagName,
-                        userId: userId
-                    }, function(err, tags){
+                    TagModel.findById(tagId, function(err, tag){
                         if(err) {
                             cb("Error remove tag mongo");
                             return;
                         }
 
-                        if(!tags.length){
+                        if(tag.isDeleted == true){
                             cb(null);
                         }else{
                             cb("Error remove tag");
@@ -239,13 +235,26 @@ describe('Tag', function(){
             }
         }
 
+        var reqMockRemove = {
+            body: {},
+            user: {
+                _id: userId
+            }
+        }
+
         beforeEach(function(done){
-            async.parallel([
+            async.waterfall([
+                function(cb){
+                    TagController.create(reqMockCreate, resMock, function(tag){
+                        reqMockRemove.body._id = tag._id;
+                        cb()
+                    });
+                },
                 function(cb){
                     TagController.create(reqMockCreate, resMock, function(tag){cb()});
                 },
                 function(cb){
-                    TagController.create(reqMockCreate, resMock, function(tag){cb()});
+                    TagController.remove(reqMockRemove, resMock, function(tag){cb()});
                 }
             ], function(){
                 done();
@@ -260,7 +269,7 @@ describe('Tag', function(){
             }
 
             TagController.get(reqMockGet, resMock, function(tags){
-                if(tags.length == 2 && tags[0].tagName == tagName ){
+                if(tags.length == 1 && tags[0].tagName == tagName ){
                     done();
                 }else{
                     throw "should get tag";

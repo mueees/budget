@@ -94,7 +94,8 @@ var controller = {
     },
     get: function(req, res, next){
         TagModel.find({
-            userId: req.user._id
+            userId: req.user._id,
+            isDeleted: false
         },{
             tagName: true,
             _id: true

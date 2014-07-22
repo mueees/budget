@@ -1,30 +1,38 @@
 define([
-    'jquery',
-    'backbone',
+    'underscore',
     'marionette',
     'app',
     'config'
-], function(jQuery, Backbone, Marionette, App, config){
+], function(_, Marionette, App, config){
 
     App.module("Log", {
 
-        startWithParent: false,
+        startWithParent: true,
 
-        define: function( Log, App, Backbone, Marionette, $, _ ){
+        define: function( Log, App, Marionette, $, _ ){
 
-            var log;
-
-            var Controller = Marionette.Controller.extend({});
-
-            var API  = {
-                start: function(){Controller.start()}
+            function getLogInstance(moduleName){
+                var module = moduleName;
+                return function (message){
+                    if(!config.showLog) return false;
+                    var isObject = _.isPlainObject(message);
+                    if( isObject ){
+                        console.log(module + ' : ');
+                        console.log(message);
+                    }else{
+                        console.log(module + ' : ' + message);
+                    }
+                }
             }
 
-            Log.API = API;
+            var controller = {
+                getLog: function(moduleName){
+                    return getLogInstance(moduleName);
+                }
+            }
+            App.reqres.setHandler("getLog", controller.getLog);
 
-            App.addInitializer(function(){});
         }
     })
-
 
 })

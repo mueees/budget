@@ -49,8 +49,6 @@ var controller = {
         var data = req.body;
 
         TransactionModel.findById( data._id, function ( err, transaction ){
-            transaction.tagName = data.tagName;
-
             if( data.count ) transaction.count = data.count;
             if( data.tags ) transaction.tags = data.tags;
             transaction.updated_at = Date.now();
@@ -88,7 +86,6 @@ var controller = {
         var period = data.period;
         var userId = req.user.id;
         var tags = data.tags || [];
-
 
         TransactionModel.getTransactions({
             period: period,

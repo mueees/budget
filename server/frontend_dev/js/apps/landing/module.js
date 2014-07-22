@@ -28,9 +28,7 @@ define([
             })
 
             var Controller = Marionette.Controller.extend({
-                start: function(){
-
-                }
+                start: function(){}
             });
 
             var API  = {

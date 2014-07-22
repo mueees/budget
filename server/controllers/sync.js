@@ -10,19 +10,31 @@ var config = require('config')
 
 
 var TagControler = require('./sync/tag');
-var TransactionControler = require('./sync/tag');
+var TransactionControler = require('./sync/transaction');
 
 var controller = {
     clientServer: function(req, res, next){
 
-        var tagController = new TagControler(req);
-        var transactionController = new TransactionControler(req);
+        var tagController = new TagControler(req.body.tags, req.user._id);
+        var transactionController = new TransactionControler(req.body.transactions, req.user._id);
 
         async.waterfall([
             function(cb){
-                tagController.sync(cb);
-            }/*,
-            transactionController.sync*/
+                tagController.sync(function(err){
+                    if(err) return cb(err);
+
+                    var createdTagId = tagController.getCreatedId();
+                    if( createdTagId.length ){
+                        transactionController.updateTagsId(createdTagId);
+                    }
+
+                    cb(null);
+
+                });
+            },
+            function(cb){
+                transactionController.sync(cb);
+            }
         ], function(err){
             if(err){
                 logger.error(err);

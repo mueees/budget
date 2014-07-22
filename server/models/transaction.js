@@ -19,6 +19,11 @@ var Transaction = new Schema({
     updated_at: {
         type: Date,
         default: new Date()
+    },
+
+    isDeleted: {
+        type: Boolean,
+        default: false
     }
 });
 
@@ -32,7 +37,12 @@ Transaction.statics.removeTagById = function(tagId, userId, cb){
             }
         },
 
-        { $pull: { tags: tagId } },
+        {
+            $pull: {
+                tags: tagId
+            },
+            updated_at: Date.now()
+        },
 
         {multi: true},
 
@@ -44,24 +54,10 @@ Transaction.statics.removeTagById = function(tagId, userId, cb){
             cb(null);
         }
     )
-
-
-    /*this.find({
-        userId: userId,
-        tags: {
-        $in: [tagId]
-        }
-    }, function ( err, transactions ){
-        if(err){
-        return cb(err);
-        }
-    console.log("removeTagById");
-
-        cb(null);
-    });*/
 }
 
 Transaction.static.getTransactions = function(options, cb){
+    options.isDeleted = false;
     this.find(options, function(err, transactions){
         if(err) {
             return cb(err);
@@ -73,7 +69,16 @@ Transaction.static.getTransactions = function(options, cb){
 
 Transaction.statics.deleteById = function(id, cb){
     this.findById( id, function ( err, transaction ){
-        transaction.remove( function ( err, transaction ){
+
+        transaction.isDeleted = true;
+        transaction.updated_at = Date.now();
+
+        if( !transaction ){
+            logger.error('transaction not found');
+            return cb('transaction not found');
+        }
+
+        transaction.save( function ( err, transaction ){
             if( err ) {
                 return cb(err);
             }else{

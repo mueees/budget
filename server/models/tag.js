@@ -17,6 +17,11 @@ var Tag = new Schema({
     updated_at: {
         type: Date,
         default: new Date()
+    },
+
+    isDeleted: {
+        type: Boolean,
+        default: false
     }
 });
 
@@ -43,7 +48,16 @@ Tag.statics.isHasTag = function(id, userId, cb){
 
 Tag.statics.deleteById = function(id, cb){
     this.findById( id, function ( err, tag ){
-        tag.remove( function ( err, tag ){
+
+        tag.isDeleted = true;
+        tag.updated_at = Date.now();
+
+        if( !tag ){
+            logger.error('tag not found');
+            return cb('tag not found');
+        }
+
+        tag.save( function ( err, tag ){
             if( err ) {
                 return cb(err);
             }else{

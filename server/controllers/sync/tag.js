@@ -4,32 +4,67 @@ var config = require('config')
     , _ = require('underscore')
     , validator = require('validator')
     , async = require('async')
-    , EmailAction = require("actions/email/email")
     , TagModel = require('models/tag')
     , TransactionModel = require('models/transaction')
     , Q = require("q");
 
 
-function TagControler(req){
-    this.userId = req.user._id;
-    this.tags = req.body.tags || [];
+function TagControler(tags, userId){
+    this.userId = userId;
+    this.tags = tags || [];
+    this.createdTag = [];
 }
 
-TagControler.prototype._create = function(tag, cb){
-    cb();
+TagControler.prototype._create = function(currentTag, cb){
+
+    var _this = this;
+
+    var tag = new TagModel({
+        tagName: currentTag.tagName,
+        userId: this.userId
+    });
+
+    async.waterfall([
+        function(cb){
+            tag.validate(function(err){
+                ( err ) ? cb(null, tag) : cb(err);
+            })
+        },
+        function(cb){
+            tag.save(function(err){
+                if(err) {
+                    return cb("An error occurred. Please try again later");
+                }
+                cb(null, tag);
+            })
+        }
+    ], function(err, tag){
+        if(err){
+            cb(err);
+        }
+
+        _this.createdTag.push({
+            idBefore: currentTag._id,
+            idActual: tag._id
+        })
+
+        cb(null);
+
+    })
 };
 
-TagControler.prototype._remove = function(tag, cb){
-    cb();
-};
+TagControler.prototype.getCreatedId = function(){
+    return this.createdTag;
+}
 
-TagControler.prototype._edit = function(currentTag, cb){
+TagControler.prototype._remove = function(currentTag, cb){
     TagModel.isHasTag(currentTag['_id'], this.userId, function(err, tag){
         if(err){
             cb(err);
         }
-        if(tag){
-            tag.tagName = currentTag.tagName;
+        if(tag && !tag.isDeleted){
+            tag.isDeleted = true;
+            tag.updated_at = Date.now();
             tag.save(function(err){
                 if(err){
                     cb(err);
@@ -39,7 +74,26 @@ TagControler.prototype._edit = function(currentTag, cb){
         }else{
             cb(null);
         }
+    });
+};
 
+TagControler.prototype._edit = function(currentTag, cb){
+    TagModel.isHasTag(currentTag['_id'], this.userId, function(err, tag){
+        if(err){
+            cb(err);
+        }
+        if(tag && !tag.isDeleted){
+            tag.tagName = currentTag.tagName;
+            tag.updated_at = Date.now();
+            tag.save(function(err){
+                if(err){
+                    cb(err);
+                }
+                cb(null);
+            })
+        }else{
+            cb(null);
+        }
     })
 };
 
@@ -49,7 +103,7 @@ TagControler.prototype._sync = function(){
     var _this = this;
 
     _.each(this.tags, function(tag){
-        if(tag['new']){
+        if(tag['create']){
             methods.push(function(cb){
                 _this._create(tag, cb);
             })

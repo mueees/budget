@@ -105,7 +105,9 @@ describe('Transaction', function(){
 
         it('should remove transaction', function(done){
 
-            TransactionModel.find({}, function(err, transactions){
+            TransactionModel.find({
+                idDeleted: false
+            }, function(err, transactions){
                 if(err) {
                     throw "Error remove transaction mongo";
                     return;
@@ -119,7 +121,7 @@ describe('Transaction', function(){
         })
     });
 
-    describe('# edit tag', function(){
+    describe('# edit transaction', function(){
         var count = 50;
         var newCount = 70;
         var userId = "53c7f168fb7458ad0a2c1c97";
