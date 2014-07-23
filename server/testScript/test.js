@@ -60,3 +60,8 @@ $.ajax({
         password: "123123"
     })
 })
+
+$.ajax({
+    type: "post",
+    url: "/api/user/logout"
+})

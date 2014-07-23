@@ -15,7 +15,7 @@ var controller = {
             return next(new HttpError(400, "Invalid Email"));
         }
 
-        if( !validator.isLength(data.password, 3) ){
+        if( !validator.isLength(data.password, 5) ){
             return next(new HttpError(400, "Password least than 3."));
         }
 

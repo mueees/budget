@@ -1,3 +1,22 @@
 extends layout
-block content
-    h1 Users
+
+block js_scripts
+
+    script(type='text/javascript').
+        var Budget = {
+            user: {
+                email: false
+            }
+        };
+
+    if(user)
+        script(type='text/javascript').
+            Budget['user'] = {
+                email: '#{user.email}'
+            }
+
+    script(type='text/javascript' src='js/vendor/libs/require/require.js')
+    script(type='text/javascript').
+        requirejs(['js/config'], function(){
+            require(['apps/web'], function(){})
+        })

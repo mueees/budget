@@ -29,16 +29,14 @@ define([
         trigger.apply(App.channels.second, arguments);
     };
 
-    App.on('initialize:before', function(){
+    App.on('initialize:after', function(){
         log = App.reqres.request("getLog", 'App');
 
         if( Backbone.history ){
             //не стартуем сразу, даем время модулям зависящим от
             //Навигации нормально инициализироваться
 
-            Backbone.history.start({
-                silent: true
-            });
+            Backbone.history.start();
         }
     });
 
@@ -84,6 +82,10 @@ define([
         App.currentApp = currentApp;
         currentApp.start(args);
     };
+
+    App.addRegions({
+        body: "body"
+    });
 
     return App;
 

@@ -8,11 +8,11 @@ define([
     './views/Layout'
 ], function(jQuery, Backbone, Marionette, App, config, Layout){
 
-    App.module("Landing", {
+    App.module("Report", {
 
         startWithParent: false,
 
-        define: function( Landing, App, Backbone, Marionette, $, _ ){
+        define: function( Report, App, Backbone, Marionette, $, _ ){
 
             var log;
 
@@ -22,58 +22,49 @@ define([
                 },
 
                 start: function(){
-                    this.layout = new Layout();
-                    this.region.show(this.layout);
 
-                    this.signWidget = new App.Widget.Sign.Controller({
-                        region: this.layout.sign
-                    });
-                    this.signWidget.show();
                 },
 
                 onClose: function(){
-                    if(this.signWidget) this.signWidget.close();
-                    if(this.layout) this.layout.close();
                 }
             });
 
             var API  = {
 
-                landing: function(){
+                report: function(){
+
                     if( config.data.user.email ){
                         App.navigate('#report', {trigger: true});
-                        return;
                     }
 
-                    Landing.controller.start();
+                    Report.controller.start();
                 },
 
                 /*Инициализация перед стартом*/
                 start: function(){
-                    Landing.controller = new Controller({
+                    Report.controller = new Controller({
                         region: App.body
                     });
-
-                    App.execute(config.commands['main:disable']);
+                    App.execute(config.commands['main:enable']);
                     log('create controller');
                 },
 
                 /*Остановка модуля*/
                 stop: function(){
-                    if(Landing.controller) {
+                    if(Report.controller) {
                         log('delete controller');
-                        Landing.controller.close();
-                        delete Landing.controller;
+                        Report.controller.close();
+                        delete Report.controller;
                     }
                 }
             }
 
-            Landing.start = API.start;
-            Landing.stop = API.stop;
-            Landing.landing = API.landing;
+            Report.start = API.start;
+            Report.stop = API.stop;
+            Report.report = API.report;
 
             App.on('initialize:before', function(){
-                log = App.reqres.request("getLog", 'Landing');
+                log = App.reqres.request("getLog", 'Report');
             })
         }
     })

@@ -4,8 +4,7 @@ define([
     'backbone',
     'marionette',
     'app',
-    'config',
-    'raven'
+    'config'
 ], function($, _, Backbone, Marionette, App, config){
 
     App.module("Entities", {
@@ -28,21 +27,6 @@ define([
                         tags: {
                             modelName: this.modelName || "defaultModelName"
                         }
-                    }
-
-                    switch (error.status){
-                        case 401:
-                            App.execute(config.commands["raven:send:message"], '401', options);
-                            break;
-                        case 403:
-                            App.execute(config.commands["raven:send:message"], '403', options);
-                            break;
-                        case 404:
-                            App.execute(config.commands["raven:send:message"], '404', options);
-                            break;
-                        case 500:
-                            App.execute(config.commands["raven:send:message"], '500', options);
-                            break;
                     }
                 }
             });

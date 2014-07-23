@@ -9,22 +9,48 @@ define([
 
 ], function(jQuery, Backbone, Marionette, App, config, SignView){
 
-    App.module("Widget.Collection.Sign", {
+    App.module("Widget.Sign", {
 
         startWithParent: true,
 
         define: function( Sign, App, Backbone, Marionette, $, _ ){
             var log;
 
-            Sign = Marionette.Controller.extend({
+            Sign.Controller = Marionette.Controller.extend({
                 initialize: function(options){
                     log = App.reqres.request("getLog", 'Widget.Collection.Sign');
+                    this.region = options.region;
+
+                    this.user = App.reqres.request(config.reqres['user:entity']);
+                    this.user.validation = {
+                        email: {
+                            required: true,
+                            pattern: 'email'
+                        },
+                        password: {
+                            required: true,
+                            minLength: 5
+                        }
+                    }
+
+                    this.view = new SignView({
+                        model: this.user
+                    })
+
+                    this.listenTo(this.view, "signUp", function(){
+                        alert("signUp");
+                    })
+
+                    this.listenTo(this.view, "signIn", function(){
+                        alert("signIn");
+                    })
+
                     log('Initialized');
                 },
 
-                show: function(options){},
-
-                hide: function(){}
+                show: function(){
+                    this.region.show(this.view);
+                }
 
             });
 
