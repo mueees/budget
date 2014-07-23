@@ -5,9 +5,42 @@ body{
   background rgba(78, 93, 108, 0.8)
   position relative
 
+
+#notify-container-side
+    position fixed
+    width 200px
+    min-height 12px
+    top 20px
+    right 5px
+
+    .notify
+        padding 6px 6px 3px
+        margin-bottom 7px
+
+    .success
+        border-bottom: 2px solid #3c96ea
+
+.notify
+    text-align center
+    font-size 14px
+    background rgba(255, 255, 255, 0.89)
+    padding 6px 6px 0
+    min-height 30px
+    margin 0 0 3px
+    color #646464
+
+    .body
+        p
+            padding 0
+
+    &.error
+        border-bottom 2px solid #e62038
+    &.success
+        border-bottom: 2px solid #e62038
+
+
 .landingLogo
   width: 30%
-
 
   @media (max-width: 768px)
     width: 60%
@@ -137,11 +170,3 @@ body{
     padding-left: 0;
   }
 }
-
-
-/*
-@media (min-width: 768px) and (max-width: 979px) {
-    .row .span4 {
-        width:46%;
-    }
-}*/

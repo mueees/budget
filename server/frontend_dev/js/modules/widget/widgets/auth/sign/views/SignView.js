@@ -24,6 +24,11 @@ define([
             }
         },
 
+        ui: {
+            email: ".email",
+            password: ".password"
+        },
+
         initialize: function(){
             _.bindAll(this, "processSuccessSignUp", "processSuccessSignIn");
             FormView.prototype.initialize.apply(this, arguments);
@@ -58,6 +63,12 @@ define([
                     success: this.processSuccessSignIn,
                     error: this.processError
                 });
+            }
+        },
+
+        resetForm: function(){
+            for( var key in this.ui ){
+                this.ui[key].val('');
             }
         },
 

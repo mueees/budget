@@ -16,3 +16,4 @@ App.execute('setActiveMenu', 'Event');
 
 
 App.execute(config.commands["raven:send:message"], '401', options);
+App.execute(config.commands['notify:showNotify:side'], {text: 'Funnel was created.'});

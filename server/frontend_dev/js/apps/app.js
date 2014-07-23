@@ -42,7 +42,7 @@ define([
 
     App.navigate = function(fragment, options){
         options = options || {};
-        log('navigate to: ' + fragment);
+        console.log('navigate to: ' + fragment);
         App.router.navigate(fragment, options);
     };
 
@@ -84,7 +84,7 @@ define([
     };
 
     App.addRegions({
-        body: "body"
+        body: "#body"
     });
 
     return App;

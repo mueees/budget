@@ -8,11 +8,11 @@ define([
     './views/Layout'
 ], function(jQuery, Backbone, Marionette, App, config, Layout){
 
-    App.module("Report", {
+    App.module("Tags", {
 
         startWithParent: false,
 
-        define: function( Report, App, Backbone, Marionette, $, _ ){
+        define: function( Tags, App, Backbone, Marionette, $, _ ){
 
             var log;
 
@@ -22,7 +22,8 @@ define([
                 },
 
                 start: function(){
-
+                    this.layout = new Layout();
+                    this.region.show(this.layout);
                 },
 
                 onClose: function(){
@@ -31,18 +32,18 @@ define([
 
             var API  = {
 
-                report: function(){
+                tags: function(){
 
                     if( !config.data.user.email ){
                         App.navigate('#landing', {trigger: true});
                     }
 
-                    Report.controller.start();
+                    Tags.controller.start();
                 },
 
                 /*Инициализация перед стартом*/
                 start: function(){
-                    Report.controller = new Controller({
+                    Tags.controller = new Controller({
                         region: App.body
                     });
                     App.execute(config.commands['main:enable']);
@@ -51,20 +52,20 @@ define([
 
                 /*Остановка модуля*/
                 stop: function(){
-                    if(Report.controller) {
+                    if(Tags.controller) {
                         log('delete controller');
-                        Report.controller.close();
-                        delete Report.controller;
+                        Tags.controller.close();
+                        delete Tags.controller;
                     }
                 }
             }
 
-            Report.start = API.start;
-            Report.stop = API.stop;
-            Report.report = API.report;
+            Tags.start = API.start;
+            Tags.stop = API.stop;
+            Tags.tags = API.tags;
 
             App.on('initialize:before', function(){
-                log = App.reqres.request("getLog", 'Report');
+                log = App.reqres.request("getLog", 'Tags');
             })
         }
     })

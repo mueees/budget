@@ -5,7 +5,8 @@ define([], function(){
     return {
         data: {
             user: {
-                email: serverConfig.user.email
+                email: serverConfig.user.email,
+                id: serverConfig.user.id
             }
         },
         reqres: {
@@ -18,7 +19,10 @@ define([], function(){
 
         commands: {
             'main:enable': 'main:enable',
-            'main:disable': 'main:disable'
+            'main:disable': 'main:disable',
+
+            'notify:showNotify': 'notify:showNotify',
+            'notify:showNotify:side': 'notify:showNotify:side'
         },
 
         channels: {},
@@ -30,4 +34,5 @@ define([], function(){
 
         showLog: false
     }
+
 })

@@ -7,12 +7,10 @@ define([
 
         template: _.template(template),
 
-        className: "container-fluid",
+        className: "tags",
 
         regions: {
-            header: '.header-container',
-            content: '.content-container',
-            menu: '.menu-container'
+            list: '.list-container'
         }
 
     })

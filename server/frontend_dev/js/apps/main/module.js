@@ -31,21 +31,27 @@ define([
                     App.body.show(this.layout);
 
                     App.addRegions({
-                        header: ".header-container"
+                        header: this.layout.header,
+                        content: this.layout.content,
+                        menu: this.layout.menu
                     });
 
                     App.module('Header').API.start();
+                    App.module('Menu').API.start();
                 },
 
                 disable: function(){
-
                     if(!this.init) return false;
                     this.init = false;
 
                     if(this.layout) this.layout.close();
 
                     App.removeRegion('header');
+                    App.removeRegion('content');
+                    App.removeRegion('menu');
+
                     App.module('Header').API.stop();
+                    App.module('Menu').API.stop();
                 }
             });
 
