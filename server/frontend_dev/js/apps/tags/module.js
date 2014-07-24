@@ -24,7 +24,9 @@ define([
                 start: function(){
                     this.layout = new Layout();
                     this.region.show(this.layout);
-                    this.tagList = new App.Widget.TagList.Controller();
+                    this.tagList = new App.Widget.TagList.Controller({
+                        region: this.layout.list
+                    });
 
                     App.execute(config.commands['notify:showNotify'], {text: 'Loading...'});
 
@@ -51,15 +53,21 @@ define([
 
                 addNewTagHandler: function(tagName){
                     var tag = App.reqres.request(config.reqres['tag:entity']);
+                    var _this = this;
                     tag.set({
                         tagName: tagName
                     });
 
                     $.when(tag.createTag()).done(function(){
-                        debugger
+                        _this.tagList.addTag(tag);
+                        _this.layout.resetForm();
+                        App.execute(config.commands['notify:showNotify:side'], {text: 'Tag was added.'});
                     }).fail(function(){
-                        debugger
-                    })
+                            App.execute(config.commands['notify:showNotify:side'], {
+                                text: 'Create tag was failed. Server error.',
+                                type: 'error'
+                            });
+                        })
                 },
 
                 onClose: function(){}

@@ -26,6 +26,10 @@ define([
             var tagName = this.ui.add.val();
             tagName = $.trim(tagName);
             this.trigger('addNewTag', tagName);
+        },
+
+        resetForm: function(){
+            this.ui.add.val('');
         }
 
     })

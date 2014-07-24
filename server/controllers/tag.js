@@ -50,6 +50,12 @@ var controller = {
         var data = req.body;
 
         TagModel.findById( data._id, function ( err, tag ){
+
+            if(!tag){
+                logger.error('Cannot find tag');
+                return next(new HttpError(400, 'Cannot find tag'));
+            }
+
             tag.tagName = data.tagName;
             tag.updated_at = Date.now();
             tag.save( function ( err, tag, count ){
@@ -87,7 +93,7 @@ var controller = {
                 return next(new HttpError(400, err.errors));
             }
 
-            res.send();
+            res.send({});
             next();
         })
 

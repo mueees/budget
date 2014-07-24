@@ -16,7 +16,9 @@ define([], function(){
             'collection:entity': 'collection:entity',
             'user:entity': 'user:entity',
             'tag:entity': 'tag:entity',
-            'tag:collection:entity': 'tag:collection:entity'
+            'tag:collection:entity': 'tag:collection:entity',
+            'notice:get': 'notice:get',
+            'notice:get:prompt' : 'notice:get:prompt'
         },
 
         commands: {
@@ -34,7 +36,9 @@ define([], function(){
             signup: '/api/user/signup',
             signin: '/api/user/signin',
             tagCreate: '/api/tag/create',
-            tagGet: '/api/tag/get'
+            tagRemove: '/api/tag/remove',
+            tagGet: '/api/tag/get',
+            tagEdit: '/api/tag/edit'
         },
 
         showLog: false

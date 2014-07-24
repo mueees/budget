@@ -1,8 +1,9 @@
 define([
     'marionette',
     'text!../templates/ListTemp.html',
-    './Tag'
-], function(Marionette, template, Tag){
+    './Tag',
+    './NoTags'
+], function(Marionette, template, Tag, NoTags){
 
     return Marionette.CompositeView.extend({
 
@@ -10,23 +11,23 @@ define([
 
         itemView: Tag,
 
-        itemViewContainer: 'tbody',
+        emptyView: NoTags,
+
+        itemViewContainer: '.list-group',
 
         template: _.template(template),
 
-        events: {
-
-        },
+        events: {},
 
         initialize: function(){},
 
         onCompositeRendered : function() {
-            this.on('itemview:deleteBtn',function(view, model) {
-                this.trigger('deleteProject', model);
+            this.on('itemview:deleteBtn',function(view, data) {
+                this.trigger('deleteTag', data.model);
             });
 
-            this.on('itemview:editBtn',function(view, model) {
-                this.trigger('editProject', model);
+            this.on('itemview:editBtn',function(view, data) {
+                this.trigger('editTag', data.model);
             });
         }
     });

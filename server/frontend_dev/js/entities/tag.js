@@ -19,7 +19,9 @@ define([
             Entities.TagModel = Entities.ClearModel.extend({
 
                 urls: {
-                    create: config.api.tagCreate
+                    create: config.api.tagCreate,
+                    remove: config.api.tagRemove,
+                    edit: config.api.tagEdit
                 },
 
                 idAttribute: '_id',
@@ -33,6 +35,7 @@ define([
                 modelName: 'TagModel',
 
                 createTag: function(options){
+
                     options = options || {};
                     var model =  this.toJSON();
                     var data = {
@@ -45,14 +48,62 @@ define([
                         data: JSON.stringify(data)
                     };
                     options = _.extend(defaults, options);
-                    return this.save(null, options);
+                    this.xhr = this.save(null, options);
+                    return this.xhr;
                 },
 
-                editTag: function(options){},
-                removeTag: function(options){}
+                saveTag: function(options){
+                    options = options || {};
+                    var model = this.toJSON();
+                    var attrs = null;
+
+                    if(options.data) {
+                        model = _.extend(model, options.data);
+                        delete options.data;
+                    }
+
+                    var data = {
+                        _id: model._id,
+                        tagName: model.tagName
+                    };
+
+                    var defaults = {
+                        url: this.urls.edit,
+                        type: 'post',
+                        data: JSON.stringify(data)
+                    };
+
+                    options = _.extend(defaults, options);
+
+                    if( options.wait ){
+                        attrs = data;
+                        options.attrs = attrs;
+                        delete options.data;
+                    }
+
+                    this.xhr = this.save(attrs, options);
+                    return this.xhr;
+                },
+                removeTag: function(options){
+                    options = options || {};
+                    var model =  this.toJSON();
+                    var data = {
+                        _id: model._id
+                    };
+
+                    var defaults = {
+                        url: this.urls.remove,
+                        type: 'post',
+                        data: JSON.stringify(data)
+                    };
+
+                    options = _.extend(defaults, options);
+                    this.xhr = this.destroy(options);
+                    return this.xhr;
+                }
 
             });
-            Entities.TagCollections = Backbone.Collection.extend({
+            Entities.TagCollections = Entities.ClearCollection.extend({
                 model: Entities.TagModel,
                 url: config.api.tagGet
             })

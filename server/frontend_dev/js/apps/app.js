@@ -1,7 +1,9 @@
 define([
     'backbone',
-    'marionette'
-], function(Backbone, Marionette){
+    'marionette',
+
+    'extends/ModalRegion'
+], function(Backbone, Marionette, ModalRegion){
 
     var App = new Marionette.Application();
     var AppRouter = Marionette.AppRouter.extend({});
@@ -84,7 +86,8 @@ define([
     };
 
     App.addRegions({
-        body: "#body"
+        body: "#body",
+        modal: new ModalRegion({el: "#modal"})
     });
 
     return App;

@@ -1,52 +1,34 @@
 define([
     'marionette',
-    'text!../templates/ProjectTemp.html'
+    'text!../templates/TagTemp.html'
 ], function(Marionette, template){
 
     return Marionette.ItemView.extend({
 
-        tagName: 'tr',
+        tagName: 'li',
 
         template: _.template(template),
 
-        events: {
-            'click' : "elHandler",
+        ui: {
+            tagName: '.tagName'
+        },
+
+        triggers: {
             'click .deleteBtn': "deleteBtn",
             'click .editBtn': "editBtn"
         },
 
-        ui: {
-            name: '.name .text'
-        },
-
         initialize: function(){
-            this.listenTo(this.model, "change:name", this.handlerChangeName);
+            this.listenTo(this.model, "change:tagName", this.handlerChangeTagName);
             this.listenTo(this.model, "destroy", this.handlerDestroy);
         },
 
-        handlerChangeName: function(){
-            this.ui.name.html( this.model.get('name') );
+        handlerChangeTagName: function(){
+            this.ui.tagName.html( this.model.get('tagName') );
         },
 
         handlerDestroy: function(){
             this.close();
-        },
-
-        elHandler: function(e){
-            e.preventDefault();
-            this.trigger('el:click', this.model);
-        },
-
-        deleteBtn: function(e){
-            e.preventDefault();
-            e.stopPropagation();
-            this.trigger('deleteBtn', this.model);
-        },
-
-        editBtn: function(e){
-            e.preventDefault();
-            e.stopPropagation();
-            this.trigger('editBtn', this.model);
         }
     });
 
