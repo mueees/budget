@@ -8,7 +8,10 @@ define([
     /*widgets*/
 
     //auth
-    './widgets/auth/sign/index'
+    './widgets/auth/sign/index',
+
+    //tag
+    './widgets/tagList/index'
 
 ], function(jQuery, Backbone, Marionette, App, config){
 

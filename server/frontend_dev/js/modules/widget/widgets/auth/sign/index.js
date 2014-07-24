@@ -38,11 +38,12 @@ define([
                     })
 
                     this.listenTo(this.view, "signUp", function(){
-                        alert("signUp");
+                        this.view.resetForm();
+                        this.trigger('signUp', this.user);
                     })
 
                     this.listenTo(this.view, "signIn", function(){
-                        alert("signIn");
+                        this.trigger('signIn', this.user);
                     })
 
                     log('Initialized');

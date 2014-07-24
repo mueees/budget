@@ -10,9 +10,10 @@ define([
         className: "container-fluid",
 
         regions: {
-            sign: '.sign-container'
+            header: '.header-container',
+            menu: '.menu-container',
+            content: '.content-container'
         }
 
     })
-
 })

@@ -29,12 +29,25 @@ define([
                         region: this.layout.sign
                     });
                     this.signWidget.show();
+
+                    this.listenTo(this.signWidget, "signUp", this.signUpHandler);
+                    this.listenTo(this.signWidget, "signIn", this.signInHandler);
+                },
+
+                signUpHandler: function(){
+                    App.execute(config.commands['notify:showNotify:side'], {text: 'Please verify your email.'});
+                },
+
+                signInHandler: function(){
+                    App.execute(config.commands['notify:showNotify:side'], {text: 'Welcome to account.'});
+                    App.navigate('#report', {trigger: true});
                 },
 
                 onClose: function(){
                     if(this.signWidget) this.signWidget.close();
                     if(this.layout) this.layout.close();
                 }
+
             });
 
             var API  = {

@@ -33,8 +33,8 @@ define([
 
                 report: function(){
 
-                    if( config.data.user.email ){
-                        App.navigate('#report', {trigger: true});
+                    if( !config.data.user.email ){
+                        App.navigate('#landing', {trigger: true});
                     }
 
                     Report.controller.start();

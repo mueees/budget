@@ -99,8 +99,6 @@ define([
                 return API.showNotifySide( options );
             })
 
-            //notify-container--side
-
         }
     })
 

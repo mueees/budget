@@ -18,6 +18,7 @@ define([
 
                 appRoutes: {
                     "landing(?:querypath)": "landing",
+                    "tags(?:querypath)": "tags",
                     "report(/:tabName)(?:querypath)": "report",
                     "(?:querypath)": "redirectToLanding",
                     "*any": "redirectToLanding"
@@ -36,6 +37,11 @@ define([
                 report: function(tabname){
                     App.startSubApp("Report");
                     App.currentApp.report(tabname);
+                },
+
+                tags: function(){
+                    App.startSubApp("Tags");
+                    App.currentApp.tags();
                 },
 
                 redirectToLanding: function(){

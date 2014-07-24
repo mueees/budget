@@ -18,6 +18,9 @@ require("mongooseDb");
 require('modules/auth');
 
 app.use(session({
+    cookie: {
+        maxAge: 2592000000
+    },
     secret: 'keyboard cat',
     store : new MongoStore({
         db: config.get('db:nameDatabase')

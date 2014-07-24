@@ -5,7 +5,8 @@ define([], function(){
     return {
         data: {
             user: {
-                email: serverConfig.user.email
+                email: serverConfig.user.email,
+                id: serverConfig.user.id
             }
         },
         reqres: {
@@ -13,21 +14,30 @@ define([], function(){
             /*models*/
             'model:entity': 'model:entity',
             'collection:entity': 'collection:entity',
-            'user:entity': 'user:entity'
+            'user:entity': 'user:entity',
+            'tag:entity': 'tag:entity',
+            'tag:collection:entity': 'tag:collection:entity'
         },
 
         commands: {
             'main:enable': 'main:enable',
-            'main:disable': 'main:disable'
+            'main:disable': 'main:disable',
+
+            'notify:showNotify': 'notify:showNotify',
+            'notify:showNotify:side': 'notify:showNotify:side',
+            'notify:clearAllNotice': 'notify:clearAllNotice'
         },
 
         channels: {},
 
         api: {
             signup: '/api/user/signup',
-            signin: '/api/user/signin'
+            signin: '/api/user/signin',
+            tagCreate: '/api/tag/create',
+            tagGet: '/api/tag/get'
         },
 
         showLog: false
     }
+
 })

@@ -1,4 +1,8 @@
 extends layout
+block content
+    #body
+    #notify-container-side
+    #notify-container
 
 block js_scripts
 
@@ -12,7 +16,8 @@ block js_scripts
     if(user)
         script(type='text/javascript').
             Budget['user'] = {
-                email: '#{user.email}'
+                email: '#{user.email}',
+                id: '#{user.id}'
             }
 
     script(type='text/javascript' src='js/vendor/libs/require/require.js')
