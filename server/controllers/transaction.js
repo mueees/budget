@@ -14,6 +14,7 @@ var controller = {
         var transaction = new TransactionModel({
             userId: req.user._id,
             count: data.count,
+            date: data.date,
             tags: data.tags
         });
 
@@ -51,6 +52,7 @@ var controller = {
         TransactionModel.findById( data._id, function ( err, transaction ){
             if( data.count ) transaction.count = data.count;
             if( data.tags ) transaction.tags = data.tags;
+            if( data.date ) transaction.date = data.date;
             transaction.updated_at = Date.now();
 
             transaction.save( function ( err, transaction, count ){
@@ -101,6 +103,34 @@ var controller = {
         })
 
 
+    },
+
+    total: function(req, res, next){
+        var data = req.body;
+
+        TransactionModel.getTotals(data.period, req.user._id, function(err, total){
+            if(err){
+                logger.error(err);
+                return next(new HttpError(400, "Server error."));
+            }
+            res.send({
+                total: total
+            });
+        })
+    },
+
+    totalByTag: function(req, res, next){
+        var data = req.body;
+
+        TransactionModel.getTotalsByTag(data.period, req.user._id, function(err, result){
+            if(err){
+                logger.error(err);
+                return next(new HttpError(400, "Server error."));
+            }
+            res.send({
+                result: result
+            });
+        })
     }
 }
 module.exports = controller;

@@ -39,3 +39,170 @@
 {"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T03:28:01.327Z"}
 {"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-07-25T03:33:50.410Z"}
 {"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-07-25T04:03:19.838Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T07:48:51.316Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T07:48:51.360Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-07-25T07:49:52.291Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T08:01:36.541Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T08:01:36.577Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T08:03:09.689Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T08:03:09.717Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T08:03:28.842Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T08:03:28.878Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T08:05:18.628Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T08:05:18.670Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T08:06:14.910Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T08:06:14.952Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T08:06:33.050Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T08:06:33.098Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T08:28:55.524Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T08:28:55.568Z"}
+{"status":404,"url":"/api/tag/remove","level":"warn","message":"","timestamp":"2014-07-25T08:30:51.859Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T09:07:51.927Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T09:07:51.966Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T09:08:14.796Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T09:08:14.834Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T09:49:29.467Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T09:49:29.502Z"}
+{"status":404,"url":"/js/apps/baseApp.js?no-cache=1406281819214","level":"warn","message":"","timestamp":"2014-07-25T09:50:20.034Z"}
+{"status":404,"url":"/js/apps/baseApp.js?no-cache=1406281824849","level":"warn","message":"","timestamp":"2014-07-25T09:50:25.647Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T09:51:04.503Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T09:51:04.560Z"}
+{"status":404,"url":"/api/tag/remove","level":"warn","message":"","timestamp":"2014-07-25T09:51:37.589Z"}
+{"status":404,"url":"/api/tag/remove","level":"warn","message":"","timestamp":"2014-07-25T09:51:38.826Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T12:17:01.843Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T12:17:01.899Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T12:36:46.147Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T12:36:46.196Z"}
+{"status":404,"url":"/js/modules/widget/widgets/statistics/totals/templates/SignTemp.html?no-cache=1406292029823","level":"warn","message":"","timestamp":"2014-07-25T12:40:31.357Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:32:19.660Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:32:52.756Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:33:00.199Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:33:01.271Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:33:01.742Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:33:01.959Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:33:02.303Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:33:03.900Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:33:04.259Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:33:04.593Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:34:03.013Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:34:39.841Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:34:43.018Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:34:44.037Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:34:44.525Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:34:45.270Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:34:45.696Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:34:50.292Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:34:50.999Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:34:51.455Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:34:51.764Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:34:51.925Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:34:52.784Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:34:52.941Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:34:53.227Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:34:54.272Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:34:54.436Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T14:39:39.200Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T14:39:39.242Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T14:41:09.068Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T14:41:09.108Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T14:41:30.881Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T14:41:30.931Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T14:42:37.511Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T14:42:37.557Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T14:43:53.162Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T14:43:53.197Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T14:44:11.009Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T14:44:11.052Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T14:44:29.979Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T14:44:30.013Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:44:35.998Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T14:44:56.536Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T14:44:56.588Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:46:31.575Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:46:33.122Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:46:36.923Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:46:38.127Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:46:39.009Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:46:39.450Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:46:39.848Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:46:41.167Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:46:41.359Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:46:41.758Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:46:41.905Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-07-25T14:46:57.883Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-07-25T14:46:57.928Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-07-25T14:46:57.955Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:46:59.811Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:47:13.313Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:47:13.883Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:47:14.470Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:47:14.981Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:47:15.154Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:47:17.163Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:47:17.350Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:47:17.552Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:47:17.696Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:47:22.845Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:47:34.724Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:47:35.636Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:47:37.351Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:47:43.480Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:47:47.079Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:49:42.007Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:50:06.132Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T14:52:16.135Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T15:01:26.794Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T15:01:26.837Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T15:03:05.733Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T15:03:05.780Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T15:03:22.906Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T15:03:42.623Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T15:03:43.551Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T15:03:43.699Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T15:03:44.371Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T15:03:44.534Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T15:04:15.865Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T15:04:15.907Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T15:04:34.485Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T15:04:34.536Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T15:05:51.557Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T15:05:51.599Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T15:06:09.841Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T15:06:09.879Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T15:06:31.216Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T15:06:31.251Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T15:06:52.984Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T15:06:53.023Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T15:07:42.046Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T15:07:42.081Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T15:07:46.702Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T15:09:21.289Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T15:09:21.345Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T15:10:39.995Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T15:10:40.085Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T15:11:09.479Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T15:11:09.525Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T15:12:04.381Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T15:12:04.419Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T15:12:21.886Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T15:12:21.921Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T15:12:49.362Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T15:12:49.407Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T15:13:28.417Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T15:13:33.615Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T15:13:55.641Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T15:13:55.689Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T15:14:12.797Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T15:14:12.832Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T15:15:05.508Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T15:15:05.550Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T15:16:49.382Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T15:16:50.435Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T15:16:51.316Z"}
+{"status":404,"url":"/api/transaction/totalByTag","level":"warn","message":"","timestamp":"2014-07-25T15:16:57.680Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T15:19:01.996Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T15:19:02.042Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T15:19:30.522Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T15:19:30.558Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T15:20:20.367Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T15:20:20.414Z"}

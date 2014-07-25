@@ -28,7 +28,8 @@ define([
 
                 defaults: {
                     count: null,
-                    tags: []
+                    tags: [],
+                    date: new Date()
                 },
 
                 validation: {},
@@ -40,8 +41,9 @@ define([
                     options = options || {};
                     var model =  this.toJSON();
                     var data = {
-                        count: model.tagName,
-                        tags: model.tags
+                        count: model.count,
+                        tags: model.tags,
+                        date: model.date
                     };
 
                     var defaults = {
@@ -67,7 +69,8 @@ define([
                     var data = {
                         _id: model._id,
                         count: model.tagName,
-                        tags: model.tags
+                        tags: model.tags,
+                        date: model.date
                     };
 
                     var defaults = {
@@ -134,6 +137,11 @@ define([
             App.reqres.setHandler(config.reqres['transaction:collection:entity'], function(){
                 return API.getTrasactionCollection();
             });
+
+            //get total transaction (month)
+            //get transaction by tag (month)
+            //
+
         }
     })
 

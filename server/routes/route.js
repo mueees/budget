@@ -28,6 +28,8 @@ module.exports = function(app) {
     app.get('/api/transaction/get', middleware, transactionController.get);
     app.post('/api/transaction/edit', middleware, transactionController.edit);
     app.post('/api/transaction/remove', middleware, transactionController.remove);
+    app.post('/api/transaction/total', middleware, transactionController.total);
+    app.post('/api/transaction/totalByTag', middleware, transactionController.totalByTag);
 
     //sync
     app.post('/api/sync/clientserver', middleware, syncController.clientServer);

@@ -61,7 +61,7 @@ var controller = {
     },
     logout: function(req, res, next){
         req.logout();
-        res.send({});
+        res.redirect('/');
     },
 
     confirmation: function(req, res, next){

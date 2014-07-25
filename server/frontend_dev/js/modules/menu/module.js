@@ -41,7 +41,26 @@ define([
 
                 pathHandler: function(){
                     var path = this.model.get('path');
-                    App.navigate('#' + path, {trigger: true});
+
+                    if( path == "logout" ){
+                        App.redirect( config.api.logout );
+                    }else{
+                        App.navigate('#' + path, {trigger: true});
+                    }
+
+                },
+
+                setMenu: function(path, options){
+                    this.model.set({
+                        path: path
+                    }, options)
+                },
+
+                unselectMenu: function(){
+                    this.model.set({
+                        path: false
+                    }, {silent: true});
+                    this.view.pathHandler();
                 }
             });
 
@@ -68,10 +87,19 @@ define([
 
             Menu.API = API;
 
-            App.addInitializer(function(){})
+            App.addInitializer(function(){
+
+            })
 
             App.on('initialize:before', function(){
                 log = App.reqres.request("getLog", 'Menu');
+            })
+
+            App.commands.setHandler(config.commands['menu:set'], function(path, options){
+                Menu.controller.setMenu(path, options);
+            })
+            App.commands.setHandler(config.commands['menu:unselect'], function(){
+                Menu.controller.unselectMenu();
             })
         }
     })

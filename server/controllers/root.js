@@ -8,7 +8,6 @@ var config = require('config')
 
 var controller = {
     home: function(req, res, next) {
-        console.log(req.user);
         res.render('index', {
             user: req.user || false
         });

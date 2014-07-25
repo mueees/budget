@@ -14,6 +14,11 @@ var Transaction = new Schema({
         required: true
     },
 
+    date: {
+        type: Date,
+        required: true
+    },
+
     tags: [Schema.Types.ObjectId],
 
     updated_at: {
@@ -56,7 +61,7 @@ Transaction.statics.removeTagById = function(tagId, userId, cb){
     )
 }
 
-Transaction.static.getTransactions = function(options, cb){
+Transaction.statics.getTransactions = function(options, cb){
     options.isDeleted = false;
     this.find(options, function(err, transactions){
         if(err) {
@@ -66,6 +71,62 @@ Transaction.static.getTransactions = function(options, cb){
         cb(null, transactions);
     })
 }
+
+
+Transaction.statics.getTotals = function(period, userId, cb){
+    var query = {
+        userId: userId,
+        date: {
+            $gt: new Date(period.start),
+            $lt: new Date(period.end)
+        }
+    };
+
+    this.find(query, function(err, transactions){
+        if(err) {
+            return cb(err);
+        }
+
+        var result = 0;
+
+        console.log(transactions);
+
+        if( transactions && transactions.length ){
+            _.each(transactions, function(transaction){
+                result += transaction.count;
+            })
+        }
+
+        cb(null, result);
+    })
+}
+
+Transaction.statics.getTotalsByTag = function(period, userId, cb){
+    var query = {
+        userId: userId,
+        date: {
+            $gt: new Date(period.start),
+            $lt: new Date(period.end)
+        }
+    };
+
+    this.find(query, function(err, transactions){
+        if(err) {
+            return cb(err);
+        }
+
+        var result = 0;
+
+        if( transactions && transactions.length ){
+            _.each(transactions, function(transaction){
+                result += transaction.count;
+            })
+        }
+
+        cb(null, result);
+    })
+}
+
 
 Transaction.statics.deleteById = function(id, cb){
     this.findById( id, function ( err, transaction ){

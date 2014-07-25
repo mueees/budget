@@ -54,6 +54,9 @@ define([
                 addNewTagHandler: function(tagName){
                     var tag = App.reqres.request(config.reqres['tag:entity']);
                     var _this = this;
+
+                    if(!tagName) return false;
+
                     tag.set({
                         tagName: tagName
                     });

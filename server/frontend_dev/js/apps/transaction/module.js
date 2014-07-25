@@ -34,13 +34,22 @@ define([
 
                 subscribe: function(){
                     this.listenTo(this.transactionAdd, 'cancelBtn', this.cancelHandler)
+                    this.listenTo(this.transactionAdd, 'create', this.createHandler)
                 },
 
                 cancelHandler: function(){
-                    App.navigate('#landing', {trigger: true});
+                    App.navigate('#report', {trigger: true});
                 },
 
-                onClose: function(){}
+                createHandler: function(){
+                    App.execute(config.commands['notify:showNotify:side'], {text: 'Transaction was created.'});
+                    App.navigate('#report', {trigger: true});
+                },
+
+                onClose: function(){
+                    this.transactionAdd.close();
+                    this.layout.close();
+                }
             });
 
             var API  = {
@@ -51,6 +60,7 @@ define([
                         App.navigate('#landing', {trigger: true});
                     }
 
+                    App.execute(config.commands['menu:unselect']);
                     Transaction.controller.start();
                 },
 

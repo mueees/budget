@@ -1,0 +1,30 @@
+define([
+    'marionette',
+    'text!../templates/LayoutTemp.html'
+], function(Marionette, template){
+
+    return Marionette.Layout.extend({
+
+        template: _.template(template),
+
+        className: "widget-container",
+
+        initialize: function(){
+            this.listenTo(this.model, 'request', this.startRequestHandler);
+            this.listenTo(this.model, 'sync', this.endFetchHandler);
+        },
+
+        regions: {
+            main: '.main-container'
+        },
+
+        startRequestHandler: function(){
+            this.$el.addClass('loadingState');
+        },
+        endFetchHandler: function(){
+            this.$el.removeClass('loadingState');
+        }
+
+    })
+
+})

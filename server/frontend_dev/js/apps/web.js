@@ -7,10 +7,13 @@ require([
     'entities/user',
     'entities/tag',
     'entities/transaction',
+    'entities/statistics/total',
+    'entities/statistics/totalByTag',
 
     /*modules*/
     'modules/log/module',
     'modules/widget/module',
+    'modules/component/module',
     'modules/notice/module',
     'modules/notify/module',
     'modules/header/module',

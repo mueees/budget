@@ -44,7 +44,6 @@ define([
 
     App.navigate = function(fragment, options){
         options = options || {};
-        console.log('navigate to: ' + fragment);
         App.router.navigate(fragment, options);
     };
 

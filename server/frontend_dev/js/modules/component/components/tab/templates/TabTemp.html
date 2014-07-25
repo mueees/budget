@@ -1,0 +1,10 @@
+<% _.each(tabs, function(tab){ %>
+<div class="btn-group">
+    <button data-value="<%= tab.value %>" type="button" class="btn btn-default <%= (tab.value == currentTab) ? 'active' : '' %> ">
+        <span class="glyphicon glyphicon-stats"></span>
+        <% if(tab.name) {%>
+            <span class="text"><%= tab.name%></span>
+        <% }%>
+    </button>
+</div>
+<% }) %>

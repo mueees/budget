@@ -7,10 +7,11 @@ define([
 
         template: _.template(template),
 
-        className: "container-fluid",
+        className: 'statistic',
 
         regions: {
-            sign: '.sign-container'
+            header: '.header-container',
+            main: '.main-container'
         }
 
     })

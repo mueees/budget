@@ -1,9 +1,11 @@
 define([
     'marionette',
-    'text!../templates/AddTemp.html'
-], function(Marionette, template, Tag, NoTags){
+    'extends/FormView',
+    'text!../templates/AddTemp.html',
+    'moment'
+], function(Marionette, FormView, template, moment){
 
-    return Marionette.ItemView.extend({
+    return FormView.extend({
 
         className: "form-horizontal",
 
@@ -12,22 +14,28 @@ define([
         template: _.template(template),
 
         triggers: {
-            'click .tags li' : "tagHandler"
+            'click .cancel' : "cancelBtn"
         },
 
         events: {
-            'submit': "submitHandler"
+            'submit': "submitHandler",
+            'click .tags li' : "tagHandler"
         },
 
         ui: {
             tags: '.tags'
         },
 
-        initialize: function(){},
+        initialize: function(){
+            FormView.prototype.initialize.apply(this, arguments);
+            _.bindAll(this, 'processSuccessCreate');
+        },
 
         serializeData: function(){
             return {
-                tags: this.collection.toJSON()
+                tags: this.collection.toJSON(),
+                transaction: this.model.toJSON(),
+                date: moment(this.model.get('date')).format("YYYY-MM-DD")
             }
         },
 
@@ -36,30 +44,33 @@ define([
         },
 
         submitHandler: function(e){
-
             e.preventDefault();
             this.model.set(this.getData());
-            console.log(this.model.toJSON());
-            /*
-
             if( this.model.isValid(true) ){
                 this.loadingState();
-                this.model.signIn({
-                    success: this.processSuccessSignIn,
+                this.model.createTransaction({
+                    success: this.processSuccessCreate,
                     error: this.processError
                 });
-            }*/
+            }
+        },
+
+        processSuccessCreate: function(){
+            this.trigger('create', this.model);
         },
 
         tagHandler: function(e){
             var $el = $(e.target).closest('li');
+            if(!$el.hasClass('active')) this.ui.tags.find('li').removeClass('active');
             $el.toggleClass('active');
         },
 
         getData: function(){
-            var data =  Backbone.Syphon.serialize(this);
+            var data = Backbone.Syphon.serialize(this);
             var tag = this.ui.tags.find('.active').data('id');
             if(tag) data.tags = [tag];
+
+            data.date = new Date(data.date);
             return data;
         },
 

@@ -27,7 +27,10 @@ define([
                     this.transaction.validation = {
                         count: {
                             required: true,
-                            pattern: 'email'
+                            pattern: 'number'
+                        },
+                        date: {
+                            required: true
                         }
                     }
 
@@ -35,7 +38,6 @@ define([
                 },
 
                 show: function(){
-
                     var _this = this;
                     var def = $.Deferred();
 
@@ -58,10 +60,15 @@ define([
 
                 subscribe: function(){
                     this.listenTo(this.view, "cancelBtn", this.cancelHandler);
+                    this.listenTo(this.view, "create", this.createHandler);
                 },
 
                 cancelHandler: function(){
                     this.trigger('cancelBtn');
+                },
+
+                createHandler: function(transaction){
+                    this.trigger('create', transaction);
                 }
             });
 
