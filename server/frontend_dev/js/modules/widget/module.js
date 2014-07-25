@@ -11,7 +11,10 @@ define([
     './widgets/auth/sign/index',
 
     //tag
-    './widgets/tagList/index'
+    './widgets/tagList/index',
+
+    //transaction
+    './widgets/transaction/add/index'
 
 ], function(jQuery, Backbone, Marionette, App, config){
 

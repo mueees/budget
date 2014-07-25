@@ -31,3 +31,11 @@
 {"status":404,"url":"/api/tag/remove","level":"warn","message":"","timestamp":"2014-07-24T13:10:00.158Z"}
 {"status":404,"url":"/api/tag/remove","level":"warn","message":"","timestamp":"2014-07-24T13:10:01.620Z"}
 {"status":404,"url":"/api/tag/remove","level":"warn","message":"","timestamp":"2014-07-24T13:10:06.137Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-24T20:47:39.830Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-24T20:47:39.855Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-07-24T20:47:43.292Z"}
+{"status":404,"url":"/api/tag/remove","level":"warn","message":"","timestamp":"2014-07-24T20:48:44.408Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-25T03:28:01.304Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-25T03:28:01.327Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-07-25T03:33:50.410Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-07-25T04:03:19.838Z"}

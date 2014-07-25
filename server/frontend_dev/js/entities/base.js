@@ -25,6 +25,7 @@ define([
 
                 fetch: function(){
                     this.xhr = Backbone.Model.prototype.fetch.apply(this, arguments);
+                    return this.xhr;
                 },
 
                 requestHandler: function(){
@@ -59,6 +60,7 @@ define([
 
                 fetch: function(){
                     this.xhr = Backbone.Collection.prototype.fetch.apply(this, arguments);
+                    return this.xhr;
                 },
 
                 initialize: function(attributes, options) {

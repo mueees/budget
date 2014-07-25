@@ -43,7 +43,7 @@ define([
                 /*Инициализация перед стартом*/
                 start: function(){
                     Report.controller = new Controller({
-                        region: App.body
+                        region: App.content
                     });
                     App.execute(config.commands['main:enable']);
                     log('create controller');

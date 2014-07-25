@@ -6,6 +6,7 @@ require([
     'entities/base',
     'entities/user',
     'entities/tag',
+    'entities/transaction',
 
     /*modules*/
     'modules/log/module',
@@ -20,7 +21,8 @@ require([
     'apps/main/module',
     'apps/report/module',
     'apps/tags/module',
-    'apps/landing/module'
+    'apps/landing/module',
+    'apps/transaction/module'
 
 ], function(App){
     App.start();

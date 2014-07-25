@@ -15,6 +15,7 @@ define([], function(){
             'model:entity': 'model:entity',
             'collection:entity': 'collection:entity',
             'user:entity': 'user:entity',
+            'transaction:entity' : 'transaction:entity',
             'tag:entity': 'tag:entity',
             'tag:collection:entity': 'tag:collection:entity',
             'notice:get': 'notice:get',
@@ -35,10 +36,17 @@ define([], function(){
         api: {
             signup: '/api/user/signup',
             signin: '/api/user/signin',
+
+            //tag
             tagCreate: '/api/tag/create',
             tagRemove: '/api/tag/remove',
             tagGet: '/api/tag/get',
-            tagEdit: '/api/tag/edit'
+            tagEdit: '/api/tag/edit',
+
+            //transaction
+            transactionCreate: '/api/transaction/create',
+            transactionRemove: '/api/transaction/remove',
+            transactionEdit: '/api/transaction/edit'
         },
 
         showLog: false

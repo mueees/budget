@@ -19,6 +19,7 @@ define([
                 appRoutes: {
                     "landing(?:querypath)": "landing",
                     "tags(?:querypath)": "tags",
+                    "transaction/add(?:querypath)": "transactionAdd",
                     "report(/:tabName)(?:querypath)": "report",
                     "(?:querypath)": "redirectToLanding",
                     "*any": "redirectToLanding"
@@ -42,6 +43,11 @@ define([
                 tags: function(){
                     App.startSubApp("Tags");
                     App.currentApp.tags();
+                },
+
+                transactionAdd: function(){
+                    App.startSubApp("Transaction");
+                    App.currentApp.add();
                 },
 
                 redirectToLanding: function(){
