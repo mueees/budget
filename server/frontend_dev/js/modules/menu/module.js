@@ -53,7 +53,9 @@ define([
                 setMenu: function(path, options){
                     this.model.set({
                         path: path
-                    }, options)
+                    }, {silent: true})
+
+                    this.view.pathHandler();
                 },
 
                 unselectMenu: function(){

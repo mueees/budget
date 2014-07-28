@@ -20,8 +20,7 @@ define([
             'click': "chooseTransaction"
         },
 
-        initialize: function(){
-        },
+        initialize: function(){},
 
         serializeData: function(){
             var data = this.model.toJSON();

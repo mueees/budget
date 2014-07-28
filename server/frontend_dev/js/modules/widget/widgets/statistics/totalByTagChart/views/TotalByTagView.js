@@ -23,7 +23,7 @@ define([
                 xkey: 'tagName',
                 ykeys: ['count'],
                 labels: ['Tag'],
-                barColors: ['#df691a'],
+                barColors: ['#93bb25'],
                 hideHover: 'always'
             });
 

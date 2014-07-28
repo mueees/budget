@@ -20,6 +20,11 @@ var Transaction = new Schema({
         default: new Date()
     },
 
+    comment: {
+        type: String,
+        default: ''
+    },
+
     tags: [Schema.Types.ObjectId],
 
     updated_at: {
@@ -82,6 +87,8 @@ Transaction.statics.getTotals = function(period, userId, cb){
             $lt: new Date(period.end)
         }
     };
+
+
 
     this.find(query, function(err, transactions){
         if(err) {
@@ -165,7 +172,15 @@ Transaction.statics.getTransactionList = function(period, userId, cb){
         };
     }
 
-    this.find(query, function(err, transactions){
+    var fields = {
+        _id: 1,
+        comment: 1,
+        count: 1,
+        tags: 1,
+        date: 1
+    }
+
+    this.find(query, fields, function(err, transactions){
         if(err) {
             return cb(err);
         }

@@ -111,8 +111,6 @@ var controller = {
                 return next(new HttpError(400, "Server error"));
             }
             res.send(tags);
-            next(tags);
-
         });
     }
 }

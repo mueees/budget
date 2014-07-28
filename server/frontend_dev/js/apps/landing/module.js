@@ -34,13 +34,13 @@ define([
                     this.listenTo(this.signWidget, "signIn", this.signInHandler);
                 },
 
-                signUpHandler: function(){
+                signUpHandler: function(user){
                     App.execute(config.commands['notify:showNotify:side'], {text: 'Please verify your email.'});
                 },
 
-                signInHandler: function(){
+                signInHandler: function(user){
                     App.execute(config.commands['notify:showNotify:side'], {text: 'Welcome to account.'});
-                    App.navigate('#report', {trigger: true});
+                    setTimeout(function(){App.redirect('/')}, 800)
                 },
 
                 onClose: function(){
