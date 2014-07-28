@@ -1,5 +1,6 @@
 var _ = require('underscore'),
     logger = require("libs/log")(module),
+    async = require("async"),
     mongoose = require('mongoose');
 
 var Schema = mongoose.Schema;
@@ -16,7 +17,7 @@ var Transaction = new Schema({
 
     date: {
         type: Date,
-        required: true
+        default: new Date()
     },
 
     tags: [Schema.Types.ObjectId],
@@ -72,7 +73,6 @@ Transaction.statics.getTransactions = function(options, cb){
     })
 }
 
-
 Transaction.statics.getTotals = function(period, userId, cb){
     var query = {
         userId: userId,
@@ -89,8 +89,6 @@ Transaction.statics.getTotals = function(period, userId, cb){
 
         var result = 0;
 
-        console.log(transactions);
-
         if( transactions && transactions.length ){
             _.each(transactions, function(transaction){
                 result += transaction.count;
@@ -102,31 +100,40 @@ Transaction.statics.getTotals = function(period, userId, cb){
 }
 
 Transaction.statics.getTotalsByTag = function(period, userId, cb){
-    var query = {
-        userId: userId,
-        date: {
+
+
+
+    var query = [
+        {
+            $match: {
+                userId: mongoose.Types.ObjectId(userId),
+                isDeleted: false
+            }
+        },
+        {
+            $group: {
+                _id: '$tags',
+                count: {
+                    $sum: '$count'
+                }
+            }
+        }
+    ];
+
+    if(period && period.length){
+        query[0].$match.date = {
             $gt: new Date(period.start),
             $lt: new Date(period.end)
-        }
-    };
+        };
+    }
 
-    this.find(query, function(err, transactions){
+    this.aggregate(query, function(err, data){
         if(err) {
             return cb(err);
         }
-
-        var result = 0;
-
-        if( transactions && transactions.length ){
-            _.each(transactions, function(transaction){
-                result += transaction.count;
-            })
-        }
-
-        cb(null, result);
+        cb(null, data);
     })
 }
-
 
 Transaction.statics.deleteById = function(id, cb){
     this.findById( id, function ( err, transaction ){

@@ -16,8 +16,9 @@ define([], function(){
             'collection:entity': 'collection:entity',
             'user:entity': 'user:entity',
             'transaction:entity' : 'transaction:entity',
+            'transaction:collection:entity': 'transaction:collection:entity',
             'tag:entity': 'tag:entity',
-            'tag:collection:entity': 'tag:collection:entity',
+            'tag:collection:entity': 'tag:collectWion:entity',
             'statistic:total:entity': 'statistic:total:entity',
 
             'notice:get': 'notice:get',

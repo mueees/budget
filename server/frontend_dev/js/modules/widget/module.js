@@ -6,6 +6,7 @@ define([
     'config',
 
     /*widgets*/
+    './widgets/base/index',
 
     //auth
     './widgets/auth/sign/index',
@@ -18,6 +19,7 @@ define([
 
     //transaction
     './widgets/transaction/add/index',
+    './widgets/transaction/list/index',
 
     //statistic
     './widgets/statistics/totals/index',

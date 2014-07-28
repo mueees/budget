@@ -5,7 +5,8 @@ var config = require('config')
     , validator = require('validator')
     , async = require('async')
     , EmailAction = require("actions/email/email")
-    , TransactionModel = require('models/transaction');
+    , TransactionModel = require('models/transaction')
+    , TagModel = require('models/tag');
 
 var controller = {
     create: function(req, res, next){
@@ -14,9 +15,10 @@ var controller = {
         var transaction = new TransactionModel({
             userId: req.user._id,
             count: data.count,
-            date: data.date,
             tags: data.tags
         });
+
+        if(data.data) transaction.date = data.date;
 
         async.waterfall([
             function(cb){
@@ -122,14 +124,55 @@ var controller = {
     totalByTag: function(req, res, next){
         var data = req.body;
 
-        TransactionModel.getTotalsByTag(data.period, req.user._id, function(err, result){
-            if(err){
-                logger.error(err);
-                return next(new HttpError(400, "Server error."));
+        async.parallel([
+            function(cb){
+                TransactionModel.getTotalsByTag( data.period, req.user._id, cb );
+            },
+            function(cb){
+                TagModel.find({
+                    userId: req.user._id
+                }, function(err, tags){
+                    if(err){
+                        console.log(err)
+                        return cb(err)
+                    }
+                    cb(null, tags);
+                });
             }
+        ], function(err, results){
+            if(err){
+                if(err) {
+                    logger.error(err);
+                    console.log(err);
+                    return next(new HttpError(400, "Server error."));
+                }
+            }
+
+            var result = [];
+            var countByTags = results[0];
+            var tags = results[1];
+            _.each(countByTags, function(countByTag){
+                var data = {
+                    count: countByTag.count
+                };
+                if( countByTag._id.length ){
+                    data.tagId = countByTag._id[0];
+
+                    _.each(tags, function(tag){
+                        if(tag._id+'' == data.tagId+'') {
+                            data.tagName = tag.tagName;
+                        }
+                    })
+
+                }
+
+                result.push(data);
+            })
+
             res.send({
-                result: result
+                data: result
             });
+            next(result);
         })
     }
 }

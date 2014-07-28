@@ -68,6 +68,7 @@ define([
                             });
                             break;
                         case configModule.allowedTab[1]:
+                            debugger
                             this.subController = new Report.Details.Controller({
                                 region: region
                             });
@@ -76,7 +77,7 @@ define([
                             this.subController = new Report.Main.Controller({
                                 region: region
                             });
-                            break;
+                                break;
                     }
 
                     this.subController.show();

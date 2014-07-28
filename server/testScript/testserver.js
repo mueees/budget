@@ -1,11 +1,21 @@
-var EmailAction = require("actions/email/email")
+require('../mongooseDb');
+var async = require("async");
+var assert = require("assert");
+var TagModel = require('../models/tag');
+var TransactionModel = require('../models/transaction');
+var TagController = require('../controllers/tag');
+var TransactionController = require('../controllers/transaction');
 
-var emailAction = new EmailAction({
-    to: 'mue.miv@gmail.com',
-    template: './views/email/registerConfirmation.jade',
-    subject: "Confirmation account",
-    data: {
-        confirmationId: 'test'
+db.transactions.aggregate([
+    {
+        $match: {}
+    },
+    {
+        $group: {
+            _id: '$tags',
+            count: {
+                $sum: '$count'
+            }
+        }
     }
-});
-emailAction.execute();
+]);

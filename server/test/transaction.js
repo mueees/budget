@@ -5,6 +5,7 @@ var TransactionModel = require('../models/transaction');
 var TagController = require('../controllers/tag');
 var TransactionController = require('../controllers/transaction');
 
+console.log("TRANSACTION")
 
 describe('Transaction', function(){
 
@@ -12,7 +13,7 @@ describe('Transaction', function(){
         send: function(message){
             //console.log('send');
         }
-    }
+    };
 
     beforeEach(function(done){
         TagModel.find({}).remove(function(){
@@ -29,6 +30,8 @@ describe('Transaction', function(){
             })
         });
     })
+
+    /*
 
     describe('# create transaction', function(){
 
@@ -176,7 +179,95 @@ describe('Transaction', function(){
 
             });
         })
-    });
+    });*/
+
+    describe('# get transactions by tag', function(){
+
+        var tagName = "test tag name";
+        var userId = "53c7f168fb7458ad0a2c1c97";
+        var reqMock = {
+            body: {
+                tagName: tagName
+            },
+            user: {
+                _id: userId
+            }
+        }
+
+        var count1 = 50;
+        var count2 = 50;
+        var count3 = 30;
+
+        var tagId;
+
+        beforeEach(function(done){
+            //создать тег
+            TagController.create(reqMock, resMock, function(tag){
+
+                tagId = tag._id;
+
+                var reqTransMock1 = {
+                    body: {
+                        count: count1,
+                        tags: [tagId]
+                    },
+                    user:{_id:userId}
+                };
+                var reqTransMock2 = {
+                    body: {
+                        count: count2,
+                        tags: [tagId]
+                    },
+                    user:{_id:userId}
+                };
+                var reqTransMock3 = {
+                    body: {
+                        count: count3,
+                        tags: []
+                    },
+                    user:{_id:userId}
+                };
+
+                // создать пару трансзакций с тегом и без
+                TransactionController.create(reqTransMock1, resMock, function(transaction){
+
+                    TransactionController.create(reqTransMock2, resMock, function(transaction){
+
+                        TransactionController.create(reqTransMock3, resMock, function(transaction){
+                            done();
+                        });
+
+                    });
+
+                });
+
+            });
+        })
+
+        it('should getById transaction correct', function(done){
+            var req = {
+                body: {
+                    period: {
+                        start: '2000-01-01',
+                        end: '2016-01-01'
+                    }
+                },
+                user: {
+                    _id: userId
+                }
+            }
+
+            TransactionController.totalByTag(req, resMock, function(result){
+                if( result && result.length === 2 ){
+                    done();
+                }else{
+                    throw "Error getById transaction mongo";
+                }
+
+            });
+        })
+
+    })
 
     /*describe('# create transaction time', function(){
         var count = 50;
