@@ -30,12 +30,17 @@ define([
                     this.totalByTag = new App.Widget.TotalByTag.Controller({
                         region: this.layout.table
                     })
+                    this.totalByTagChart = new App.Widget.TotalByTagChart.Controller({
+                        region: this.layout.chart
+                    })
+
                     log('initialized');
                 },
 
                 show: function(){
                     this.total.show();
                     this.totalByTag.show();
+                    this.totalByTagChart.show();
                     this.subscribe();
                     this.updateWidgets();
                 },
@@ -52,6 +57,10 @@ define([
                     });
 
                     this.totalByTag.setData({
+                        period: period
+                    });
+
+                    this.totalByTagChart.setData({
                         period: period
                     });
                 },

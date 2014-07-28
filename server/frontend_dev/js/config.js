@@ -22,7 +22,8 @@ requirejs.config({
         "backbone.stickit": "vendor/libs/backbone/backbone.stickit",
         "backbone.syphon": "vendor/libs/backbone/backbone.syphon",
         bootstrap: "vendor/libs/bootstrap/js/bootstrap.min",
-
+        raphael: "vendor/libs/raphael.min",
+        morris: "vendor/libs/morris.min",
 
         /*plugins*/
         moment: "vendor/plugins/moment.min",
@@ -40,6 +41,10 @@ requirejs.config({
         backbone: {
             deps: ['jquery', 'underscore'],
             exports: "Backbone"
+        },
+        morris: {
+            deps: ['jquery', 'raphael'],
+            exports: "Morris"
         },
         bootstrap: ['jquery']
     },

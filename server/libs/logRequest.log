@@ -453,3 +453,4 @@
 {"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-28T13:46:10.912Z"}
 {"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-28T13:46:10.954Z"}
 {"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-07-28T14:49:47.568Z"}
+{"status":404,"url":"/js/vendor/libs/raphael.min.js.js?no-cache=1406560516328","level":"warn","message":"","timestamp":"2014-07-28T15:15:17.849Z"}

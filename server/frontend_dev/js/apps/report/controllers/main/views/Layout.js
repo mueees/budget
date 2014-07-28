@@ -9,7 +9,8 @@ define([
 
         regions: {
             total: '.total-container',
-            table: '.table-container'
+            table: '.table-container',
+            chart: '.chart-container'
         }
 
     })

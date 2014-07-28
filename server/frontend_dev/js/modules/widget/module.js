@@ -24,6 +24,7 @@ define([
 
     //statistic
     './widgets/statistics/totals/index',
+    './widgets/statistics/totalByTagChart/index',
     './widgets/statistics/totalByTag/index'
 
 ], function(jQuery, Backbone, Marionette, App, config){
