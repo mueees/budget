@@ -2829,6 +2829,28 @@ body {
 .filter-container {
   margin: 10px 0;
 }
+.small-grid-row {
+  margin-right: -2px;
+  margin-left: -2px;
+}
+.small-grid {
+  padding-right: 2px;
+  padding-left: 2px;
+}
+.choosePointer {
+  cursor: pointer;
+}
+@media (min-width: 768px) {
+  .calculator {
+    display: none;
+  }
+}
+.calculator [class^="col"] {
+  margin: 8px 0;
+}
+.calculator button {
+  width: 100%;
+}
 .dateFiter .dateLabel {
   text-align: center;
   padding: 9px 0;
@@ -2866,7 +2888,7 @@ body {
   position: fixed;
   width: 200px;
   min-height: 12px;
-  top: 20px;
+  top: 40px;
   right: 5px;
   z-index: 1040;
 }
@@ -2922,6 +2944,9 @@ body {
 }
 .budget-table td {
   padding: 15px 5px !important;
+}
+.budget-table .value {
+  padding-left: 10px;
 }
 .budget-pager {
   margin: 15px 0;
@@ -2984,22 +3009,22 @@ body {
   padding: 5px 9px;
   background: rgba(0,0,0,0.1);
 }
-.add .tags {
+.transaction-container .tags {
   padding: 0;
 }
-.add .tags li {
+.transaction-container .tags li {
   display: inline-block;
   list-style: none;
   cursor: pointer;
   margin-right: 8px;
   margin-bottom: 10px;
 }
-.add .tags li .text {
+.transaction-container .tags li.active button {
+  background: #df691a;
+}
+.transaction-container .tags li .text {
   display: inline-block;
   margin-right: 10px;
-}
-.add .tags li.active button {
-  background: #df691a;
 }
 .menu-toggle .icon-bar {
   width: 22px;

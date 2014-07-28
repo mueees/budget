@@ -30,6 +30,9 @@ module.exports = function(app) {
     app.post('/api/transaction/remove', middleware, transactionController.remove);
     app.post('/api/transaction/total', middleware, transactionController.total);
     app.post('/api/transaction/totalByTag', middleware, transactionController.totalByTag);
+    app.post('/api/transaction/list', middleware, transactionController.transactionList);
+    app.post('/api/transaction/getById', middleware, transactionController.getById);
+
 
     //sync
     app.post('/api/sync/clientserver', middleware, syncController.clientServer);

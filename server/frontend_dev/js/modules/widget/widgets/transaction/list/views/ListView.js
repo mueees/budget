@@ -1,18 +1,33 @@
 define([
     'marionette',
-    'text!../templates/ListTemp.html'
-], function(Marionette, template){
-    return Marionette.ItemView.extend({
+    'text!../templates/ListTemp.html',
+    './Transaction',
+    './NoTransaction'
+], function(Marionette, template, Transaction, NoTransaction){
+
+    return Marionette.CompositeView.extend({
+
+        className: "wrapper",
+
+        itemView: Transaction,
+
+        emptyView: NoTransaction,
+
+        itemViewContainer: 'tbody',
 
         template: _.template(template),
 
-        initialize: function(){
+        events: {},
 
+        initialize: function(){
+            this.collection = this.model.get('data');
         },
 
-        onClose: function(){
-
+        onCompositeRendered : function() {
+            this.on('itemview:chooseTransaction',function(view, data) {
+                this.trigger('chooseTransaction', data.model);
+            });
         }
-
     });
+
 })

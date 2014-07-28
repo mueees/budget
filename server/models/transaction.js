@@ -76,6 +76,7 @@ Transaction.statics.getTransactions = function(options, cb){
 Transaction.statics.getTotals = function(period, userId, cb){
     var query = {
         userId: userId,
+        isDeleted: false,
         date: {
             $gt: new Date(period.start),
             $lt: new Date(period.end)
@@ -99,9 +100,24 @@ Transaction.statics.getTotals = function(period, userId, cb){
     })
 }
 
+Transaction.statics.getTransactionById = function(_id, userId, cb){
+    var query = {
+        userId: userId,
+        isDeleted: false,
+        _id: _id
+    };
+
+    this.find(query, function(err, transactions){
+        if(err) {
+            return cb(err);
+        }
+
+        cb(null, transactions[0]);
+    })
+}
+
+
 Transaction.statics.getTotalsByTag = function(period, userId, cb){
-
-
 
     var query = [
         {
@@ -120,7 +136,7 @@ Transaction.statics.getTotalsByTag = function(period, userId, cb){
         }
     ];
 
-    if(period && period.length){
+    if(period && period.start && period.end){
         query[0].$match.date = {
             $gt: new Date(period.start),
             $lt: new Date(period.end)
@@ -132,6 +148,28 @@ Transaction.statics.getTotalsByTag = function(period, userId, cb){
             return cb(err);
         }
         cb(null, data);
+    })
+}
+
+Transaction.statics.getTransactionList = function(period, userId, cb){
+
+    var query = {
+        userId: mongoose.Types.ObjectId(userId),
+        isDeleted: false
+    };
+
+    if(period && period.start && period.end){
+        query.date = {
+            $gt: new Date(period.start),
+            $lt: new Date(period.end)
+        };
+    }
+
+    this.find(query, function(err, transactions){
+        if(err) {
+            return cb(err);
+        }
+        cb(null, transactions);
     })
 }
 

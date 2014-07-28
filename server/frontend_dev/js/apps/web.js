@@ -9,6 +9,7 @@ require([
     'entities/transaction',
     'entities/statistics/total',
     'entities/statistics/totalByTag',
+    'entities/statistics/transactionsList',
 
     /*modules*/
     'modules/log/module',

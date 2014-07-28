@@ -20,6 +20,7 @@ define([], function(){
             'tag:entity': 'tag:entity',
             'tag:collection:entity': 'tag:collectWion:entity',
             'statistic:total:entity': 'statistic:total:entity',
+            'statistic:transactionList:entity': 'statistic:transactionList:entity',
 
             'notice:get': 'notice:get',
             'notice:get:prompt' : 'notice:get:prompt',
@@ -56,10 +57,12 @@ define([], function(){
             transactionCreate: '/api/transaction/create',
             transactionRemove: '/api/transaction/remove',
             transactionEdit: '/api/transaction/edit',
+            transactionGetById: '/api/transaction/getById',
 
             statistic: {
                 total: '/api/transaction/total',
-                totalByTag: '/api/transaction/totalByTag'
+                totalByTag: '/api/transaction/totalByTag',
+                listTransactions: "/api/transaction/list"
             }
 
 

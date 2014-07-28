@@ -24,22 +24,32 @@ define([
                     this.layout = new Layout();
                     this.region.show(this.layout);
 
-                    debugger
-                    this.transactions = new App.Widget.Transaction.List.Controller();
+                    this.transactions = new App.Widget.Transaction.List.Controller({
+                        region: this.layout.transaction
+                    });
                     log('initialized');
                 },
 
                 show: function(){
                     this.transactions.show();
                     this.subscribe();
+                    this.updateWidgets();
                 },
 
                 subscribe: function(){
-                    //this.listenTo( App.channels.main, config.channels['date:change'], this.updateWidgets );
+                    this.listenTo( App.channels.main, config.channels['date:change'], this.updateWidgets );
+                    this.listenTo( this.transactions, 'chooseTransaction', this.chooseTransactionHandler );
                 },
 
                 updateWidgets: function(){
                     var period = App.reqres.request(config.reqres['date:get:period']);
+                    this.transactions.setData({
+                        period: period
+                    })
+                },
+
+                chooseTransactionHandler: function(transaction){
+                    App.navigate('#transaction/edit/' + transaction.get('_id'), {trigger: true});
                 },
 
                 onClose: function(){}

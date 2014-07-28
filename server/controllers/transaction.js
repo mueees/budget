@@ -80,8 +80,7 @@ var controller = {
                 return next(new HttpError(400, err.errors));
             }
 
-            res.send();
-            next();
+            res.send({});
         })
     },
 
@@ -119,6 +118,45 @@ var controller = {
                 total: total
             });
         })
+    },
+
+    transactionList: function(req, res, next){
+        var data = req.body;
+
+        TransactionModel.getTransactionList( data.period, req.user._id, function(err, transactions){
+            if(err) {
+                logger.error(err);
+                return next(new HttpError(400, "Server error."));
+            }
+
+            res.send({
+                data: transactions
+            });
+        });
+
+    },
+
+    getById: function(req, res, next){
+        var data = req.body;
+
+        TransactionModel.getTransactionById(data._id, req.user._id, function(err, transaction){
+            if(err){
+                logger.error(err);
+                return next(new HttpError(400, "Server error."));
+            }
+
+            if(!transaction){
+                res.send({});
+            }else{
+                res.send({
+                    _id: transaction._id,
+                    tags: transaction.tags,
+                    date: transaction.date,
+                    count: transaction.count
+                });
+            }
+        })
+
     },
 
     totalByTag: function(req, res, next){

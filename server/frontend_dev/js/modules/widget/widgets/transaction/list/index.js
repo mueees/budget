@@ -7,9 +7,9 @@ define([
 
     './views/ListView',
 
-    '../../base/index'
+    'widgetBase/index'
 
-], function(jQuery, Backbone, Marionette, App, config, ListView ){
+], function(jQuery, Backbone, Marionette, App, config, ListView){
 
     App.module("Widget.Transaction.List", {
 
@@ -20,19 +20,28 @@ define([
 
             List.Controller = App.Widget.Base.Controller.extend({
 
+                widgetName: 'List of transactions',
+
                 initialize: function(options){
-                    log = App.reqres.request("getLog", 'Widget.Base');
-                    App.Widget.Base.Controller.apply(this, arguments);
-                    _.bindAll(this, "successModelUpdate", 'processError');
+                    log = App.reqres.request("getLog", 'Widget.Transaction.List');
+                    App.Widget.Base.Controller.prototype.initialize.apply(this, arguments);
                     log('Initialized');
                 },
 
-                getCollection: function(){
-                    return App.reqres.request(config.reqres['transaction:collection:entity']);
+                getModel: function(){
+                    return App.reqres.request(config.reqres['statistic:transactionList:entity']);
                 },
 
                 getView: function(){
                     return ListView;
+                },
+
+                subscribe: function(){
+                    this.listenTo(this.view, 'chooseTransaction', this.chooseTransactionHandler);
+                },
+
+                chooseTransactionHandler: function(transaction){
+                    this.trigger('chooseTransaction', transaction);
                 }
             });
 

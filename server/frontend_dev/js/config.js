@@ -1,10 +1,11 @@
 requirejs.config({
     baseUrl: 'js/',
-    waitSeconds : 15,
+    waitSeconds : 3,
     paths: {
         'app' : 'apps/app',
         'vendor': 'vendor',
         'modules': 'modules',
+        widgetBase: 'modules/widget/widgets/base/',
 
         jquery: "vendor/libs/jquery",
         underscore: "vendor/libs/underscore",

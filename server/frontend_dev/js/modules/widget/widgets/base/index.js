@@ -20,6 +20,8 @@ define([
 
                 View: null,
 
+                widgetName: 'BaseWidget',
+
                 initialize: function(options){
                     log = App.reqres.request("getLog", 'Widget.Base');
 
@@ -27,7 +29,11 @@ define([
 
                     this.region = options.region;
                     this.model = this.getModel();
+                    this.model.set({
+                        widgetName: this.widgetName
+                    })
                     this.collection = this.getCollection();
+                    this.layout = this.getLayout();
                     this.View = this.getView();
                     this.view = null;
 
@@ -35,10 +41,20 @@ define([
                 },
 
                 getModel: function(){
-
+                    return App.reqres.request(config.reqres['model:entity']);
                 },
 
                 getView: function(){},
+
+                subscribe: function(){},
+
+                getLayout: function(){
+                    return Layout;
+                },
+
+                getCollection: function(){
+                    return null;
+                },
 
                 show: function(options){
                     this.layout = new Layout({
@@ -53,14 +69,15 @@ define([
                         Collection: this.Collection
                     });
                     this.layout.main.show(this.view);
+                    this.subscribe();
                 },
 
                 setData: function(options){
                     this.model.set(options, {silent: true});
-                    this.syncModel();
+                    this.sync();
                 },
 
-                syncModel: function(){
+                sync: function(){
                     var _this = this;
                     this.model.getData({
                         success: _this.successModelUpdate,
@@ -70,7 +87,7 @@ define([
 
                 isSuccessUpdate: function(model){
                     var data = model.get('data');
-                    if( data || data.length === 0 ){
+                    if( data && data.length !== 0 ){
                         return true;
                     }else{
                         return false;
@@ -78,7 +95,7 @@ define([
                 },
 
                 successModelUpdate: function(model){
-                    if( this.isSuccessUpdate() ){
+                    if( this.isSuccessUpdate(model) ){
                         if(!this.view) this.showView();
                     }else{
                         this.showErrorView();

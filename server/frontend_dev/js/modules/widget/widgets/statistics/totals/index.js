@@ -35,10 +35,6 @@ define([
                         model: this.model
                     });
                     this.region.show(this.layout);
-
-                    this.setData({
-                        period: App.reqres.request(config.reqres['date:get:period'])
-                    })
                 },
 
                 showView: function(){

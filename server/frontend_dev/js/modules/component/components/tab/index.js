@@ -20,9 +20,34 @@ define([
 
                 className: 'btn-group btn-group-justified',
 
-                initialize: function(options){},
+                events: {
+                    'click button': 'buttonHandler'
+                },
 
                 template: _.template(template),
+
+                ui: {
+                    buttons: 'button'
+                },
+
+                initialize: function(options){
+                    this.listenTo(this.model, 'change:currentTab', this.currentTabHandler)
+                },
+
+                currentTabHandler: function(){
+                    var currentTab = this.model.get('currentTab');
+                    this.ui.buttons.removeClass('active');
+                    this.$el.find('[data-value='+ currentTab +']').addClass('active');
+                },
+
+                buttonHandler: function(e){
+                    e.preventDefault();
+                    var $el = $(e.target).closest('button');
+                    var value = $el.data('value');
+                    if(!value) return false;
+
+                    this.model.set('currentTab', value);
+                },
 
                 onShow: function(){}
 

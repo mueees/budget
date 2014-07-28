@@ -1,6 +1,6 @@
 define([
     'marionette',
-    'text!../templates/SignTemp.html'
+    'text!../templates/TotalByTagTemp.html'
 ], function(Marionette, template){
     return Marionette.ItemView.extend({
 

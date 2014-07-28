@@ -21,6 +21,7 @@ define([
                 urls: {
                     create: config.api.transactionCreate,
                     remove: config.api.transactionRemove,
+                    getById: config.api.transactionGetById,
                     edit: config.api.transactionEdit
                 },
 
@@ -68,7 +69,7 @@ define([
 
                     var data = {
                         _id: model._id,
-                        count: model.tagName,
+                        count: model.count,
                         tags: model.tags,
                         date: model.date
                     };
@@ -106,6 +107,24 @@ define([
 
                     options = _.extend(defaults, options);
                     this.xhr = this.destroy(options);
+                    return this.xhr;
+                },
+
+                getData: function(options){
+                    options = options || {};
+                    var model =  this.toJSON();
+
+                    var data = {
+                        _id: model._id
+                    };
+                    var defaults = {
+                        url: this.urls.getById,
+                        type: 'post',
+                        data: JSON.stringify(data)
+                    };
+
+                    options = _.extend(defaults, options);
+                    this.xhr = this.fetch(options);
                     return this.xhr;
                 }
 

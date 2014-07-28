@@ -34,6 +34,8 @@ define([
                     this.dateFilter = this.getDateFilter();
                     this.dateFilter.show();
 
+                    this.subscribe();
+
                 },
 
                 getTab: function(){
@@ -60,6 +62,14 @@ define([
                 getDateFilter: function(){
                     return new App.Widget.DateFilter.Controller({
                         region: this.layout.filter
+                    })
+                },
+
+                subscribe: function(){
+
+                    this.listenTo(this.tabModel, 'change:currentTab', function(tabModel){
+                        var tabName = tabModel.get('currentTab');
+                        App.navigate('#report/' + tabName, {trigger: true});
                     })
                 },
 

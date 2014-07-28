@@ -19,6 +19,7 @@ define([
 
     //transaction
     './widgets/transaction/add/index',
+    './widgets/transaction/edit/index',
     './widgets/transaction/list/index',
 
     //statistic

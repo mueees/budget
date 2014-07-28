@@ -11,7 +11,7 @@ define([
 
         initialize: function(){
             this.listenTo(this.model, 'request', this.startRequestHandler);
-            this.listenTo(this.model, 'sync', this.endFetchHandler);
+            this.listenTo(this.model, 'sync', this.endRequestHandler);
         },
 
         regions: {
@@ -21,7 +21,7 @@ define([
         startRequestHandler: function(){
             this.$el.addClass('loadingState');
         },
-        endFetchHandler: function(){
+        endRequestHandler: function(){
             this.$el.removeClass('loadingState');
         }
 

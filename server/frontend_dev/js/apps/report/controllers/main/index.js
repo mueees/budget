@@ -36,7 +36,8 @@ define([
                 show: function(){
                     this.total.show();
                     this.totalByTag.show();
-                    this.subscribe()
+                    this.subscribe();
+                    this.updateWidgets();
                 },
 
                 subscribe: function(){

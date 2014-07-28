@@ -5,8 +5,9 @@ define([
     'app',
     'config',
 
-    './views/Layout'
-], function(jQuery, Backbone, Marionette, App, config, Layout){
+    './controllers/add/index',
+    './controllers/edit/index'
+], function(jQuery, Backbone, Marionette, App, config){
 
     App.module("Transaction", {
 
@@ -17,39 +18,34 @@ define([
             var log;
 
             var Controller = Marionette.Controller.extend({
+
                 initialize: function(options){
                     this.region = options.region;
                 },
 
-                start: function(){
-                    this.layout = new Layout();
-                    this.region.show(this.layout);
-                    this.transactionAdd = new App.Widget.Transaction.Add.Controller({
-                        region: this.layout.add
+                add: function(){
+                    if( this.subController ) this.subController.close();
+                    App.execute(config.commands['notify:clearAllNotice']);
+                    this.subController = new Transaction.Add.Controller({
+                        region: this.region
                     });
-                    this.transactionAdd.show();
-
-                    this.subscribe();
+                    this.subController.show();
                 },
 
-                subscribe: function(){
-                    this.listenTo(this.transactionAdd, 'cancelBtn', this.cancelHandler)
-                    this.listenTo(this.transactionAdd, 'create', this.createHandler)
-                },
-
-                cancelHandler: function(){
-                    App.navigate('#report', {trigger: true});
-                },
-
-                createHandler: function(){
-                    App.execute(config.commands['notify:showNotify:side'], {text: 'Transaction was created.'});
-                    App.navigate('#report', {trigger: true});
+                edit: function(id){
+                    if( this.subController ) this.subController.close();
+                    App.execute(config.commands['notify:clearAllNotice']);
+                    this.subController = new Transaction.Edit.Controller({
+                        region: this.region,
+                        id: id
+                    });
+                    this.subController.show();
                 },
 
                 onClose: function(){
-                    this.transactionAdd.close();
-                    this.layout.close();
+                    if(this.subController) this.subController.close();
                 }
+
             });
 
             var API  = {
@@ -61,7 +57,16 @@ define([
                     }
 
                     App.execute(config.commands['menu:unselect']);
-                    Transaction.controller.start();
+                    Transaction.controller.add();
+                },
+
+                edit: function(id){
+                    if( !config.data.user.email ){
+                        App.navigate('#landing', {trigger: true});
+                    }
+
+                    App.execute(config.commands['menu:unselect']);
+                    Transaction.controller.edit(id);
                 },
 
                 /*Инициализация перед стартом*/
@@ -83,6 +88,7 @@ define([
                 }
             }
 
+            Transaction.edit = API.edit;
             Transaction.start = API.start;
             Transaction.stop = API.stop;
             Transaction.add = API.add;

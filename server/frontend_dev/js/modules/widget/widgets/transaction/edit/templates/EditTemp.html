@@ -1,9 +1,10 @@
-<h3 class="page-header">Add transaction</h3>
+<h3 class="page-header">Edit transaction</h3>
+
 <form class="form-horizontal">
     <fieldset>
         <div class="form-group">
             <div class="col-lg-10">
-                <input name="count" type="number" class="form-control" id="cost" placeholder="Count">
+                <input name="count" value="<%= transaction.count %>" type="number" class="form-control" id="cost" placeholder="Count">
             </div>
             <div class="col-lg-10">
                 <div class="calculator">
@@ -60,8 +61,8 @@
             <div class="col-lg-10">
                 <ul class="tags">
                     <% _.each(tags, function(tag){ %>
-                    <li data-id="<%= tag._id %>" class="">
-                        <button type="button" class="btn btn-default">
+                    <li data-id="<%= tag._id %>" class=" <%=  (tag._id == transaction.tags[0])? 'active': '' %> ">
+                        <button type="button" class="btn btn-default ">
                             <span class="glyphicon glyphicon-tag"></span>
                             <span class="text"><%= tag.tagName %></span>
                         </button>
@@ -85,8 +86,9 @@
 
         <div class="form-group">
             <div class="col-lg-10">
-                <button class="btn btn-default cancel">Cancel</button>
-                <button type="submit" class="btn btn-primary add">Add cost</button>
+                <button type="button" class="btn btn-danger deleteBtn">Remove</button>
+                <button type="button" class="btn btn-default cancelBtn">Cancel</button>
+                <button type="submit" class="btn btn-primary editBtn">Edit</button>
             </div>
         </div>
     </fieldset>

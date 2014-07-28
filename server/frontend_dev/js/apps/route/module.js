@@ -20,6 +20,7 @@ define([
                     "landing(?:querypath)": "landing",
                     "tags(?:querypath)": "tags",
                     "transaction/add(?:querypath)": "transactionAdd",
+                    "transaction/edit/:id(?:querypath)": "transactionEdit",
                     "report(/:tabName)(?:querypath)": "report",
                     "(?:querypath)": "redirectToLanding",
                     "*any": "redirectToLanding"
@@ -48,6 +49,11 @@ define([
                 transactionAdd: function(){
                     App.startSubApp("Transaction");
                     App.currentApp.add();
+                },
+
+                transactionEdit: function(id){
+                    App.startSubApp("Transaction");
+                    App.currentApp.edit(id);
                 },
 
                 redirectToLanding: function(){
