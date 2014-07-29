@@ -12,3 +12,7 @@ cd /vagrant/server/test
 export NODE_SITE=development
 export NODE_PATH=/vagrant/server
 mocha -t 10000
+
+sudo rm /var/lib/mongodb/mongod.lock
+mongod --repair
+sudo service mongodb start
