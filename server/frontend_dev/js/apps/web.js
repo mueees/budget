@@ -19,6 +19,7 @@ require([
     'modules/notify/module',
     'modules/header/module',
     'modules/menu/module',
+    'modules/behaviors/module',
 
     /*main modules*/
     'apps/route/module',

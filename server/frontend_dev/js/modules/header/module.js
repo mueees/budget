@@ -24,6 +24,15 @@ define([
                 start: function(){
                     this.view = new MainView();
                     this.region.show(this.view);
+                    this.subscribe();
+                },
+
+                subscribe: function(){
+                    this.listenTo(this.view, 'openMenu', this.openMenuHandler)
+                },
+
+                openMenuHandler: function(){
+                    App.execute(config.commands['menu:open']);
                 }
             });
 

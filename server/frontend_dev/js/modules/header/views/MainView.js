@@ -6,6 +6,10 @@ define([
 
         template: _.template(template),
 
+        triggers: {
+            'click .menu-toggle': "openMenu"
+        },
+
         initialize: function(){
 
         },

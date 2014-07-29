@@ -25,7 +25,21 @@ define([
         },
 
         ui: {
-            tags: '.tags'
+            tags: '.tags',
+            count: '#count'
+        },
+
+        behaviors: {
+            Calculator: {
+                modelField: 'count'
+            },
+            Comment: {}
+        },
+
+        bindings: {
+            '[name=count]': {
+                observe: 'count'
+            }
         },
 
         initialize: function(){

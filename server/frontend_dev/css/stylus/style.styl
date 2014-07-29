@@ -139,28 +139,39 @@ body{
 .page-header{
   margin-top: 10px;
 }
-.menu{
-  position: fixed;
-  left: 0;
-  top: 0;
-  display: none;
-}
-.menu .nav{
-  background:  #4e5d6c;
-}
-.menu .nav a{
-  color: white;
-}
-.menu .nav li a:hover{
-  background: #485563;
-}
-.menu .nav .active{
-  background: #485563;
-}
-.menu .nav .text{
-  display: inline-block;
-  margin-left: 10px;
-}
+.menu
+  position relative
+  display block
+  padding-left 0
+  padding-right 0
+  background  #4e5d6c
+  z-index 1040
+
+  .nav
+    .text
+      display inline-block
+      margin-left 10px
+
+    .active
+      background #485563
+
+    a
+      color white
+      &:hover
+        background #485563
+
+  @media (max-width: 768px)
+    position fixed
+    left -95%
+    top 0
+    bottom 0
+    width 95%
+    transition left 0.3s
+
+    &.active
+      left 0
+      display block
+
 .logo{
   margin: 5px 5px 0 0;
   display: inline-block;
@@ -198,7 +209,8 @@ body{
 }
 .transaction-container
     .tags
-        padding: 0
+        padding 0
+        margin 0
 
         li
             display: inline-block;
@@ -228,12 +240,5 @@ body{
 @media (max-width: 768px){
   .menu-toggle{
     display: block;
-  }
-}
-@media (min-width: 768px){
-  .menu {
-    position: relative;
-    display: block;
-    padding-left: 0;
   }
 }

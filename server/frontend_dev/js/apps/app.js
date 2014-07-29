@@ -17,6 +17,11 @@ define([
     App.channels.main = _.extend({}, Backbone.Events);
     App.channels.second = _.extend({}, Backbone.Events);
 
+    App.behaviors = {};
+    Marionette.Behaviors.behaviorsLookup = function() {
+        return App.behaviors;
+    }
+
     var trigger = Backbone.Events.trigger;
 
     App.channels.main.trigger = function(){

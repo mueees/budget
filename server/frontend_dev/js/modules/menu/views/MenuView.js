@@ -32,10 +32,15 @@ define([
 
             var $el = $(e.target).closest('a');
             var path = $el.data('path');
+            var data = {
+                isOpen: false
+            };
 
-            if(!path || path == this.model.get('path')) return false;
+            if(path || path != this.model.get('path')){
+                data.path = path;
+            }
 
-            this.model.set('path', path);
+            this.model.set(data);
         },
 
         onClose: function(){

@@ -61,7 +61,6 @@ Transaction.statics.removeTagById = function(tagId, userId, cb){
             if(err){
                 return cb(err);
             }
-            console.log("removeTagById");
             cb(null);
         }
     )
