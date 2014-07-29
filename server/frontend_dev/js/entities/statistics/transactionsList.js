@@ -5,7 +5,8 @@ define([
     'marionette',
     'app',
     'config',
-    '../base'
+    '../base',
+    '../transaction'
 ], function($, _, Backbone, Marionette, App, config){
 
     App.module("Entities.Statistic", {

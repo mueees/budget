@@ -121,6 +121,8 @@ define([
                         App.navigate('#landing', {trigger: true});
                     }
 
+                    App.execute(config.commands['menu:set'], 'report/main');
+
                     Report.controller.start(tagName);
                 },
 

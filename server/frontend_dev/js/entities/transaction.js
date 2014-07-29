@@ -30,7 +30,8 @@ define([
                 defaults: {
                     count: null,
                     tags: [],
-                    date: new Date()
+                    date: new Date(),
+                    comment: ''
                 },
 
                 validation: {},
@@ -44,7 +45,8 @@ define([
                     var data = {
                         count: model.count,
                         tags: model.tags,
-                        date: model.date
+                        date: model.date,
+                        comment: model.comment
                     };
 
                     var defaults = {
@@ -71,7 +73,8 @@ define([
                         _id: model._id,
                         count: model.count,
                         tags: model.tags,
-                        date: model.date
+                        date: model.date,
+                        comment: model.comment
                     };
 
                     var defaults = {
@@ -130,8 +133,7 @@ define([
 
             });
             Entities.TransactionCollections = Entities.ClearCollection.extend({
-                model: Entities.TagModel,
-                url: config.api.tagGet
+                model: Entities.TransactionModel
             })
 
             var API = {

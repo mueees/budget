@@ -24,7 +24,7 @@ define([
         pathHandler: function(){
             var path = this.model.get('path');
             this.$el.find('li').removeClass('active');
-            this.$el.find('a[data-path='+ path +']').parent().addClass('active');
+            this.$el.find('a[data-path="'+ path +'"]').parent().addClass('active');
         },
 
         linkHandler: function(e){

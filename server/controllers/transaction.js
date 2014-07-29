@@ -15,6 +15,7 @@ var controller = {
         var transaction = new TransactionModel({
             userId: req.user._id,
             count: data.count,
+            comment: data.comment,
             tags: data.tags
         });
 
@@ -53,6 +54,7 @@ var controller = {
 
         TransactionModel.findById( data._id, function ( err, transaction ){
             if( data.count ) transaction.count = data.count;
+            if( data.comment ) transaction.comment = data.comment;
             if( data.tags ) transaction.tags = data.tags;
             if( data.date ) transaction.date = data.date;
             transaction.updated_at = Date.now();
@@ -89,6 +91,8 @@ var controller = {
         var period = data.period;
         var userId = req.user.id;
         var tags = data.tags || [];
+
+
 
         TransactionModel.getTransactions({
             period: period,
@@ -152,7 +156,8 @@ var controller = {
                     _id: transaction._id,
                     tags: transaction.tags,
                     date: transaction.date,
-                    count: transaction.count
+                    count: transaction.count,
+                    comment: transaction.comment
                 });
             }
         })

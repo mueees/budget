@@ -71,9 +71,9 @@ define([
 
                 setMenu: function(path, options){
                     this.model.set({
-                        path: path,
-                        isOpen: false
-                    }, options)
+                        path: path
+                    }, {silent: true})
+                    this.view.pathHandler();
                 },
 
                 unselectMenu: function(){

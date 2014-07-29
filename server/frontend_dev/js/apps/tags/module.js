@@ -84,6 +84,8 @@ define([
                         App.navigate('#landing', {trigger: true});
                     }
 
+                    App.execute(config.commands['menu:set'], 'tags');
+
                     Tags.controller.start();
                 },
 
