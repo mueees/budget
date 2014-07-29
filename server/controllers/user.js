@@ -5,11 +5,13 @@ var config = require('config')
     , validator = require('validator')
     , async = require('async')
     , EmailAction = require("actions/email/email")
+    , TagModel = require('models/tag')
     , UserModel = require('models/user');
 
 var controller = {
     signup: function(req, res, next){
         var data = req.body;
+        var _this = this;
 
         if( !validator.isEmail(data.email) ) {
             return next(new HttpError(400, "Invalid Email"));
@@ -43,7 +45,6 @@ var controller = {
                 _id: user._id
             })
 
-
             var emailAction = new EmailAction({
                 to: user.email,
                 template: './views/email/registerConfirmation.jade',
@@ -53,9 +54,41 @@ var controller = {
                 }
             });
             emailAction.execute();
+
+            controller._createBaseTags(user._id);
         })
 
     },
+
+    _createBaseTags: function(userId){
+        var funcs = [];
+        var names = ['fun', 'car', 'food', 'other'];
+
+        _.each(names, function(name){
+            funcs.push(function(cb){
+                var tag = new TagModel({
+                    userId: userId,
+                    tagName: name
+                })
+                tag.save(function(err){
+                    if(err){
+                        return cb(err);
+                    }else{
+                        cb();
+                    }
+                });
+            })
+        })
+
+        async.parallel(funcs, function(err){
+            if(err){
+                logger.error(err);
+                return false;
+            }
+        })
+
+    },
+
     signin: function(req, res, next){
         res.send({});
     },

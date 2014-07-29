@@ -8,6 +8,7 @@
         "moment": "2",
         "node-inspector": "0",
         "cron": "",
+        "time": "",
         "nconf": "",
         "winston": "",
         "async": "",

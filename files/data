@@ -3,6 +3,11 @@ export NODE_SITE=development
 export NODE_PATH=/vagrant/server
 supervisor -i 'node_modules,public,testScript,frontend_dev' server.js
 
+cd /vagrant/server
+export NODE_SITE=development
+export NODE_PATH=/vagrant/server
+node cron.js
+
 cd /vagrant/server/test
 export NODE_SITE=development
 export NODE_PATH=/vagrant/server

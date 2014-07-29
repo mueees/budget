@@ -23,12 +23,27 @@ define([
         },
 
         ui: {
-            tags: '.tags'
+            tags: '.tags',
+            count: '#count'
+        },
+
+        behaviors: {
+            Calculator: {
+                modelField: 'count'
+            },
+            Comment: {}
+        },
+
+        bindings: {
+            '[name=count]': {
+                observe: 'count'
+            }
         },
 
         initialize: function(){
             FormView.prototype.initialize.apply(this, arguments);
             _.bindAll(this, 'processSuccessCreate');
+            this.subscribe();
         },
 
         serializeData: function(){
@@ -37,6 +52,14 @@ define([
                 transaction: this.model.toJSON(),
                 date: moment(this.model.get('date')).format("YYYY-MM-DD")
             }
+        },
+
+        subscribe: function(){
+            this.listenTo(this.model, "change:count", this.countHandler)
+        },
+
+        countHandler: function(){
+            this.ui.count.val(this.model.get('count'));
         },
 
         onRender: function(){

@@ -171,7 +171,6 @@ var controller = {
                     userId: req.user._id
                 }, function(err, tags){
                     if(err){
-                        console.log(err)
                         return cb(err)
                     }
                     cb(null, tags);
@@ -181,7 +180,6 @@ var controller = {
             if(err){
                 if(err) {
                     logger.error(err);
-                    console.log(err);
                     return next(new HttpError(400, "Server error."));
                 }
             }

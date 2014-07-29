@@ -1,4 +1,3 @@
-var start = new Date();
 var express = require('express'),
     app = express(),
     route = require('routes/route'),
@@ -72,4 +71,4 @@ var server = http.createServer(app);
 server.listen(config.get("port"));
 logger.info("Web server listening: " + config.get("port"));
 
-console.log( new Date() - start )
+//var cron = require('child_process').fork( __dirname + '/cron');

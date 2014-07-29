@@ -20,6 +20,8 @@ define([
             var Controller = Marionette.Controller.extend({
 
                 initialize: function(options){
+
+                    _.bindAll(this, "resizeHandler");
                     this.region = options.region;
                 },
 
@@ -37,6 +39,23 @@ define([
 
                 subscribe: function(){
                     this.listenTo(this.model, "change:path", this.pathHandler);
+                    this.listenTo(this.model, "change:isOpen", this.isOpenHandler);
+                    $(window).on('resize', this.resizeHandler);
+                },
+
+                resizeHandler: function(){
+                    this.model.set({
+                        isOpen: false
+                    })
+                },
+
+                isOpenHandler: function(){
+                    var isOpen = this.model.get('isOpen');
+                    if(isOpen){
+                        this.region.$el.addClass('active');
+                    }else{
+                        this.region.$el.removeClass('active');
+                    }
                 },
 
                 pathHandler: function(){
@@ -52,7 +71,8 @@ define([
 
                 setMenu: function(path, options){
                     this.model.set({
-                        path: path
+                        path: path,
+                        isOpen: false
                     }, options)
                 },
 
@@ -61,6 +81,12 @@ define([
                         path: false
                     }, {silent: true});
                     this.view.pathHandler();
+                },
+
+                openMenu: function(){
+                    this.model.set({
+                        isOpen: true
+                    })
                 }
             });
 
@@ -98,9 +124,15 @@ define([
             App.commands.setHandler(config.commands['menu:set'], function(path, options){
                 Menu.controller.setMenu(path, options);
             })
+            App.commands.setHandler(config.commands['menu:open'], function(path, options){
+                Menu.controller.openMenu();
+            })
             App.commands.setHandler(config.commands['menu:unselect'], function(){
                 Menu.controller.unselectMenu();
             })
+
+
+
         }
     })
 

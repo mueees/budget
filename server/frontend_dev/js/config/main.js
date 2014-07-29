@@ -35,7 +35,8 @@ define([], function(){
             'notify:showNotify:side': 'notify:showNotify:side',
             'notify:clearAllNotice': 'notify:clearAllNotice',
 
-            'menu:set': 'menu:set'
+            'menu:set': 'menu:set',
+            'menu:open': 'menu:open'
         },
 
         channels: {
