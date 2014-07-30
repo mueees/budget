@@ -1,7 +1,20 @@
+//DEVELOPMENT
 cd /vagrant/server
 export NODE_SITE=development
 export NODE_PATH=/vagrant/server
-supervisor -i 'node_modules,public,testScript,frontend_dev' server.js
+supervisor --debug -i 'node_modules,public,testScript,public' server.js
+
+//LIVE
+cd /vagrant/server
+export NODE_SITE=live
+export NODE_PATH=/vagrant/server
+supervisor -i 'node_modules,public,testScript,public' server.js
+
+cd /vagrant/server
+export NODE_SITE=development
+export NODE_PATH=/vagrant/server
+node-inspector
+
 
 cd /vagrant/server
 export NODE_SITE=development

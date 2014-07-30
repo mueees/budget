@@ -179,12 +179,12 @@ Transaction.statics.getTransactionList = function(period, userId, cb){
         date: 1
     }
 
-    this.find(query, fields, function(err, transactions){
+    this.find(query, fields).lean().exec(function(err, transactions){
         if(err) {
             return cb(err);
         }
         cb(null, transactions);
-    })
+    });
 }
 
 Transaction.statics.deleteById = function(id, cb){

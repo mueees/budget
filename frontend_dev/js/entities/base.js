@@ -3,9 +3,8 @@ define([
     'underscore',
     'backbone',
     'marionette',
-    'apps/baseApp',
-    'config',
-    'raven'
+    'app',
+    'config'
 ], function($, _, Backbone, Marionette, App, config){
 
     App.module("Entities", {
@@ -20,7 +19,19 @@ define([
                 initialize: function(attributes, options) {
                     options || (options = {});
                     this.bind("error", this.defaultErrorHandler);
+                    this.bind("request", this.requestHandler);
                     Backbone.Model.prototype.initialize.apply(this, arguments);
+                },
+
+                fetch: function(){
+                    this.xhr = Backbone.Model.prototype.fetch.apply(this, arguments);
+                    return this.xhr;
+                },
+
+                requestHandler: function(){
+                    if( this.xhr ){
+                        this.abortAjax();
+                    }
                 },
 
                 defaultErrorHandler: function(model, error) {
@@ -29,25 +40,47 @@ define([
                             modelName: this.modelName || "defaultModelName"
                         }
                     }
+                },
 
-                    switch (error.status){
-                        case 401:
-                            App.execute(config.commands["raven:send:message"], '401', options);
-                            break;
-                        case 403:
-                            App.execute(config.commands["raven:send:message"], '403', options);
-                            break;
-                        case 404:
-                            App.execute(config.commands["raven:send:message"], '404', options);
-                            break;
-                        case 500:
-                            App.execute(config.commands["raven:send:message"], '500', options);
-                            break;
+                xhr: null,
+
+                abortAjax: function(){
+                    if( this.xhr ){
+                        this.xhr.abort();
+                        this.xhr = null;
                     }
                 }
+
             });
             Entities.ClearCollection = Backbone.Collection.extend({
-                model: Entities.ClearModel
+
+                model: Entities.ClearModel,
+
+                xhr: null,
+
+                fetch: function(){
+                    this.xhr = Backbone.Collection.prototype.fetch.apply(this, arguments);
+                    return this.xhr;
+                },
+
+                initialize: function(attributes, options) {
+                    options || (options = {});
+                    this.bind("request", this.requestHandler);
+                    Backbone.Model.prototype.initialize.apply(this, arguments);
+                },
+
+                requestHandler: function(){
+                    if( this.xhr ){
+                        this.abortAjax();
+                    }
+                },
+
+                abortAjax: function(){
+                    if( this.xhr ){
+                        this.xhr.abort();
+                        this.xhr = null;
+                    }
+                }
             });
 
             var API = {

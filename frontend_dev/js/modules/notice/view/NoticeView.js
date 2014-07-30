@@ -7,10 +7,12 @@ define([
 
         template: _.template( template ),
 
+        className: "modal-dialog",
+
         events: {
-            "click .close-notice" : "closeBtn",
-            "click .buttons .decline" : "decline",
-            "click .buttons .accept" : "accept"
+            "click .closeBtn" : "closeBtn",
+            "click .modal-footer .decline" : "decline",
+            "click .modal-footer .accept" : "accept"
         },
 
         initialize: function( options ){
@@ -22,27 +24,28 @@ define([
         },
 
         onShow: function(){
-            this.$el.addClass('notice');
             this.$el.addClass(this.options.addCustomClass);
-            this.$el.addClass('status-' + this.options.status );
         },
 
         closeBtn: function(e){
-            if(e) e.preventDefault();
+            e.preventDefault();
+            e.stopPropagation();
             this.trigger("closeBtn");
-            this.trigger("closeWindow");
+            if( this.options.isCloseAuto ) this.trigger("closeWindow");
         },
 
         decline: function(e){
-            if(e) e.preventDefault();
+            e.preventDefault();
+            e.stopPropagation();
             this.trigger("decline");
-            this.trigger("closeWindow");
+            if( this.options.isCloseAuto ) this.trigger("closeWindow");
         },
 
         accept: function(e){
-            if(e) e.preventDefault();
+            e.preventDefault();
+            e.stopPropagation();
             this.trigger("accept");
-            this.trigger("closeWindow");
+            if( this.options.isCloseAuto ) this.trigger("closeWindow");
         }
 
     })

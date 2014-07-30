@@ -1,5 +1,6 @@
 var _ = require('underscore'),
     logger = require("libs/log")(module),
+    crypto = require('crypto'),
     mongoose = require('mongoose');
 
 var Schema = mongoose.Schema;
@@ -66,10 +67,18 @@ User.statics.isHaveUser = function(email, cb){
         }
     });
 }
-User.statics.comparePassword = function(password, userPassword){
-    return (password == userPassword) ? true : false;
+User.statics.comparePassword = function(password, user){
+    var sha1 = crypto.createHash('sha1');
+    sha1.update(password + user.email + password);
+    var password = sha1.digest('hex');
+
+    return (password == user.password) ? true : false;
 }
 User.statics.registerNewUser = function(email, password, cb){
+
+    var sha1 = crypto.createHash('sha1');
+    sha1.update(password + email + password);
+    password = sha1.digest('hex');
 
     var UserModel = mongoose.model('User');
     var user = new UserModel({

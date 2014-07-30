@@ -2,7 +2,7 @@ define([
     'jquery',
     'backbone',
     'marionette',
-    'apps/baseApp',
+    'app',
     'config',
 
     /*views*/
@@ -98,8 +98,6 @@ define([
             App.commands.setHandler(config.commands['notify:showNotify:side'], function( options ){
                 return API.showNotifySide( options );
             })
-
-            //notify-container--side
 
         }
     })

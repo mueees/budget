@@ -32,7 +32,7 @@ passport.use(new LocalStrategy(
                 UserModel.isHaveUser(email, cb);
             }, function(user, cb){
                 if( !user ){ return cb('Unknown email address')}
-                if(!UserModel.comparePassword(password, user.password)){
+                if(!UserModel.comparePassword(password, user)){
                     return cb('Invalid Password');
                 }
                 switch(user.status){

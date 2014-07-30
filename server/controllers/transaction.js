@@ -127,16 +127,58 @@ var controller = {
     transactionList: function(req, res, next){
         var data = req.body;
 
-        TransactionModel.getTransactionList( data.period, req.user._id, function(err, transactions){
-            if(err) {
+        async.parallel([
+            function(cb){
+                TransactionModel.getTransactionList( data.period, req.user._id, function(err, transactions){
+                    if(err) {
+                        return cb(err);
+                    }
+
+                    cb(null, transactions);
+                });
+            },
+            function(cb){
+                TagModel.find({
+                    userId: req.user._id
+                }, function(err, tags){
+                    if(err){
+                        return cb(err)
+                    }
+                    cb(null, tags);
+                });
+            }
+        ], function(err, results){
+            if(err){
                 logger.error(err);
                 return next(new HttpError(400, "Server error."));
             }
 
+            var result = [];
+            var transactions = results[0];
+            var tags = results[1];
+
+            _.each(transactions, function(transaction){
+                var resultTags = [];
+                _.each(transaction.tags, function(transactionTagId){
+                    var result = {
+                        id: transactionTagId + ''
+                    };
+                    _.each(tags, function(tag){
+                        if(tag._id+'' == transactionTagId+'') {
+                            result.tagName = tag.tagName;
+                        }
+                    })
+                    resultTags.push(result);
+                })
+                transaction.tags = resultTags;
+
+                result.push(transaction);
+            })
+
             res.send({
-                data: transactions
+                data: result
             });
-        });
+        })
 
     },
 
@@ -182,11 +224,9 @@ var controller = {
                 });
             }
         ], function(err, results){
-            if(err){
-                if(err) {
-                    logger.error(err);
-                    return next(new HttpError(400, "Server error."));
-                }
+            if(err) {
+                logger.error(err);
+                return next(new HttpError(400, "Server error."));
             }
 
             var result = [];

@@ -1,0 +1,20 @@
+<td>
+    <% if(tags.length) {%>
+        <% _.each(tags, function(tag){%>
+        <span class="glyphicon glyphicon-tag"></span>
+        <span class="value"><%= tag.tagName %></span>
+        <%}) %>
+    <%}else{%>
+        <span class="glyphicon glyphicon-tag"></span>
+        <span class="value">-</span>
+    <% }%>
+</td>
+<td><%=  count  %></td>
+<td><%=  dateLabel  %></td>
+<td><%=  comment  %></td>
+<td>
+    <span class="glyphicon glyphicon-chevron-right"></span>
+</td>
+
+
+

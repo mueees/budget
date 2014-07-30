@@ -2,7 +2,7 @@ define([
     'jquery',
     'backbone',
     'marionette',
-    'apps/baseApp',
+    'apps',
     'config',
 
     /*modules*/
@@ -16,7 +16,6 @@ define([
         define: function( Storage, App, Backbone, Marionette, $, _ ){
 
             var log = App.reqres.request('getLog', "Service.Storage");
-
 
             var S = Marionette.Controller.extend({
                 initialize: function(){

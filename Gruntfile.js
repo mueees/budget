@@ -5,19 +5,32 @@ module.exports = function(grunt) {
 
     // configurable paths
     var configPath = {
-        public_temp_web: 'public',
-        public_web: './server',
-
-        public_temp_mobile: 'www',
-        public_mobile: './mobile',
-
-        dev: 'server/frontend_dev'
+        public_web: 'server/public',
+        dev: 'frontend_dev'
     };
 
     // Project configuration.
     grunt.initConfig({
 
         configPath: configPath,
+
+        clean: {
+            public_web: '<%= configPath.public_web %>'
+        },
+
+        copy: {
+            web: {
+                files: [
+                    {expand: true, src: ['<%= configPath.dev %>' + '/fonts'], dest: '<%= configPath.public_web %>', flatten: true},
+                    {expand: true, src: ['<%= configPath.dev %>' + '/fonts/*'], dest: '<%= configPath.public_web %>/fonts', flatten: true},
+                    {expand: true, src: ['<%= configPath.dev %>' + '/img'], dest: '<%= configPath.public_web %>', flatten: true},
+                    {expand: true, src: ['<%= configPath.dev %>' + '/img/*'], dest: '<%= configPath.public_web %>/img', flatten: true},
+                    {expand: true, src: ['<%= configPath.dev %>' + '/css'], dest: '<%= configPath.public_web %>', flatten: true},
+                    {expand: true, src: ['<%= configPath.dev %>' + '/css/style.css'], dest: '<%= configPath.public_web %>/css', flatten: true},
+                    {expand: true, src: ['<%= configPath.dev %>' + '/js/vendor/libs/require/require.js'], dest: '<%= configPath.public_web %>/js', flatten: true},
+                ]
+            }
+        },
 
         concat: {
             options: {},
@@ -44,6 +57,18 @@ module.exports = function(grunt) {
             }
         },
 
+        requirejs: {
+            web: {
+                options: {
+                    baseUrl: ".",
+                    mainConfigFile: "config.js",
+                    name: "./frontend_dev/js/apps/web.js",
+                    out: '<%= configPath.public_web %>' + "/js/script.js",
+                    optimize: "none"
+                }
+            }
+        },
+
         watch: {
             develop: {
                 tasks: ['develop'],
@@ -62,5 +87,13 @@ module.exports = function(grunt) {
         'stylus',
         'concat'
     ]);
+
+    grunt.registerTask('production', [
+        'clean:public_web',
+        'stylus',
+        'concat',
+        'requirejs:web',
+        'copy:web'
+    ])
 
 };

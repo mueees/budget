@@ -1,38 +1,20 @@
-<% if(showCloseButton == true) { %>
-<div class="close-notice">
-    <div class="icon-close-window"></div>
-</div>
-<% }%>
-<div class="header">
-    <div class="icon-notice-<%= icon %> notice-icon"></div>
-    <div class="title"><%= title %></div>
-    <close></close>
-</div>
-<div class="main">
-    <div class="content">
-        <div class="wrapper">
-            <%= text %>
-        </div>
+<div class="modal-content">
+    <div class="modal-header">
+
+        <% if(showCloseButton == true) { %>
+        <button type="button" class="close closeBtn">×</button>
+        <% }%>
+
+        <h4 class="modal-title"><%= title %></h4>
     </div>
-    <div class="buttons">
-        <div class="wrapper">
+    <div class="modal-body">
+        <%= text %>
+    </div>
+    <div class="modal-footer">
 
-            <a href="#" class="<%= classFirstBtn %>">
-                <% if(iconFirstBtn == true && classFirstIcon) { %>
-                <span class="<%= classFirstIcon%>"></span>
-                <% }%>
-                <span class="text"><%= firstBtnText%></span>
-            </a>
-
-            <% if(showSecondBtn == true && secondBtnText) { %>
-            <a href="#" class="<%= classSecondBtn %>">
-                <% if(iconSecondBtn == true && classSecondIcon) { %>
-                <span class="<%= classSecondIcon%>"></span>
-                <% }%>
-                <span class="text"><%= secondBtnText%></span>
-            </a>
-            <% }%>
-
-        </div>
+        <% if(isShowCloseOnFooter == true) { %>
+        <button type="button" class="btn btn-default decline"><%= textDefault %></button>
+        <% }%>
+        <button type="button" class="btn btn-primary accept"><%= textPrimary %></button>
     </div>
 </div>

@@ -2,7 +2,7 @@ define([
     'jquery',
     'backbone',
     'marionette',
-    'apps/baseApp',
+    'apps',
     'config',
 
     /*modules*/

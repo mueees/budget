@@ -5,6 +5,101 @@ body{
   background rgba(78, 93, 108, 0.8)
   position relative
 
+.filter-container
+    margin 10px 0
+
+.small-grid-row
+    margin-right: -2px;
+    margin-left: -2px;
+.small-grid
+    padding-right: 2px;
+    padding-left: 2px;
+
+.choosePointer
+    cursor pointer
+
+.calculator
+    @media (min-width: 768px)
+        display none
+
+    [class^="col"]
+        margin 8px 0
+
+    button
+        width 100%
+
+.dateFiter
+    .dateLabel
+        text-align: center;
+        padding: 9px 0;
+        background: rgb(224, 224, 224);
+        color: rgb(65, 65, 65);
+
+.widget-container
+    padding 10px 0
+    position relative
+
+.loadingState
+    .loading-container
+        display block
+
+.loading-container
+    height 4px
+    position absolute
+    top 0
+    left 0
+    width 100%
+    display none
+
+    .progress-bar
+        width 100%
+
+.chart
+    max-height 200px
+
+#notify-container
+    position fixed
+    width 150px
+    min-height 12px
+    top 0px
+    left 50%
+    margin-left -100px
+    z-index 1040
+
+#notify-container-side
+    position fixed
+    width 200px
+    min-height 12px
+    top 40px
+    right 5px
+    z-index 1040
+
+    .notify
+        padding 6px 6px 3px
+        margin-bottom 7px
+
+    .success
+        border-bottom: 2px solid #3c96ea
+
+.notify
+    text-align center
+    font-size 14px
+    background rgba(255, 255, 255, 0.89)
+    padding 6px 6px 0
+    min-height 30px
+    margin 0 0 3px
+    color #646464
+
+    .body
+        p
+            padding 0
+
+    &.error
+        border-bottom 2px solid #e62038
+    &.success
+        border-bottom: 2px solid #e62038
+
+
 .landingLogo
   width: 30%
 
@@ -32,6 +127,9 @@ body{
 .budget-table td{
   padding: 15px 5px !important;
 }
+.budget-table .value{
+    padding-left 10px
+}
 .budget-pager{
   margin: 15px 0;
 }
@@ -41,28 +139,39 @@ body{
 .page-header{
   margin-top: 10px;
 }
-.menu{
-  position: fixed;
-  left: 0;
-  top: 0;
-  display: none;
-}
-.menu .nav{
-  background:  #4e5d6c;
-}
-.menu .nav a{
-  color: white;
-}
-.menu .nav li a:hover{
-  background: #485563;
-}
-.menu .nav .active{
-  background: #485563;
-}
-.menu .nav .text{
-  display: inline-block;
-  margin-left: 10px;
-}
+.menu
+  position relative
+  display block
+  padding-left 0
+  padding-right 0
+  background  #4e5d6c
+  z-index 1040
+
+  .nav
+    .text
+      display inline-block
+      margin-left 10px
+
+    .active
+      background #485563
+
+    a
+      color white
+      &:hover
+        background #485563
+
+  @media (max-width: 768px)
+    position fixed
+    left -95%
+    top 0
+    bottom 0
+    width 95%
+    transition left 0.3s
+
+    &.active
+      left 0
+      display block
+
 .logo{
   margin: 5px 5px 0 0;
   display: inline-block;
@@ -98,23 +207,27 @@ body{
 .budget-list .list-group-item:last-child{
 
 }
-.add .tags{
-  padding: 0;
-}
-.add .tags li{
-  display: inline-block;
-  list-style: none;
-  cursor: pointer;
-  margin-right: 8px;
-  margin-bottom: 10px;
-}
-.add .tags li .text{
-  display: inline-block;
-  margin-right: 10px;
-}
-.add .tags li.active{
-  background: #2E3841;
-}
+.transaction-container
+    .tags
+        padding 0
+        margin 0
+
+        li
+            display: inline-block;
+            list-style: none;
+            cursor: pointer;
+            margin-right: 8px;
+            margin-bottom: 10px;
+
+            &.active
+                button
+                    background #df691a
+
+            .text
+                display: inline-block;
+                margin-right: 10px;
+
+
 .menu-toggle .icon-bar{
   width: 22px;
   height: 2px;
@@ -129,18 +242,3 @@ body{
     display: block;
   }
 }
-@media (min-width: 768px){
-  .menu {
-    position: relative;
-    display: block;
-    padding-left: 0;
-  }
-}
-
-
-/*
-@media (min-width: 768px) and (max-width: 979px) {
-    .row .span4 {
-        width:46%;
-    }
-}*/
