@@ -11,7 +11,6 @@ var config = require('config')
 var controller = {
     signup: function(req, res, next){
         var data = req.body;
-        var _this = this;
 
         if( !validator.isEmail(data.email) ) {
             return next(new HttpError(400, "Invalid Email"));

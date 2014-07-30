@@ -22,8 +22,17 @@ block js_scripts
                 id: '#{user.id}'
             }
 
-    script(type='text/javascript' src='js/vendor/libs/require/require.js')
-    script(type='text/javascript').
-        requirejs(['js/config'], function(){
-            require(['apps/web'], function(){})
-        })
+
+    if(live)
+        script(type='text/javascript' src='js/require.js')
+        script(type='text/javascript' src='/js/script.js')
+    else
+        script(type='text/javascript' src='js/vendor/libs/require/require.js')
+        script(type='text/javascript').
+            requirejs(['js/config'], function(){
+                require(['apps/web'], function(){})
+            })
+
+
+
+

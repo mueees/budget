@@ -16,3 +16,13 @@ App.execute('setActiveMenu', 'Event');
 
 
 App.execute(config.commands["raven:send:message"], '401', options);
+App.execute(config.commands['notify:showNotify:side'], {text: 'Funnel was created.'});
+
+var notice = App.reqres.request(config.reqres["notice:get"], {
+    title: "Delete tag",
+    text: "Do you want delete tag?",
+    textPrimary: "Delete",
+    isCloseAuto: true
+});
+
+App.modal.show(notice);

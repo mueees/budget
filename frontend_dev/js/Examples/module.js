@@ -2,43 +2,75 @@ define([
     'jquery',
     'backbone',
     'marionette',
-    'apps/baseApp',
+    'app',
     'config'
 ], function(jQuery, Backbone, Marionette, App, config){
 
-    App.module("Map", {
+    App.module("Landing", {
 
         startWithParent: false,
 
-        define: function( Map, App, Backbone, Marionette, $, _ ){
+        define: function( Landing, App, Backbone, Marionette, $, _ ){
 
             var log;
             var Router = Marionette.AppRouter.extend({
 
                 before: function(){
-                    App.startSubApp( "Map", {} );
+                    App.startSubApp( "Landing", {} );
                 },
 
                 appRoutes: {
-                    "": "start"
+                    "landing(?:querypath)": "routeStart",
+                    "(?:querypath)": "redirectToLanding",
+                    "*any": "redirectToLanding"
                 }
 
             })
 
-            var Controller = Marionette.Controller.extend({});
+            var Controller = Marionette.Controller.extend({
+                start: function(){
+
+                }
+            });
 
             var API  = {
-                start: function(){Controller.start()}
+
+                routeStart: function(){
+                    Landing.controller.start();
+                },
+
+                redirectToLanding: function(){
+                    App.navigate('#landing', {trigger: true});
+                },
+
+                /*Инициализация перед стартом*/
+                start: function(){
+                    Landing.controller = new Controller({
+                        region: App.main
+                    });
+                    log('create controller');
+                },
+
+                /*Остановка модуля*/
+                stop: function(){
+                    if(Landing.controller) {
+                        log('delete controller');
+                        Landing.controller.close();
+                        delete Landing.controller;
+                    }
+                }
             }
 
-            Map.API = API;
+            Landing.start = API.start;
+            Landing.stop = API.stop;
 
             App.addInitializer(function(){
-                log = App.reqres.request("getLog", 'SidebarMenu');
-                var controller = new Controller();
-                new Router({
-                    controller: API
-                })
+                log('Initialize Router');
+                new Router({controller: API})
+            })
+
+            App.on('initialize:before', function(){
+                log = App.reqres.request("getLog", 'Landing');
             })
         }
     })

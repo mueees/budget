@@ -28,13 +28,21 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(express.static(__dirname + '/frontend_dev/'));
+if( process.env.NODE_SITE == "live" ){
+    app.use(express.static(__dirname + '/public/'));
+}else{
+    app.use(express.static('../frontend_dev/'));
+}
+
+
+
 app.use(bodyParser.json({type: 'application/x-www-form-urlencoded'}));
 app.use(cookieParser());
 app.set('views', __dirname + "/views");
 app.set('view engine', 'jade');
 
 app.use( require("middleware/sendHttpError") );
+app.use( require("middleware/publicVariables") );
 
 //routing
 route(app);

@@ -4,8 +4,9 @@ define([
     'marionette',
     'app',
     'config',
-    './view/NoticeView'
-], function(jQuery, Backbone, Marionette, App, config, NoticeView){
+    './view/NoticeView',
+    './view/NoticePromptView',
+], function(jQuery, Backbone, Marionette, App, config, NoticeView, NoticePromptView){
 
     App.module("Notice", {
 
@@ -22,9 +23,6 @@ define([
                 // info
                 status: "error",
 
-                /*type of icon*/
-                icon: "errorWhite",
-
                 /*title notice*/
                 title: "",
 
@@ -39,21 +37,17 @@ define([
                 addCustomClass: "",
 
                 /*close buttons*/
-                showCloseButton: false,
+                showCloseButton: true,
 
-                /*button (first) text*/
-                showFirstBtn: true,
-                firstBtnText: "Ok",
-                classFirstBtn: "button color-btn-grey size-btn-big decline",
-                iconFirstBtn: false,
-                classFirstIcon: "icon-guide-orange-button",
+                isShowCloseOnFooter: true,
 
-                /*button (second)*/
-                showSecondBtn: false,
-                secondBtnText: "Cancel",
-                classSecondBtn: "button color-btn-orange accept",
-                iconSecondBtn: false,
-                classSecondIcon: "icon-guide-orange-button"
+                textDefault: "Cancel",
+
+                textPrimary: "Ok",
+
+                isCloseAuto: true,
+
+                placeholder: ""
 
             }
 
@@ -61,6 +55,11 @@ define([
                 getNotice: function(options){
                     var opts = _.extend(_.clone(defaults), options);
                     return new NoticeView( opts );
+                },
+
+                getNoticePrompt: function(options){
+                    var opts = _.extend(_.clone(defaults), options);
+                    return new NoticePromptView( opts );
                 }
             });
 
@@ -72,7 +71,11 @@ define([
                     return controller.getNotice(options)
                 });
 
-                log("Initialized");
+                App.reqres.setHandler(config.reqres["notice:get:prompt"], function(options){
+                    return controller.getNoticePrompt(options)
+                });
+
+
             })
         }
     })

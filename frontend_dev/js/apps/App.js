@@ -1,7 +1,9 @@
 define([
     'backbone',
-    'marionette'
-], function(Backbone, Marionette){
+    'marionette',
+
+    'extends/ModalRegion'
+], function(Backbone, Marionette, ModalRegion){
 
     var App = new Marionette.Application();
     var AppRouter = Marionette.AppRouter.extend({});
@@ -14,6 +16,11 @@ define([
     App.channels.modules = {};
     App.channels.main = _.extend({}, Backbone.Events);
     App.channels.second = _.extend({}, Backbone.Events);
+
+    App.behaviors = {};
+    Marionette.Behaviors.behaviorsLookup = function() {
+        return App.behaviors;
+    }
 
     var trigger = Backbone.Events.trigger;
 
@@ -29,22 +36,19 @@ define([
         trigger.apply(App.channels.second, arguments);
     };
 
-    App.on('initialize:before', function(){
+    App.on('initialize:after', function(){
         log = App.reqres.request("getLog", 'App');
 
         if( Backbone.history ){
             //не стартуем сразу, даем время модулям зависящим от
             //Навигации нормально инициализироваться
 
-            Backbone.history.start({
-                silent: true
-            });
+            Backbone.history.start();
         }
     });
 
     App.navigate = function(fragment, options){
         options = options || {};
-        log('navigate to: ' + fragment);
         App.router.navigate(fragment, options);
     };
 
@@ -84,6 +88,11 @@ define([
         App.currentApp = currentApp;
         currentApp.start(args);
     };
+
+    App.addRegions({
+        body: "#body",
+        modal: new ModalRegion({el: "#modal"})
+    });
 
     return App;
 

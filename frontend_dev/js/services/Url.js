@@ -3,7 +3,7 @@ define([
     'underscore',
     'backbone',
     'marionette',
-    'apps/baseApp',
+    'app',
     'config',
 
     /*modules*/
