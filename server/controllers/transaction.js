@@ -92,8 +92,6 @@ var controller = {
         var userId = req.user.id;
         var tags = data.tags || [];
 
-
-
         TransactionModel.getTransactions({
             period: period,
             userId: userId,
