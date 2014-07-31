@@ -2,6 +2,7 @@
 cd /vagrant/server
 export NODE_SITE=development
 export NODE_PATH=/vagrant/server
+supervisor -i 'node_modules,public,testScript,public' server.js
 supervisor --debug -i 'node_modules,public,testScript,public' server.js
 
 //LIVE
