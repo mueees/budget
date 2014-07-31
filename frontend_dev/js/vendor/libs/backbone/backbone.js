@@ -5,7 +5,8 @@ define([
     'backbone.routefilter',
     'backbone.validation',
     'backbone.stickit',
-    'backbone.mobile',
+    /*'backbone.mobile',*/
+    'backbone.server',
     'backbone.syphon'
 ], function(Backbone) {
 

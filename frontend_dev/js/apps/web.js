@@ -13,6 +13,7 @@ require([
 
     /*modules*/
     'modules/log/module',
+    'modules/server/module',
     'modules/widget/module',
     'modules/component/module',
     'modules/notice/module',
@@ -30,5 +31,6 @@ require([
     'apps/transaction/module'
 
 ], function(App){
+
     App.start();
 });

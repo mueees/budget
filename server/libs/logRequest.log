@@ -1,0 +1,7 @@
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-31T13:16:47.148Z"}
+{"level":"error","message":"","timestamp":"2014-07-31T13:16:47.159Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-07-31T13:17:16.367Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-07-31T13:17:16.421Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-07-31T13:19:29.977Z"}
+{"status":404,"url":"/js/backbone.server.js?no-cache=1406812769982","level":"warn","message":"","timestamp":"2014-07-31T13:19:31.526Z"}
+{"status":404,"url":"/js/base.js?no-cache=1406817520245","level":"warn","message":"","timestamp":"2014-07-31T14:38:41.209Z"}

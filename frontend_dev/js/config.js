@@ -17,6 +17,7 @@ requirejs.config({
         "backbone.wreqr": "vendor/libs/backbone/backbone.wreqr",
         "backbone.babysitter": "vendor/libs/backbone/backbone.babysitter",
         "backbone.mobile": "vendor/libs/backbone/backbone.mobile",
+        "backbone.server": "vendor/libs/backbone/backbone.server",
         "backbone.queryparam": "vendor/libs/backbone/backbone.queryparam",
         "backbone.routefilter": "vendor/libs/backbone/backbone.routefilter",
         "backbone.validation": "vendor/libs/backbone/backbone.validation",

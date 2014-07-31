@@ -7,7 +7,8 @@ define([], function(){
             user: {
                 email: serverConfig.user.email,
                 id: serverConfig.user.id
-            }
+            },
+            db: 'ajax'
         },
         reqres: {
 
