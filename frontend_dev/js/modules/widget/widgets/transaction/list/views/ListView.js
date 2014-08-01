@@ -21,6 +21,12 @@ define([
 
         initialize: function(){
             this.collection = this.model.get('data');
+            this.listenTo(this.model, 'change', this.changeHandler);
+        },
+
+        changeHandler: function(){
+            this.collection = this.model.get('data');
+            this.render();
         },
 
         onCompositeRendered : function() {
