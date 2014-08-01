@@ -20,6 +20,10 @@ define([
                     this.server = options.server;
                     this.db = options.db;
 
+                    /*this.server.setTransportFactory(function(){
+                        debugger
+                    })*/
+
                     this.initRouting();
                 },
 
@@ -29,15 +33,15 @@ define([
                         createTag: {
                             urlExp: "/api/tag/create",
                             httpMethod: "POST",
-                            handler: function(context){
-                                return (new Server.TagController(context)).create();
-                            }
+                            handler: function(context){}
                         },
                         getTag: {
                             urlExp: "/api/tag/get",
                             httpMethod: "GET",
                             handler: function(context){
-                                return (new Server.TagController(context)).get();
+                                var def = new $.Deferred();
+                                (new Server.TagController({context: context,def: def})).get();
+                                return def.promise();
                             }
                         },
                         editTag: {

@@ -13,8 +13,9 @@ define([
         define: function( Server, App, Backbone, Marionette, $, _ ){
 
             Server.BaseController = Marionette.Controller.extend({
-                initialize: function(context){
-                    this.context = context;
+                initialize: function(options){
+                    this.context = options.context;
+                    this.def = options.def;
                     this.data = {};
                     if(this.context.data) this.data = JSON.parse(this.context.data);
                 }

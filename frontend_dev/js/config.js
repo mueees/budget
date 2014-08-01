@@ -23,6 +23,8 @@ requirejs.config({
         "backbone.validation": "vendor/libs/backbone/backbone.validation",
         "backbone.stickit": "vendor/libs/backbone/backbone.stickit",
         "backbone.syphon": "vendor/libs/backbone/backbone.syphon",
+        idb: "vendor/libs/idb",
+
         bootstrap: "vendor/libs/bootstrap/js/bootstrap.min",
         raphael: "vendor/libs/raphael.min",
         morris: "vendor/libs/morris.min",

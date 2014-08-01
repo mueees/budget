@@ -277,8 +277,13 @@
         // An exec-method to actually run the handler and subsequently invoke success / error
         //  callbacks. (The relevant 'success' or 'error' event will be triggered by backbone)
         execHandler = function () {
-            var result = c.route.handler.apply(null, [c].concat(c.route.handlerParams)); // Handle
-            transport[_.isString(result) ? "reject" : "resolve"](result);
+            /*var result = c.route.handler.apply(null, [c].concat(c.route.handlerParams)); // Handle
+            transport[_.isString(result) ? "reject" : "resolve"](result);*/
+
+            $.when(c.route.handler.apply(null, [c].concat(c.route.handlerParams))).always(function(result){
+                transport[_.isString(result) ? "reject" : "resolve"](result);
+            })
+
         };
 
         model.trigger("request", model, null, options);

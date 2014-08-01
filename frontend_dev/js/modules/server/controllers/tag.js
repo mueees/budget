@@ -4,8 +4,10 @@ define([
     'marionette',
     'app',
     'config',
+    'idb',
     './base'
-], function(jQuery, Backbone, Marionette, App, config){
+], function(jQuery, Backbone, Marionette, App, config, IDBStore){
+
     App.module("Server", {
 
         startWithParent: true,
@@ -16,40 +18,68 @@ define([
                 initialize: function(){
                     Server.BaseController.prototype.initialize.apply(this, arguments);
                 },
-                create: function(){
-                    var tag = App.Database.TagModel();
-                },
+                create: function(){},
                 get: function(){
-                    return [
-                        {
-                            "_id": "53d7f4790b777abc6822cb27",
-                            "tagName": "досуг"
+                    var _this = this;
+
+                    var Tag = Backbone.Model.extend({
+                        initialize: function(){},
+                        connect: function(){
+                            var def = new $.Deferred();
+                            var _this = this;
+
+                            if( this.db && this.db.onStoreReady() ){
+                                return def.resolve(_this);
+                            }else{
+                                this.db = new IDBStore({
+                                    dbVersion: 1,
+                                    storeName: 'Tags',
+                                    keyPath: 'id',
+                                    autoIncrement: true,
+                                    onStoreReady: function(){
+                                        def.resolve(_this);
+                                    }
+                                });
+                            }
+
+                            return def.promise();
                         },
-                        {
-                            "_id": "53d7f4790b777abc6822cb29",
-                            "tagName": "еда"
+                        getTags: function(){
+                            var _this = this;
+                            var def = new $.Deferred();
+                            $.when(this.connect()).done(function(){
+                                _this.db.getAll(function(data){
+                                    def.resolve(data);
+                                }, function(){debugger})
+                            })
+                            return def.promise();
                         },
-                        {
-                            "_id": "53d7f4790b777abc6822cb2a",
-                            "tagName": "другое"
-                        },
-                        {
-                            "_id": "53d7f86876e9dd430a73cf9b",
-                            "tagName": "хоз нужды"
-                        },
-                        {
-                            "_id": "53d7f87376e9dd430a73cf9c",
-                            "tagName": "гигиенические средства"
-                        },
-                        {
-                            "_id": "53d7f4790b777abc6822cb28",
-                            "tagName": "автомобиль"
-                        },
-                        {
-                            "_id": "53d7fffdaa53b2c20b20ebbc",
-                            "tagName": "обед"
+                        saveRandomTag: function(){
+                            var _this = this;
+                            var def = new $.Deferred();
+                            var tag = {tagName: 'Random tag' + (new Date()).getTime()};
+
+                            $.when(this.connect()).done(function(){
+                                _this.db.put(tag, function(){
+                                    def.resolve(_this);
+                                    console.log("RANDOM SAVE");
+                                }, function(){debugger})
+                            })
+
+                            return def.promise();
                         }
-                    ]
+                    });
+
+                    var tag = new Tag();
+
+                    $.when(tag.saveRandomTag()).done(function(){
+
+                        $.when(tag.getTags()).done(function(data){
+                            _this.def.resolve(data);
+                        })
+
+                    })
+
                 }
             });
         }
