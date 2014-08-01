@@ -19,7 +19,7 @@ var controller = {
             tags: data.tags
         });
 
-        if(data.data) transaction.date = data.date;
+        if(data.date) transaction.date = data.date;
 
         async.waterfall([
             function(cb){
