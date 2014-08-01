@@ -7,7 +7,11 @@ define([
         template: _.template(template),
 
         initialize: function(){
-            
+            this.listenTo(this.model, "change:data", this.dataHandler);
+        },
+
+        dataHandler: function(){
+            this.render();
         },
 
         onClose: function(){
