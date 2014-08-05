@@ -143,6 +143,11 @@ Transaction.statics.getTotalsByTag = function(period, userId, cb){
                     $sum: '$count'
                 }
             }
+        },
+        {
+            $sort: {
+                count: -1
+            }
         }
     ];
 
