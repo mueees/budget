@@ -5,7 +5,8 @@ define([
     'app',
     'config',
     'idb',
-    './base'
+    './base',
+    'modules/database/module'
 ], function(jQuery, Backbone, Marionette, App, config, IDBStore){
 
     App.module("Server", {
@@ -21,29 +22,7 @@ define([
                 create: function(){},
                 get: function(){
                     var _this = this;
-
-                    var Tag = Backbone.Model.extend({
-                        initialize: function(){},
-                        connect: function(){
-                            var def = new $.Deferred();
-                            var _this = this;
-
-                            if( this.db && this.db.onStoreReady() ){
-                                return def.resolve(_this);
-                            }else{
-                                this.db = new IDBStore({
-                                    dbVersion: 1,
-                                    storeName: 'Tags',
-                                    keyPath: 'id',
-                                    autoIncrement: true,
-                                    onStoreReady: function(){
-                                        def.resolve(_this);
-                                    }
-                                });
-                            }
-
-                            return def.promise();
-                        },
+                    var Tag = App.Database.TagModel.extend({
                         getTags: function(){
                             var _this = this;
                             var def = new $.Deferred();
@@ -63,13 +42,14 @@ define([
                                 _this.db.put(tag, function(){
                                     def.resolve(_this);
                                     console.log("RANDOM SAVE");
-                                }, function(){debugger})
+                                }, function(error){
+                                    alert('put error');
+                                })
                             })
 
                             return def.promise();
                         }
                     });
-
                     var tag = new Tag();
 
                     $.when(tag.saveRandomTag()).done(function(){

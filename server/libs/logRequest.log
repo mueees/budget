@@ -1,2 +1,16 @@
 {"level":"info","message":"Web server listening: 5001","timestamp":"2014-08-01T12:26:47.443Z"}
 {"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-08-01T12:26:47.528Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-08-04T07:01:25.807Z"}
+{"level":"error","message":"","timestamp":"2014-08-04T07:01:25.817Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-08-04T07:01:39.503Z"}
+{"level":"error","message":"","timestamp":"2014-08-04T07:01:39.521Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-08-04T07:02:21.162Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-08-04T07:02:21.197Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-04T07:03:01.303Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-04T07:18:38.076Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-04T07:18:38.116Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-04T07:18:38.150Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-04T07:19:25.617Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-04T07:19:30.150Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-04T07:19:33.929Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-04T07:44:30.200Z"}

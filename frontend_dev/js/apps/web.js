@@ -14,6 +14,7 @@ require([
     /*modules*/
     'modules/log/module',
     'modules/server/module',
+    'modules/database/module',
     'modules/widget/module',
     'modules/component/module',
     'modules/notice/module',

@@ -4,17 +4,15 @@ define([
     'marionette',
     'app',
     'config',
-    'backbone.server'
+    './entities/base',
+    './entities/tag',
+    'idb'
 ], function(jQuery, Backbone, Marionette, App, config, server){
     App.module("Database", {
 
         startWithParent: true,
 
-        define: function( Database, App, Backbone, Marionette, $, _ ){
-
-            Database;
-
-        }
+        define: function( Database, App, Backbone, Marionette, $, _ ){}
     })
 
 
