@@ -248,10 +248,13 @@ var controller = {
                 result.push(data);
             })
 
+            console.log('RESULT')
+            console.log(result);
+
             res.send({
                 data: result
             });
-            next(result);
+            //next(result);
         })
     }
 }
