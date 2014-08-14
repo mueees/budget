@@ -33,7 +33,11 @@ define([
                         createTag: {
                             urlExp: "/api/tag/create",
                             httpMethod: "POST",
-                            handler: function(context){}
+                            handler: function(context){
+                                var def = new $.Deferred();
+                                (new Server.TagController({context: context,def: def})).create();
+                                return def.promise();
+                            }
                         },
                         getTag: {
                             urlExp: "/api/tag/get",
@@ -48,14 +52,18 @@ define([
                             urlExp: "/api/tag/edit",
                             httpMethod: "POST",
                             handler: function(context){
-                                return (new Server.TagController(context)).edit();
+                                var def = new $.Deferred();
+                                (new Server.TagController({context: context,def: def})).edit();
+                                return def.promise();
                             }
                         },
                         removeTag: {
                             urlExp: "/api/tag/remove",
                             httpMethod: "POST",
                             handler: function(context){
-                                return (new Server.TagController(context)).remove();
+                                var def = new $.Deferred();
+                                (new Server.TagController({context: context,def: def})).remove();
+                                return def.promise();
                             }
                         }
                     });

@@ -14,3 +14,26 @@
 {"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-04T07:19:30.150Z"}
 {"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-04T07:19:33.929Z"}
 {"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-04T07:44:30.200Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-08-14T12:44:59.344Z"}
+{"level":"error","message":"","timestamp":"2014-08-14T12:44:59.356Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-08-14T12:45:37.548Z"}
+{"level":"error","message":"","timestamp":"2014-08-14T12:45:37.560Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-08-14T12:46:09.462Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-08-14T12:46:09.499Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-14T12:46:46.846Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-14T13:11:10.413Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-14T13:27:55.206Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-14T13:45:04.317Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-14T13:45:04.354Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-14T13:45:04.376Z"}
+{"level":"error","message":"Cannot find tag","timestamp":"2014-08-14T14:15:45.254Z"}
+{"level":"error","message":"Cannot find tag","timestamp":"2014-08-14T14:21:11.295Z"}
+{"level":"error","message":"Cannot find tag","timestamp":"2014-08-14T14:21:33.900Z"}
+{"level":"error","message":"Cannot find tag","timestamp":"2014-08-14T14:22:02.391Z"}
+{"level":"error","message":"Cannot find tag","timestamp":"2014-08-14T14:22:46.167Z"}
+{"level":"error","message":"Cannot find tag","timestamp":"2014-08-14T14:23:42.864Z"}
+{"level":"error","message":"Cannot find tag","timestamp":"2014-08-14T14:25:20.284Z"}
+{"level":"error","message":"Cannot find tag","timestamp":"2014-08-14T14:25:51.302Z"}
+{"level":"error","message":"Cannot find tag","timestamp":"2014-08-14T14:28:50.085Z"}
+{"level":"error","message":"Cannot find tag","timestamp":"2014-08-14T14:30:30.100Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-14T15:29:55.861Z"}

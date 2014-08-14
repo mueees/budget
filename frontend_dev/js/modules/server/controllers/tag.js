@@ -16,48 +16,64 @@ define([
         define: function( Server, App, Backbone, Marionette, $, _ ){
 
             Server.TagController = Server.BaseController.extend({
+
                 initialize: function(){
                     Server.BaseController.prototype.initialize.apply(this, arguments);
                 },
-                create: function(){},
+
+                create: function(){
+                    var _this = this;
+                    var tag = new App.Database.TagModel({
+                        tagName: this.data.tagName
+                    });
+
+                    $.when(tag.saveTag()).done(function(){
+                        _this.def.resolve({
+                            _id: tag.get('_id')
+                        });
+                    })
+                },
+
+                edit: function(){
+                    var _this = this;
+                    var newTagName = this.data.tagName;
+
+                    $.when(App.Database.TagModel.findById(this.data._id)).done(function(tag){
+                        if(!tag){
+                            _this.def.reject('Cannot find tag');
+                            return false;
+                        }else{
+                            tag.set({
+                                tagName: newTagName
+                            });
+
+                            $.when(tag.saveTag()).done( function(){
+                                _this.def.resolve();
+                            }).fail(function(){
+                                    _this.def.reject('Cannot update tag. Server error.');
+                                });
+                        }
+                    })
+                },
+
+                remove: function(){
+                    var _this = this;
+                    $.when(App.Database.TagModel.removeById(this.data._id)).done(function(){
+                        _this.def.resolve();
+                    }).fail(function(){
+                            _this.def.reject('Cannot delete tag. Server error.');
+                        })
+                },
+
                 get: function(){
                     var _this = this;
-                    var Tag = App.Database.TagModel.extend({
-                        getTags: function(){
-                            var _this = this;
-                            var def = new $.Deferred();
-                            $.when(this.connect()).done(function(){
-                                _this.db.getAll(function(data){
-                                    def.resolve(data);
-                                }, function(){debugger})
-                            })
-                            return def.promise();
-                        },
-                        saveRandomTag: function(){
-                            var _this = this;
-                            var def = new $.Deferred();
-                            var tag = {tagName: 'Random tag' + (new Date()).getTime()};
-
-                            $.when(this.connect()).done(function(){
-                                _this.db.put(tag, function(){
-                                    def.resolve(_this);
-                                    console.log("RANDOM SAVE");
-                                }, function(error){
-                                    alert('put error');
-                                })
-                            })
-
-                            return def.promise();
-                        }
+                    var tag = new App.Database.TagModel({
+                        tagName: (new Date()).getTime()
                     });
-                    var tag = new Tag();
 
-                    $.when(tag.saveRandomTag()).done(function(){
-
-                        $.when(tag.getTags()).done(function(data){
-                            _this.def.resolve(data);
-                        })
-
+                    var tagsCollection = new App.Database.TagCollection();
+                    $.when(tagsCollection.getTags()).done(function(data){
+                        _this.def.resolve(data);
                     })
 
                 }

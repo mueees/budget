@@ -137,8 +137,8 @@
         crudToHttp = {
             "create": "POST",
             "read": "GET",
-            "update": "PUT",
-            "delete": "DELETE",
+            "update": "POST", //"PUT",
+            "delete": "POST",//"DELETE",
             "patch": "PATCH"
         },
 

@@ -15,35 +15,92 @@ define([
         define: function( Database, App, Backbone, Marionette, $, _ ){
 
             Database.BaseModel = Backbone.Model.extend({
-                initialize: function(){
-                    this.connect();
-                },
+                initialize: function(){},
 
                 connect: function(){
                     var def = new $.Deferred();
                     var _this = this;
 
-                    if( this.db && this.db.onStoreReady() ){
-                        return def.resolve(_this);
+                    if(!_this.storeName) {
+                        alert("don't have store name");
+                        return false;
+                    }
+
+                    if( this.db ){
+
+                        if( this.db.onStoreReady() ){
+                            return def.resolve(_this);
+                        }else{
+                            return def.reject(_this);
+                        }
+
                     }else{
-                        this.db = new IDBStore({
+                        var options = {
                             dbVersion: 1,
-                            storeName: 'Tags',
+                            storeName: _this.storeName,
                             keyPath: 'id',
                             autoIncrement: true,
                             onStoreReady: function(){
                                 def.resolve(_this);
                             },
-                            onError: function(){
+                            onError: function(err){
+                                console.log(err);
                                 def.reject(_this);
                             }
-                        });
+                        }
+
+                        $.extend(options, this.dbOptions || {});
+                        this.db = new IDBStore(options);
                     }
 
                     return def.promise();
                 }
 
             });
+
+            Database.BaseCollection = Backbone.Collection.extend({
+
+                initialize: function(){},
+
+                connect: function(){
+                    var def = new $.Deferred();
+                    var _this = this;
+
+                    if(!_this.storeName) {
+                        alert("don't have store name");
+                        return false;
+                    }
+
+                    if( this.db ){
+
+                        if( this.db.onStoreReady() ){
+                            return def.resolve(_this);
+                        }else{
+                            return def.reject(_this);
+                        }
+
+                    }else{
+                        var options = {
+                            dbVersion: 1,
+                            storeName: _this.storeName,
+                            keyPath: 'id',
+                            autoIncrement: true,
+                            onStoreReady: function(){
+                                def.resolve(_this);
+                            },
+                            onError: function(err){
+                                console.log(err);
+                                def.reject(_this);
+                            }
+                        }
+
+                        $.extend(options, this.dbOptions || {});
+                        this.db = new IDBStore(options);
+                    }
+
+                    return def.promise();
+                }
+            })
 
         }
     })
