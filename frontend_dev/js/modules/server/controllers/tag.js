@@ -72,8 +72,8 @@ define([
                     });
 
                     var tagsCollection = new App.Database.TagCollection();
-                    $.when(tagsCollection.getTags()).done(function(data){
-                        _this.def.resolve(data);
+                    $.when(tagsCollection.getTags()).done(function(tags){
+                        _this.def.resolve(tags.toJSON());
                     })
 
                 }

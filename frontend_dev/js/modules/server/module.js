@@ -7,7 +7,8 @@ define([
     'backbone.server',
 
     /*controllers*/
-    './controllers/tag'
+    './controllers/tag',
+    './controllers/transaction'
 ], function(jQuery, Backbone, Marionette, App, config, server){
     App.module("Server", {
 
@@ -30,6 +31,7 @@ define([
                 initRouting: function(){
                     //tag
                     this.server.addRoutes({
+                        //tags
                         createTag: {
                             urlExp: "/api/tag/create",
                             httpMethod: "POST",
@@ -63,6 +65,27 @@ define([
                             handler: function(context){
                                 var def = new $.Deferred();
                                 (new Server.TagController({context: context,def: def})).remove();
+                                return def.promise();
+                            }
+                        },
+
+                        //transaction
+                        createTransaction: {
+                            urlExp: "/api/transaction/create",
+                            httpMethod: "POST",
+                            handler: function(context){
+                                var def = new $.Deferred();
+                                (new Server.TransactionController({context: context,def: def})).create();
+                                return def.promise();
+                            }
+                        },
+
+                        getTransactionList: {
+                            urlExp: "/api/transaction/list",
+                            httpMethod: "GET",
+                            handler: function(context){
+                                var def = new $.Deferred();
+                                (new Server.TransactionController({context: context,def: def})).transactionList();
                                 return def.promise();
                             }
                         }

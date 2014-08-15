@@ -6,6 +6,7 @@ define([
     'config',
     './entities/base',
     './entities/tag',
+    './entities/transaction',
     'idb'
 ], function(jQuery, Backbone, Marionette, App, config, server){
     App.module("Database", {
