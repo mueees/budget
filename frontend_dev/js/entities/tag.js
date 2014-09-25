@@ -69,7 +69,7 @@ define([
 
                     var defaults = {
                         url: this.urls.edit,
-                        type: 'post',
+                        type: 'POST',
                         data: JSON.stringify(data)
                     };
 
@@ -93,7 +93,7 @@ define([
 
                     var defaults = {
                         url: this.urls.remove,
-                        type: 'post',
+                        type: 'POST',
                         data: JSON.stringify(data)
                     };
 

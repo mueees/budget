@@ -75,9 +75,12 @@ define([
                             def.resolve(_this);
                         }, function(error){
                             alert('createNew tag error');
+                            def.reject(error);
                         })
                     }).fail(function(){
-                        })
+                        alert('connect tag error');
+                        def.reject(error);
+                    });
 
                     return def.promise();
                 },
@@ -101,9 +104,12 @@ define([
                             def.resolve(_this);
                         }, function(error){
                             alert('editTag error');
+                            def.reject(error);
                         })
                     }).fail(function(){
-                        })
+                        alert('fail editTag error');
+                        def.reject(error);
+                    })
 
                     return def.promise();
                 },
@@ -145,7 +151,7 @@ define([
                             def.reject();
                         });
                     }).fail(function(){
-                            def.reject();
+                        def.reject();
                     })
 
                     return def.promise();
@@ -153,17 +159,17 @@ define([
 
             });
 
-            Database.TagModel.findById = function(id){
+            Database.TagModel.findById = function(_id){
                 var def = new $.Deferred();
                 var tag = new Database.TagModel({
-                    _id: id
+                    _id: _id
                 });
 
                 $.when(tag.getData()).done(function(tag){
                     def.resolve(tag);
                 })
                 return def.promise();
-            }
+            };
 
             Database.TagModel.removeById = function(_id){
                 var def = new $.Deferred();
@@ -174,13 +180,12 @@ define([
                         _this.def.reject('Cannot find tag');
                         return false;
                     }else{
-
                         if( tag.get('label') && tag.get('label') == 'create' ){
                             $.when(tag.removeFromLocalDb()).done( function(){
                                 def.resolve();
                             }).fail(function(){
-                                    def.reject('Cannot delete tag. Server error.');
-                                });
+                                def.reject('Cannot delete tag. Server error.');
+                            });
 
                         }else{
                             tag.set({
@@ -190,14 +195,13 @@ define([
                             $.when(tag.saveTag()).done( function(){
                                 def.resolve();
                             }).fail(function(){
-                                    def.reject('Cannot delete tag. Server error.');
-                                });
+                                def.reject('Cannot delete tag. Server error.');
+                            });
                         }
-
                     }
                 })
                 return def.promise();
-            }
+            };
 
             Database.TagCollection = Database.BaseCollection.extend({
 
@@ -230,8 +234,8 @@ define([
                             def.resolve(result);
                         }, function(){})
                     }).fail(function(){
-                            def.reject(arguments);
-                        })
+                        def.reject(arguments);
+                    })
                     return def.promise();
                 }
             })

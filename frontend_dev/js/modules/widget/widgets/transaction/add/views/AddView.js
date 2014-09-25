@@ -90,8 +90,8 @@ define([
 
         getData: function(){
             var data = Backbone.Syphon.serialize(this);
-            var tag = this.ui.tags.find('.active').data('id');
-            if(tag) data.tags = [tag];
+            var tag = this.ui.tags.find('.active').data('id') + "";
+            data.tags = (tag) ? [tag] : [];
 
             data.date = new Date(data.date);
             return data;

@@ -45,7 +45,7 @@ define([
 
                     $.when(this.tags.fetch(), this.transaction.getData()).done(function(){
 
-                        if( !_this.transaction.get('count') ){
+                        if( !_this.transaction.get('count') && _this.transaction.get('count') !== 0 ){
                             _this.trigger('noTransaction');
                             return false;
                         }

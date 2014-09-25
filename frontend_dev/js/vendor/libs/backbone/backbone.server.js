@@ -227,7 +227,6 @@
 
     // Modify Backbone's sync to use the faux-server sync method (when appropriate)
     Backbone.sync = function (crudMethod, model, options) {
-
         // If faux-server is disabled, fall back to original sync
         if (!isEnabled) { return nativeSync.call(model, crudMethod, model, options); }
 
@@ -251,6 +250,8 @@
         // We'll be creating a transport for this sync / returning the transport's promise
             transport = null;
 
+        if(options.type) c.httpMethod = options.type.toUpperCase();
+
         // When emulating HTTP, 'create', 'update', 'delete' and 'patch' are all mapped to POST.
         if (options.emulateHTTP && c.httpMethod !== "GET") {
             c.httpMethodOverride = c.httpMethod;
@@ -264,6 +265,7 @@
         }
 
         // Find route for given URL or fall back to native sync if none found
+
         if (!(c.route = getMatchingRoute(c.url, c.httpMethod) || defaultRoute)) {
             return nativeSync.call(model, crudMethod, model, options);
         }

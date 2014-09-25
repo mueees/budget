@@ -66,7 +66,7 @@ define([
                 showView: function(){
                     this.view = new this.View({
                         model: this.model,
-                        Collection: this.Collection
+                        collection: this.collection
                     });
                     this.layout.main.show(this.view);
                     this.subscribe();

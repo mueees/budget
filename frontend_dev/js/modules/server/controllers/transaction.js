@@ -37,6 +37,57 @@ define([
                     })
                 },
 
+                edit: function(){
+                    var _this = this;
+
+                    $.when(App.Database.TransactionModel.findById(this.data._id)).done(function(transaction){
+                        if(!transaction){
+                            _this.def.reject('Cannot find transaction');
+                            return false;
+                        }else{
+
+                            var newData = {};
+                            if( _this.data.count ) newData.count = _this.data.count;
+                            if( _this.data.comment ) newData.comment = _this.data.comment;
+                            if( _this.data.tags ) newData.tags = _this.data.tags;
+                            if( _this.data.date ) newData.date = new Date(_this.data.date);
+
+                            transaction.set(newData);
+
+                            $.when(transaction.saveTransaction()).done( function(){
+                                _this.def.resolve();
+                            }).fail(function(){
+                                _this.def.reject('Cannot update transaction. Server error.');
+                            });
+                        }
+                    })
+                },
+
+                remove: function(){
+                    var _this = this;
+                    $.when(App.Database.TransactionModel.removeById(this.data._id)).done(function(){
+                        _this.def.resolve();
+                    }).fail(function(){
+                        _this.def.reject('Cannot delete transaction. Server error.');
+                    })
+                },
+
+                getById: function(){
+                    var transaction = new App.Database.TransactionModel({
+                        _id: this.data._id
+                    });
+                    var _this = this;
+                    $.when(transaction.getData()).done(function(transaction){
+                        if(!transaction){
+                            _this.def.reject();
+                            return false;
+                        }
+                        _this.def.resolve(transaction.toJSON());
+                    }).fail(function(){
+                        _this.def.reject();
+                    });
+                },
+
                 transactionList: function(){
                     var _this = this;
                     $.when(
@@ -69,64 +120,6 @@ define([
                         }).fail(function(){
                             _this.def.reject();
                         });
-                },
-
-                transactionList1: function(req, res, next){
-                    var data = req.body;
-
-                    async.parallel([
-                        function(cb){
-                            TransactionModel.getTransactionList( data.period, req.user._id, function(err, transactions){
-                                if(err) {
-                                    return cb(err);
-                                }
-
-                                cb(null, transactions);
-                            });
-                        },
-                        function(cb){
-                            TagModel.find({
-                                userId: req.user._id
-                            }, function(err, tags){
-                                if(err){
-                                    return cb(err)
-                                }
-                                cb(null, tags);
-                            });
-                        }
-                    ], function(err, results){
-                        if(err){
-                            logger.error(err);
-                            return next(new HttpError(400, "Server error."));
-                        }
-
-                        var result = [];
-                        var transactions = results[0];
-                        var tags = results[1];
-
-                        _.each(transactions, function(transaction){
-                            var resultTags = [];
-                            _.each(transaction.tags, function(transactionTagId){
-                                var result = {
-                                    id: transactionTagId + ''
-                                };
-                                _.each(tags, function(tag){
-                                    if(tag._id+'' == transactionTagId+'') {
-                                        result.tagName = tag.tagName;
-                                    }
-                                })
-                                resultTags.push(result);
-                            })
-                            transaction.tags = resultTags;
-
-                            result.push(transaction);
-                        })
-
-                        res.send({
-                            data: result
-                        });
-                    })
-
                 }
             });
         }

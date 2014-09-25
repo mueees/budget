@@ -50,3 +50,84 @@
 {"message":"","name":"CastError","type":"ObjectId","value":"undefined","path":"_id","level":"error","timestamp":"2014-08-15T10:42:48.056Z"}
 {"message":"","name":"CastError","type":"ObjectId","value":"undefined","path":"_id","level":"error","timestamp":"2014-08-15T10:43:15.198Z"}
 {"message":"","name":"CastError","type":"ObjectId","value":"undefined","path":"_id","level":"error","timestamp":"2014-08-15T10:43:23.932Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-09-03T23:06:33.754Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-09-03T23:06:33.807Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-03T23:09:15.225Z"}
+{"status":404,"url":"/js/apps/app.js?no-cache=1409785755256","level":"warn","message":"","timestamp":"2014-09-03T23:09:15.305Z"}
+{"level":"info","message":"Message sent: undefined","timestamp":"2014-09-03T23:12:17.916Z"}
+{"level":"info","message":"User confirmed account","timestamp":"2014-09-03T23:12:54.458Z"}
+{"level":"info","message":"Message sent: undefined","timestamp":"2014-09-03T23:12:56.725Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"undefined","path":"_id","level":"error","timestamp":"2014-09-03T23:29:42.214Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"undefined","path":"_id","level":"error","timestamp":"2014-09-03T23:33:54.423Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"undefined","path":"_id","level":"error","timestamp":"2014-09-03T23:34:06.924Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"2100156887028","path":"_id","level":"error","timestamp":"2014-09-03T23:36:38.600Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"2100156887028","path":"_id","level":"error","timestamp":"2014-09-03T23:38:33.974Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"2100156887028","path":"_id","level":"error","timestamp":"2014-09-03T23:41:39.820Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"2100156887028","path":"_id","level":"error","timestamp":"2014-09-03T23:42:23.859Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"2100156887028","path":"_id","level":"error","timestamp":"2014-09-03T23:43:42.775Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"2100156887028","path":"_id","level":"error","timestamp":"2014-09-03T23:44:00.148Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"2100156887028","path":"_id","level":"error","timestamp":"2014-09-03T23:44:29.245Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-03T23:45:43.086Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"2100156887028","path":"_id","level":"error","timestamp":"2014-09-03T23:45:44.903Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-09-24T09:50:54.418Z"}
+{"level":"error","message":"","timestamp":"2014-09-24T09:50:54.427Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-09-24T09:51:31.273Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-09-24T09:51:31.295Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-24T09:52:21.957Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"undefined","path":"_id","level":"error","timestamp":"2014-09-24T09:56:08.622Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"1607235127182","path":"_id","level":"error","timestamp":"2014-09-24T12:10:03.533Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"1607235127182","path":"_id","level":"error","timestamp":"2014-09-24T12:14:01.918Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"1607235127182","path":"_id","level":"error","timestamp":"2014-09-24T12:14:17.017Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"1607235127182","path":"_id","level":"error","timestamp":"2014-09-24T12:15:07.849Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"1607235127182","path":"_id","level":"error","timestamp":"2014-09-24T12:15:10.247Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"1607235127182","path":"_id","level":"error","timestamp":"2014-09-24T12:15:15.141Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"1607235127182","path":"_id","level":"error","timestamp":"2014-09-24T12:15:15.165Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"1607235127182","path":"_id","level":"error","timestamp":"2014-09-24T12:16:02.698Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"1607235127182","path":"_id","level":"error","timestamp":"2014-09-24T12:16:02.719Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"1607235127182","path":"_id","level":"error","timestamp":"2014-09-24T12:16:29.548Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"1607235127182","path":"_id","level":"error","timestamp":"2014-09-24T12:16:29.558Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"1607235127182","path":"_id","level":"error","timestamp":"2014-09-24T12:17:59.386Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"1607235127182","path":"_id","level":"error","timestamp":"2014-09-24T12:18:02.265Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"2100156887028","path":"_id","level":"error","timestamp":"2014-09-24T12:18:27.803Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"2100156887028","path":"_id","level":"error","timestamp":"2014-09-24T12:19:13.684Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"2100156887028","path":"_id","level":"error","timestamp":"2014-09-24T12:21:02.039Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"2100156887028","path":"_id","level":"error","timestamp":"2014-09-24T12:23:19.788Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"2100156887028","path":"_id","level":"error","timestamp":"2014-09-24T12:23:22.493Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"2100156887028","path":"_id","level":"error","timestamp":"2014-09-24T12:25:07.271Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"2100156887028","path":"_id","level":"error","timestamp":"2014-09-24T12:25:09.868Z"}
+{"level":"error","message":"Cannot find tag","timestamp":"2014-09-24T18:26:54.950Z"}
+{"level":"error","message":"Cannot find tag","timestamp":"2014-09-24T18:27:32.500Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-09-25T06:51:50.925Z"}
+{"level":"error","message":"","timestamp":"2014-09-25T06:51:50.940Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-09-25T06:52:21.561Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-09-25T06:52:21.583Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-25T06:52:32.926Z"}
+{"level":"error","message":"Cannot find tag","timestamp":"2014-09-25T06:52:40.311Z"}
+{"level":"error","message":"Cannot find tag","timestamp":"2014-09-25T06:52:53.825Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-09-25T06:53:51.717Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-09-25T06:53:51.741Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"1607235127182","path":"_id","level":"error","timestamp":"2014-09-25T07:00:26.132Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-09-25T07:55:39.752Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-09-25T07:55:39.773Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-09-25T07:57:58.713Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-09-25T08:11:56.978Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-09-25T08:11:56.998Z"}
+{"status":404,"url":"/js/vendor/libs/require/require.js","level":"warn","message":"","timestamp":"2014-09-25T08:11:58.909Z"}
+{"status":404,"url":"/js/vendor/libs/require/require.js","level":"warn","message":"","timestamp":"2014-09-25T08:12:03.284Z"}
+{"status":404,"url":"/js/vendor/libs/require/require.js","level":"warn","message":"","timestamp":"2014-09-25T08:12:06.432Z"}
+{"status":404,"url":"/js/vendor/libs/require/require.js","level":"warn","message":"","timestamp":"2014-09-25T08:12:07.164Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-09-25T08:13:27.071Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://localhost/budget","timestamp":"2014-09-25T08:13:27.094Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-09-25T08:14:11.769Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://localhost/budget_dev","timestamp":"2014-09-25T08:14:11.791Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-09-25T08:15:23.535Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-09-25T08:15:23.560Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-09-25T08:21:55.603Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-09-25T08:21:55.623Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-09-25T08:22:33.047Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-09-25T09:53:52.858Z"}
+{"level":"error","message":"","timestamp":"2014-09-25T09:53:52.870Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-09-25T09:54:15.453Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-09-25T09:54:15.473Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-25T09:54:31.830Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-25T10:18:32.679Z"}

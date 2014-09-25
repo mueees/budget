@@ -79,10 +79,37 @@ define([
                                 return def.promise();
                             }
                         },
+                        editTransaction: {
+                            urlExp: "/api/transaction/edit",
+                            httpMethod: "POST",
+                            handler: function(context){
+                                var def = new $.Deferred();
+                                (new Server.TransactionController({context: context,def: def})).edit();
+                                return def.promise();
+                            }
+                        },
+                        removeTransaction: {
+                            urlExp: "/api/transaction/remove",
+                            httpMethod: "POST",
+                            handler: function(context){
+                                var def = new $.Deferred();
+                                (new Server.TransactionController({context: context,def: def})).remove();
+                                return def.promise();
+                            }
+                        },
+                        getTransactionData: {
+                            urlExp: "/api/transaction/getById",
+                            httpMethod: "POST",
+                            handler: function(context){
+                                var def = new $.Deferred();
+                                (new Server.TransactionController({context: context,def: def})).getById();
+                                return def.promise();
+                            }
+                        },
 
                         getTransactionList: {
                             urlExp: "/api/transaction/list",
-                            httpMethod: "GET",
+                            httpMethod: "POST",
                             handler: function(context){
                                 var def = new $.Deferred();
                                 (new Server.TransactionController({context: context,def: def})).transactionList();

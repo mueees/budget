@@ -58,11 +58,16 @@ define([
 
                 remove: function(){
                     var _this = this;
-                    $.when(App.Database.TagModel.removeById(this.data._id)).done(function(){
+
+                    //remove tag
+                    $.when(
+                        App.Database.TagModel.removeById(this.data._id),
+                        App.Database.TransactionModel.removeTagById(this.data._id)
+                    ).done(function(){
                         _this.def.resolve();
                     }).fail(function(){
                             _this.def.reject('Cannot delete tag. Server error.');
-                        })
+                        });
                 },
 
                 get: function(){

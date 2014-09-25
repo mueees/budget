@@ -18,6 +18,7 @@ requirejs.config({
         backbone: "frontend_dev/js/vendor/libs/backbone/backbone",
         marionette: "frontend_dev/js/vendor/libs/marionette",
         "backbone.wreqr": "frontend_dev/js/vendor/libs/backbone/backbone.wreqr",
+        "backbone.server": "frontend_dev/js/vendor/libs/backbone/backbone.server",
         "backbone.babysitter": "frontend_dev/js/vendor/libs/backbone/backbone.babysitter",
         "backbone.queryparam": "frontend_dev/js/vendor/libs/backbone/backbone.queryparam",
         "backbone.routefilter": "frontend_dev/js/vendor/libs/backbone/backbone.routefilter",
@@ -28,6 +29,7 @@ requirejs.config({
         raphael: "frontend_dev/js/vendor/libs/raphael.min",
         async: "frontend_dev/js/vendor/libs/async",
         morris: "frontend_dev/js/vendor/libs/morris.min",
+        idb: "frontend_dev/js/vendor/libs/idb",
 
         /*plugins*/
         moment: "frontend_dev/js/vendor/plugins/moment.min",
