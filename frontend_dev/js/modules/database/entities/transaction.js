@@ -5,8 +5,9 @@ define([
     'marionette',
     'app',
     'config',
+    'async',
     './base'
-], function($, _, Backbone, Marionette, App, config){
+], function($, _, Backbone, Marionette, App, config, async){
 
     App.module("Database", {
 
@@ -69,7 +70,7 @@ define([
                     var def = new $.Deferred();
 
                     var data = this.toJSON();
-                    if( !this.get('label') ) data.label = 'edit';
+                    //if( !this.get('label') ) data.label = 'edit';
 
                     $.when(this.connect()).done(function(){
                         _this.db.put(data, function(){
@@ -236,6 +237,32 @@ define([
                 return def.promise();
             };
 
+            Database.TransactionModel.removeTransactions = function(options){
+                var def = new $.Deferred();
+
+                $.when(App.Database.TransactionCollection.getAllTransactions())
+                    .done(function(transactions){
+                        var transactionsToRemove = transactions.where(options);
+                        var methods = [];
+                        _.each(transactionsToRemove, function(transactions){
+                            methods.push(function(callback){
+                                $.when(transactions.removeFromLocalDb())
+                                    .done(function(){callback(null)})
+                                    .fail(function(){callback(1)});
+                            });
+                        });
+
+                        async.parallel(methods, function(err){
+                            if(err){
+                                return def.reject();
+                            }
+                            def.resolve();
+                        });
+                    });
+
+                return def.promise();
+            };
+
             Database.TransactionCollection = Database.BaseCollection.extend({
 
                 dbOptions: {
@@ -260,7 +287,6 @@ define([
                 getTransactionList: function(period){
                     var _this = this;
                     var def = new $.Deferred();
-                    var result = [];
 
                     $.when(this.connect()).done(function(){
                         var range;
@@ -273,15 +299,18 @@ define([
                             range = null;
                         }
 
-                        _this.db.iterate(function(transactionData, cursor, transaction){
-                            result.push(new App.Database.TransactionModel(transactionData));
+                        _this.db.query(function(transactionData, cursor, transaction){
+                            var result = [];
+                            _.each(transactionData, function(transaction){
+                                if(transaction.label != 'remove') result.push(new App.Database.TransactionModel(transaction));
+                            });
+
+                            def.resolve(result);
+                            //result.push(new App.Database.TransactionModel(transactionData));
                         }, {
                             order: 'DESC',
                             index: 'date',
-                            keyRange: range,
-                            onEnd: function(){
-                                def.resolve(result);
-                            }
+                            keyRange: range
                         });
 
                     }).fail(function(){
@@ -321,8 +350,85 @@ define([
                     })
 
                     return def.promise();
+                },
+
+                getChangingData: function(){
+                    var _this = this;
+                    var def = new $.Deferred();
+                    $.when(this.connect())
+                        .done(function(){
+                            _this.db.query(function(transactions, cursor, transaction){
+
+                                var changingTransactions = _.filter(transactions, function(transaction){
+                                    if (transaction.label){
+                                        return transaction;
+                                    }
+                                });
+                                _this.add(changingTransactions);
+                                def.resolve(_this);
+
+                            }, {
+                                order: 'DESC',
+                                index: '_id'
+                            })
+                        })
+                        .fail(function(){
+                            def.reject();
+                        });
+
+                    return def.promise();
+                },
+
+                getAllTransactions: function(){
+                    var _this = this;
+                    var def = new $.Deferred();
+
+                    $.when(this.connect())
+                        .done(function(){
+                            _this.db.getAll(function(data){
+                                _this.add(data);
+                                def.resolve(_this);
+                            }, function(){});
+                        })
+                        .fail(function(){
+                            def.reject(arguments);
+                        });
+
+                    return def.promise();
                 }
             })
+
+            Database.TransactionCollection.getChangingData = function(){
+                var def = $.Deferred();
+
+                var transactions = new Database.TransactionCollection();
+
+                $.when(transactions.getChangingData())
+                    .done(function(transactions){
+                        def.resolve(transactions);
+                    })
+                    .fail(function(){
+                        def.reject();
+                    });
+
+                return def.promise();
+            };
+
+            Database.TransactionCollection.getAllTransactions = function(){
+                var def = $.Deferred();
+
+                var transactions = new Database.TransactionCollection();
+
+                $.when(transactions.getAllTransactions())
+                    .done(function(transactions){
+                        def.resolve(transactions);
+                    })
+                    .fail(function(){
+                        def.reject();
+                    });
+
+                return def.promise();
+            };
 
         }
     })

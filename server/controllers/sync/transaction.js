@@ -12,6 +12,7 @@ var config = require('config')
 function TransactionController(transactions, userId){
     this.userId = userId;
     this.transactions = transactions || [];
+    this.createdTransactions = [];
 }
 
 TransactionController.prototype.updateTagsId = function(createdTagId){
@@ -30,6 +31,8 @@ TransactionController.prototype.updateTagsId = function(createdTagId){
 };
 
 TransactionController.prototype._create = function(currentTransaction, cb){
+    var _this = this;
+
     var transaction = new TransactionModel({
         userId: this.userId,
         count: currentTransaction.count,
@@ -45,7 +48,6 @@ TransactionController.prototype._create = function(currentTransaction, cb){
         function(cb){
             transaction.save(function(err){
                 if(err) {
-
                     cb(err);
                 }
                 cb(null, transaction);
@@ -57,12 +59,17 @@ TransactionController.prototype._create = function(currentTransaction, cb){
             return cb(err);
         }
 
+        _this.createdTransactions.push({
+            idBefore: currentTransaction._id,
+            idActual: transaction._id
+        });
+
         cb(null);
     })
 };
 
 TransactionController.prototype.getCreatedId = function(){
-    return this.createdTag;
+    return this.createdTransactions;
 }
 
 TransactionController.prototype._remove = function(currentTransaction, cb){
@@ -101,15 +108,15 @@ TransactionController.prototype._sync = function(){
     var _this = this;
 
     _.each(this.transactions, function(transaction){
-        if(transaction['create']){
+        if(transaction.label == 'create'){
             methods.push(function(cb){
                 _this._create(transaction, cb);
             })
-        }else if( transaction['remove'] ){
+        }else if( transaction.label == 'remove' ){
             methods.push(function(cb){
                 _this._remove(transaction, cb);
             })
-        }else if( transaction['edit'] ){
+        }else if( transaction.label == 'edit' ){
             methods.push(function(cb){
                 _this._edit(transaction, cb);
             })

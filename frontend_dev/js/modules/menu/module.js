@@ -38,6 +38,9 @@ define([
                 },
 
                 subscribe: function(){
+                    this.listenTo(this.model, "sync", function(){
+                        App.channels.main.trigger(config.channels['sync']);
+                    });
                     this.listenTo(this.model, "change:path", this.pathHandler);
                     this.listenTo(this.model, "change:isOpen", this.isOpenHandler);
                     $(window).on('resize', this.resizeHandler);

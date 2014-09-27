@@ -24,6 +24,7 @@ requirejs.config({
         "backbone.stickit": "vendor/libs/backbone/backbone.stickit",
         "backbone.syphon": "vendor/libs/backbone/backbone.syphon",
         idb: "vendor/libs/idb",
+        async: "vendor/libs/async",
 
         bootstrap: "vendor/libs/bootstrap/js/bootstrap.min",
         raphael: "vendor/libs/raphael.min",

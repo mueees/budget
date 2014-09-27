@@ -44,7 +44,8 @@ define([
                             return false;
                         }else{
                             tag.set({
-                                tagName: newTagName
+                                tagName: newTagName,
+                                label: 'edit'
                             });
 
                             $.when(tag.saveTag()).done( function(){

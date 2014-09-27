@@ -39,14 +39,15 @@ TagControler.prototype._create = function(currentTag, cb){
             })
         }
     ], function(err, tag){
+
         if(err){
-            cb(err);
+            return cb(err);
         }
 
         _this.createdTag.push({
             idBefore: currentTag._id,
             idActual: tag._id
-        })
+        });
 
         cb(null);
 
@@ -103,15 +104,15 @@ TagControler.prototype._sync = function(){
     var _this = this;
 
     _.each(this.tags, function(tag){
-        if(tag['create']){
+        if(tag.label == 'create'){
             methods.push(function(cb){
                 _this._create(tag, cb);
             })
-        }else if( tag['remove'] ){
+        }else if( tag.label == 'remove' ){
             methods.push(function(cb){
                 _this._remove(tag, cb);
             })
-        }else if( tag['edit'] ){
+        }else if( tag.label == 'edit' ){
             methods.push(function(cb){
                 _this._edit(tag, cb);
             })

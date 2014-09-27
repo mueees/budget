@@ -21,7 +21,9 @@ var controller = {
         async.waterfall([
             function(cb){
                 tagController.sync(function(err){
-                    if(err) return cb(err);
+                    if(err) {
+                        return cb(err);
+                    }
 
                     var createdTagId = tagController.getCreatedId();
                     if( createdTagId.length ){
@@ -40,10 +42,17 @@ var controller = {
                 logger.error(err);
                 return next(new HttpError(400, err.errors));
             }
-            res.send();
-            next();
+
+            res.send({
+                newTagId: tagController.getCreatedId(),
+                newTransactionId: transactionController.getCreatedId()
+            });
         })
     },
-    serverClient: function(req, res, next){}
+    serverClient: function(req, res, next){
+
+
+
+    }
 }
 module.exports = controller;

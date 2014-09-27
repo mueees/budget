@@ -5,8 +5,9 @@ define([
     'marionette',
     'app',
     'config',
+    'async',
     './base'
-], function($, _, Backbone, Marionette, App, config){
+], function($, _, Backbone, Marionette, App, config, async){
 
     App.module("Database", {
 
@@ -97,8 +98,6 @@ define([
                         id: this.get('id')
                     }
 
-                    if( !this.get('label') ) data.label = 'edit';
-
                     $.when(this.connect()).done(function(){
                         _this.db.put(data, function(){
                             def.resolve(_this);
@@ -118,7 +117,7 @@ define([
                     var _this = this;
                     var _id =  this.get('_id');
                     var def = new $.Deferred();
-                    var result;
+                    var result = null;
                     $.when(this.connect()).done(function(){
                         var range = _this.db.makeKeyRange({
                             lower: _id,
@@ -167,7 +166,7 @@ define([
 
                 $.when(tag.getData()).done(function(tag){
                     def.resolve(tag);
-                })
+                });
                 return def.promise();
             };
 
@@ -186,12 +185,10 @@ define([
                             }).fail(function(){
                                 def.reject('Cannot delete tag. Server error.');
                             });
-
                         }else{
                             tag.set({
                                 label: 'remove'
                             });
-
                             $.when(tag.saveTag()).done( function(){
                                 def.resolve();
                             }).fail(function(){
@@ -200,6 +197,33 @@ define([
                         }
                     }
                 })
+                return def.promise();
+            };
+
+            Database.TagModel.removeTags = function(options){
+                var def = new $.Deferred();
+
+                $.when(App.Database.TagCollection.getAllTags())
+                    .done(function(tags){
+                        var tagToRemove = tags.where(options);
+
+                        var methods = [];
+                        _.each(tagToRemove, function(tag){
+                            methods.push(function(callback){
+                                $.when(tag.removeFromLocalDb())
+                                    .done(function(){callback(null)})
+                                    .fail(function(){callback(1)});
+                            });
+                        });
+
+                        async.parallel(methods, function(err){
+                            if(err){
+                                return def.reject();
+                            }
+                            def.resolve();
+                        });
+                    });
+
                 return def.promise();
             };
 
@@ -224,21 +248,105 @@ define([
                 getTags: function(){
                     var _this = this;
                     var def = new $.Deferred();
-                    $.when(this.connect()).done(function(){
-                        _this.db.getAll(function(data){
-                            var result = new App.Database.TagCollection();
-                            _.each(data, function(tag){
-                                if(tag.label != 'remove') result.add(tag);
-                            })
 
-                            def.resolve(result);
-                        }, function(){})
-                    }).fail(function(){
-                        def.reject(arguments);
-                    })
+                    $.when(this.connect())
+                        .done(function(){
+                            _this.db.getAll(function(data){
+                                var result = new App.Database.TagCollection();
+                                _.each(data, function(tag){
+                                    if(tag.label != 'remove') result.add(tag);
+                                });
+
+                                def.resolve(result);
+                            }, function(){});
+                        })
+                        .fail(function(){
+                            def.reject(arguments);
+                        });
+
+                    return def.promise();
+                },
+
+                getAllTags: function(){
+                    var _this = this;
+                    var def = new $.Deferred();
+
+                    $.when(this.connect())
+                        .done(function(){
+                            _this.db.getAll(function(data){
+                                var tags = new App.Database.TagCollection();
+                                tags.add(data);
+                                def.resolve(tags);
+                            }, function(){});
+                        })
+                        .fail(function(){
+                            def.reject(arguments);
+                        });
+
+                    return def.promise();
+                },
+
+                getChangingData: function(){
+                    var _this = this;
+                    var def = new $.Deferred();
+                    $.when(this.connect())
+                        .done(function(){
+                            _this.db.query(function(tags, cursor, transaction){
+
+                                var changingTags = _.filter(tags, function(tag){
+                                    if (tag.label){
+                                        return tag;
+                                    }
+                                });
+                                _this.add(changingTags);
+                                def.resolve(_this);
+
+                            }, {
+                                order: 'DESC',
+                                index: '_id'
+                            })
+                        })
+                        .fail(function(){
+                            def.reject();
+                        });
+
                     return def.promise();
                 }
-            })
+            });
+
+            Database.TagCollection.getChangingData = function(){
+                var def = $.Deferred();
+
+                //find all tags, that have field label not empty
+                var tags = new Database.TagCollection();
+
+                $.when(tags.getChangingData())
+                    .done(function(tags){
+                        def.resolve(tags);
+                    })
+                    .fail(function(){
+                        def.reject();
+                    });
+
+                return def.promise();
+            };
+
+            Database.TagCollection.getAllTags = function(){
+                var def = $.Deferred();
+
+                //find all tags, that have field label not empty
+                var tags = new Database.TagCollection();
+
+                $.when(tags.getAllTags())
+                    .done(function(tags){
+                        def.resolve(tags);
+                    })
+                    .fail(function(){
+                        def.reject();
+                    });
+
+                return def.promise();
+            };
 
         }
     })

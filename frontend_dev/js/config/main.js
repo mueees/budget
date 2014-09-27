@@ -19,13 +19,21 @@ define([], function(){
             'transaction:entity' : 'transaction:entity',
             'transaction:collection:entity': 'transaction:collection:entity',
             'tag:entity': 'tag:entity',
-            'tag:collection:entity': 'tag:collectWion:entity',
+            'tag:collection:entity': 'tag:collection:entity',
             'statistic:total:entity': 'statistic:total:entity',
             'statistic:transactionList:entity': 'statistic:transactionList:entity',
+            'statistic:totalByTag:entity': 'statistic:totalByTag:entity',
 
             'notice:get': 'notice:get',
             'notice:get:prompt' : 'notice:get:prompt',
-            'date:get:period': 'date:get:period'
+            'date:get:period': 'date:get:period',
+
+            'service:db:getChangingData': 'service:db:getChangingData',
+            'service:db:updateTagsId': 'service:db:updateTagsId',
+            'service:db:updateTransactionsId': 'service:db:updateTransactionsId',
+            'service:db:removeRemovedTransactions': 'service:db:removeRemovedTransactions',
+            'service:db:removeRemovedTag': 'service:db:removeRemovedTag',
+            'service:db:updateTagIdInTransactions': 'service:db:updateTagIdInTransactions'
         },
 
         commands: {
@@ -35,13 +43,15 @@ define([], function(){
             'notify:showNotify': 'notify:showNotify',
             'notify:showNotify:side': 'notify:showNotify:side',
             'notify:clearAllNotice': 'notify:clearAllNotice',
+            'notify:clearAllNotify:side': 'notify:clearAllNotify:side',
 
             'menu:set': 'menu:set',
             'menu:open': 'menu:open'
         },
 
         channels: {
-            'date:change': 'date:change'
+            'date:change': 'date:change',
+            'sync': 'sync'
         },
 
         api: {
@@ -65,6 +75,11 @@ define([], function(){
                 total: '/api/transaction/total',
                 totalByTag: '/api/transaction/totalByTag',
                 listTransactions: "/api/transaction/list"
+            },
+
+            sync: {
+                clientServer: '/api/sync/clientserver',
+                serverClient: '/api/sync/serverclient'
             }
 
 

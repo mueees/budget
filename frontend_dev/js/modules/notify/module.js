@@ -65,6 +65,10 @@ define([
 
                 clearAllNotice: function(){
                     $('#notify-container').html('');
+                },
+
+                clearAllNotifySide: function(){
+                    $('#notify-container-side').html('');
                 }
             }
 
@@ -83,6 +87,10 @@ define([
 
                 showNotifySide: function(options){
                     Controller.showNotifySide(options);
+                },
+
+                clearAllNotifySide: function(){
+                    return Controller.clearAllNotifySide();
                 }
             }
 
@@ -97,6 +105,10 @@ define([
 
             App.commands.setHandler(config.commands['notify:showNotify:side'], function( options ){
                 return API.showNotifySide( options );
+            })
+
+            App.commands.setHandler(config.commands['notify:clearAllNotify:side'], function( options ){
+                return API.clearAllNotifySide( options );
             })
 
         }
