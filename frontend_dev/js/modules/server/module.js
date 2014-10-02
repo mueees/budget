@@ -21,10 +21,6 @@ define([
                     this.server = options.server;
                     this.db = options.db;
 
-                    /*this.server.setTransportFactory(function(){
-                        debugger
-                    })*/
-
                     this.initRouting();
                 },
 

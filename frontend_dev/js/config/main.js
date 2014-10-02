@@ -30,10 +30,20 @@ define([], function(){
 
             'service:db:getChangingData': 'service:db:getChangingData',
             'service:db:updateTagsId': 'service:db:updateTagsId',
+            'service:db:resetTagEditLabel': 'service:db:resetTagEditLabel',
+            'service:db:resetTransactionEditLabel': 'service:db:resetTransactionEditLabel',
             'service:db:updateTransactionsId': 'service:db:updateTransactionsId',
             'service:db:removeRemovedTransactions': 'service:db:removeRemovedTransactions',
             'service:db:removeRemovedTag': 'service:db:removeRemovedTag',
+            'service:db:removeTagById': 'service:db:removeTagById',
+            'service:db:removeTransactionById': 'service:db:removeTransactionById',
+            'service:db:editOrCreateTag': 'service:db:editOrCreateTag',
+            'service:db:editOrCreateTransaction': 'service:db:editOrCreateTransaction',
             'service:db:updateTagIdInTransactions': 'service:db:updateTagIdInTransactions'
+        },
+
+        storage: {
+            "lastUpdate": 'lastUpdate'
         },
 
         commands: {

@@ -70,18 +70,47 @@ define([
                     var def = new $.Deferred();
 
                     var data = this.toJSON();
-                    //if( !this.get('label') ) data.label = 'edit';
+                    delete data.id;
 
-                    $.when(this.connect()).done(function(){
-                        _this.db.put(data, function(){
-                            def.resolve(_this);
-                        }, function(error){
-                            alert('editTransaction error');
-                            def.reject(error);
+                    if( this.get('id') ) data.id = this.get('id');
+                    if(_.isString(data.updated_at) ) data.updated_at = new Date(data.updated_at);
+                    if(_.isString(data.date) ) data.date = new Date(data.date);
+
+                    var methods = [];
+
+                    if( !this.get('id') ) {
+                        //get id and then save transactions
+                        methods.push(function(cb){
+                            $.when(_this.getIdBy_Id())
+                                .done(function(id){
+                                    if(id) data.id = id;
+                                    cb(null);
+                                })
+                                .fail(function(){
+                                    cb(1);
+                                })
                         })
-                    }).fail(function(){
-                        alert('fail editTransaction error');
-                        def.reject(error);
+                    }
+
+                    methods.push(function(cb){
+                        $.when(_this.connect()).done(function(){
+                            _this.db.put(data, function(){
+                                cb(null)
+                            }, function(error){
+                                cb(error);
+                            })
+                        }).fail(function(){
+                            cb(error);
+                        });
+                    });
+
+                    async.waterfall(methods, function(err){
+                        if(err){
+                            def.reject();
+                            return false;
+                        }
+
+                        def.resolve(_this);
                     });
 
                     return def.promise();
@@ -114,6 +143,36 @@ define([
                         def.reject();
                     })
 
+                    return def.promise();
+                },
+
+                getIdBy_Id: function(){
+                    var _this = this;
+                    var _id =  this.get('_id');
+                    var def = new $.Deferred();
+                    var result;
+
+                    $.when(this.connect()).done(function(){
+                        var range = _this.db.makeKeyRange({
+                            lower: _id,
+                            upper: _id
+                        });
+
+                        _this.db.query(function(transactions, cursor, transaction){
+                            var result;
+                            if( transactions.length ){
+                                result = transactions[0].id;
+                            }
+                            def.resolve(result);
+                        }, {
+                            order: 'DESC',
+                            index: '_id',
+                            keyRange: range,
+                            onEnd: function(){
+                                def.resolve(result);
+                            }
+                        })
+                    })
                     return def.promise();
                 },
 
@@ -232,7 +291,7 @@ define([
                     });
 
                 }).fail(function(){
-                    alert('fail')
+                    alert('fail');
                 })
                 return def.promise();
             };
@@ -422,6 +481,38 @@ define([
                 $.when(transactions.getAllTransactions())
                     .done(function(transactions){
                         def.resolve(transactions);
+                    })
+                    .fail(function(){
+                        def.reject();
+                    });
+
+                return def.promise();
+            };
+
+            Database.TransactionCollection.resetEditLabel = function(){
+                var def = $.Deferred();
+
+                var transactions = new Database.TransactionCollection();
+
+                $.when(transactions.getAllTransactions())
+                    .done(function(transaction){
+                        var transactionsForEdit = transactions.where({label: 'edit'});
+                        var methods = [];
+                        _.each(transactionsForEdit, function(transaction){
+                            transaction.set({label: null});
+                            methods.push(function(callback){
+                                $.when(transaction.saveTransaction())
+                                    .done(function(){callback(null)})
+                                    .fail(function(){callback(1)});
+                            });
+                        });
+                        async.parallel(methods, function(err){
+                            if(err){
+                                return def.reject();
+                            }
+                            def.resolve();
+                        });
+
                     })
                     .fail(function(){
                         def.reject();

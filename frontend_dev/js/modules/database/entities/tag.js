@@ -54,7 +54,7 @@ define([
                     if( !this.get('_id') ){
                         return this.createNew(arguments);
                     } else{
-                        this.editTag(arguments);
+                        return this.editTag(arguments);
                     }
                 },
 
@@ -87,6 +87,7 @@ define([
                 },
 
                 editTag: function(options){
+
                     var _this = this;
                     var def = new $.Deferred();
 
@@ -94,36 +95,89 @@ define([
                         tagName: this.get('tagName'),
                         label: this.get('label'),
                         updated_at: new Date(),
-                        _id: this.get('_id'),
-                        id: this.get('id')
+                        _id: this.get('_id')
+                    };
+
+                    if( this.get('id') ) data.id = this.get('id');
+                    if(_.isString(data.updated_at) ) data.updated_at = new Date(data.updated_at);
+
+                    var methods = [];
+
+                    if( !this.get('id') ) {
+                        //get id and then save tag
+                        methods.push(function(cb){
+                            $.when(_this.getIdBy_Id())
+                                .done(function(id){
+                                    if(id) data.id = id;
+                                    cb(null);
+                                })
+                                .fail(function(){
+                                    cb(1);
+                                })
+                        })
                     }
 
-                    $.when(this.connect()).done(function(){
-                        _this.db.put(data, function(){
-                            def.resolve(_this);
-                        }, function(error){
-                            alert('editTag error');
-                            def.reject(error);
-                        })
-                    }).fail(function(){
-                        alert('fail editTag error');
-                        def.reject(error);
-                    })
+                    methods.push(function(cb){
+                        $.when(_this.connect())
+                            .done(function(){
+                                _this.db.put(data, function(){
+                                    cb(null)
+                                }, function(error){
+                                    cb(error);
+                                })
+                            })
+                            .fail(function(error){
+                                cb(error);
+                            })
+                    });
 
+                    async.waterfall(methods, function(err){
+                        if(err){
+                            def.reject();
+                            return false;
+                        }
+
+                        def.resolve(_this);
+                    });
+
+                    return def.promise();
+                },
+
+                getIdBy_Id: function(){
+                    var _this = this;
+                    var _id =  this.get('_id');
+                    var def = $.Deferred();
+                    $.when(this.connect())
+                        .done(function(){
+                            var range = _this.db.makeKeyRange({
+                                lower: _id,
+                                upper: _id
+                            });
+                            _this.db.query(function(tags, cursor, transaction){
+                                var result;
+                                if( tags.length ){
+                                    result = tags[0].id;
+                                }
+                                def.resolve(result);
+                            }, {
+                                order: 'DESC',
+                                index: '_id',
+                                keyRange: range
+                            })
+                        })
                     return def.promise();
                 },
 
                 getData: function(){
                     var _this = this;
                     var _id =  this.get('_id');
-                    var def = new $.Deferred();
+                    var def = $.Deferred();
                     var result = null;
                     $.when(this.connect()).done(function(){
                         var range = _this.db.makeKeyRange({
                             lower: _id,
                             upper: _id
                         });
-
                         _this.db.iterate(function(tag, cursor, transaction){
                             result = new App.Database.TagModel(tag);
                         }, {
@@ -171,13 +225,12 @@ define([
             };
 
             Database.TagModel.removeById = function(_id){
+
                 var def = new $.Deferred();
-                var _this = this;
 
                 $.when(App.Database.TagModel.findById(_id)).done(function(tag){
                     if(!tag){
-                        _this.def.reject('Cannot find tag');
-                        return false;
+                        return def.resolve();
                     }else{
                         if( tag.get('label') && tag.get('label') == 'create' ){
                             $.when(tag.removeFromLocalDb()).done( function(){
@@ -340,6 +393,39 @@ define([
                 $.when(tags.getAllTags())
                     .done(function(tags){
                         def.resolve(tags);
+                    })
+                    .fail(function(){
+                        def.reject();
+                    });
+
+                return def.promise();
+            };
+
+            Database.TagCollection.resetEditLabel = function(){
+                var def = $.Deferred();
+
+                //find all tags, that have field label not empty
+                var tags = new Database.TagCollection();
+
+                $.when(tags.getAllTags())
+                    .done(function(tags){
+                        var tagForEdit = tags.where({label: 'edit'});
+                        var methods = [];
+                        _.each(tagForEdit, function(tag){
+                            tag.set({label: null});
+                            methods.push(function(callback){
+                                $.when(tag.saveTag())
+                                    .done(function(){callback(null)})
+                                    .fail(function(){callback(1)});
+                            });
+                        });
+                        async.parallel(methods, function(err){
+                            if(err){
+                                return def.reject();
+                            }
+                            def.resolve();
+                        });
+
                     })
                     .fail(function(){
                         def.reject();

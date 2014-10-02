@@ -67,5 +67,20 @@ Tag.statics.deleteById = function(id, cb){
     });
 }
 
+Tag.statics.getLatestTags = function(lastUpdate, cb){
+    this.find(
+        {
+            updated_at: {
+                $gt: new Date(lastUpdate)
+            }
+        },
+        {
+            __v: 0,
+            userId: 0
+        },
+        cb
+    );
+};
+
 var TagModel = mongoose.model('Tag', Tag);
 module.exports = TagModel;

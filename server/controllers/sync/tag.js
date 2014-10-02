@@ -59,23 +59,29 @@ TagControler.prototype.getCreatedId = function(){
 }
 
 TagControler.prototype._remove = function(currentTag, cb){
-    TagModel.isHasTag(currentTag['_id'], this.userId, function(err, tag){
+    var _this = this;
+    async.waterfall([
+        function(callback){
+            TagModel.deleteById(currentTag['_id'], callback);
+        },
+        function(tag, callback){
+            TransactionModel.removeTagById(currentTag['_id'], _this.userId, callback)
+        }
+    ], function(err){
         if(err){
-            cb(err);
+            logger.error(err);
+            return cb(err)
         }
-        if(tag && !tag.isDeleted){
-            tag.isDeleted = true;
-            tag.updated_at = Date.now();
-            tag.save(function(err){
-                if(err){
-                    cb(err);
-                }
-                cb(null);
-            })
-        }else{
-            cb(null);
-        }
+        cb(null);
     });
+
+    /*TagModel.deleteById(currentTag['_id'], function(err, tag){
+        if(err){
+            logger.error(err);
+            return cb(err)
+        }
+        cb(null);
+    });*/
 };
 
 TagControler.prototype._edit = function(currentTag, cb){

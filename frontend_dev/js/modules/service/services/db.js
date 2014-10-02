@@ -42,19 +42,7 @@ define([
                     return def.promise();
                 },
 
-                removeRemovedTransactions: function(){
-                    var def = $.Deferred();
-                    $.when(App.Database.TransactionModel.removeTransactions({
-                        label: 'remove'
-                    }))
-                        .done(function(){
-                            def.resolve();
-                        }).fail(function(){
-                            def.reject();
-                        });
-
-                    return def.promise();
-                },
+                //update transactions info
 
                 updateTransactionsId: function(updateInfo){
                     var def = $.Deferred();
@@ -71,7 +59,6 @@ define([
                                 .fail(function(){callback(1)});
                         });
                     });
-
                     async.parallel(methods, function(err){
                         if(err){
                             return def.reject();
@@ -81,6 +68,108 @@ define([
 
                     return def.promise();
                 },
+
+                updateTransactionId: function(data){
+                    var def = $.Deferred();
+                    $.when(App.Database.TransactionModel.findById(data.idBefore))
+                        .then(function(transaction){
+                            if(!transaction){
+                                return def.resolve();
+                            }
+                            transaction.set({
+                                _id: data.idActual,
+                                label: ''
+                            });
+                            $.when(transaction.saveTransaction())
+                                .done(function(){
+                                    def.resolve();
+                                })
+                                .fail(function(){
+                                    def.reject();
+                                })
+                        }).fail(function(){
+                            def.reject();
+                        });
+
+                    return def.promise();
+                },
+
+                removeRemovedTransactions: function(){
+                    var def = $.Deferred();
+                    $.when(App.Database.TransactionModel.removeTransactions({
+                        label: 'remove'
+                    }))
+                        .done(function(){
+                            def.resolve();
+                        }).fail(function(){
+                            def.reject();
+                        });
+
+                    return def.promise();
+                },
+
+                resetTransactionEditLabel: function(){
+                    var def = $.Deferred();
+
+                    $.when(App.Database.TransactionCollection.resetEditLabel())
+                        .done(function(){
+                            def.resolve();
+                        }).fail(function(){
+                            def.reject();
+                        });
+
+                    return def.promise();
+                },
+
+                updateTagIdInTransactions: function(updateInfo){
+                    var def = $.Deferred();
+
+                    $.when(App.Database.TransactionCollection.getAllTransactions())
+                        .then(function(transactions){
+
+                            var transactionToSave = [];
+
+                            transactions.each( function(transaction){
+                                var tags = transaction.get('tags');
+                                var isChange = false;
+                                _.each(updateInfo, function(oneTagUpdate){
+                                    var index = $.inArray(oneTagUpdate.idBefore, tags);
+                                    if( index != -1 ){
+                                        isChange = true;
+                                        tags.splice(index, 1, oneTagUpdate.idActual);
+                                    }
+                                })
+
+                                if(isChange) {
+                                    transaction.set({
+                                        tags: tags
+                                    });
+                                    transactionToSave.push(transaction);
+                                }
+                            })
+
+                            var methods = [];
+                            _.each(transactionToSave, function(transaction){
+                                methods.push(function(callback){
+                                    $.when(transaction.saveTransaction())
+                                        .done(function(){callback(null)})
+                                        .fail(function(){callback(1)});
+                                });
+                            });
+
+                            async.parallel(methods, function(err){
+                                if(err){
+                                    return def.reject();
+                                }
+                                def.resolve();
+                            });
+
+                        });
+
+                    return def.promise();
+                },
+
+                //update tags info
 
                 updateTagsId: function(updateInfo){
                     var def = $.Deferred();
@@ -105,46 +194,6 @@ define([
                         }
                         def.resolve();
                     });
-
-                    return def.promise();
-                },
-
-                updateTransactionId: function(data){
-                    var def = $.Deferred();
-                    $.when(App.Database.TransactionModel.findById(data.idBefore))
-                        .then(function(transaction){
-                            debugger
-                            if(!transaction){
-                                return def.resolve();
-                            }
-                            transaction.set({
-                                _id: data.idActual,
-                                label: null
-                            });
-                            $.when(transaction.saveTransaction())
-                                .done(function(){
-                                    def.resolve();
-                                })
-                                .fail(function(){
-                                    def.reject();
-                                })
-                        }).fail(function(){
-                            def.reject();
-                        });
-
-                    return def.promise();
-                },
-
-                removeRemovedTag: function(){
-                    var def = $.Deferred();
-                    $.when(App.Database.TagModel.removeTags({
-                        label: 'remove'
-                    }))
-                        .done(function(){
-                            def.resolve();
-                        }).fail(function(){
-                            def.reject();
-                        });
 
                     return def.promise();
                 },
@@ -174,62 +223,108 @@ define([
                     return def.promise();
                 },
 
-                updateTagIdInTransactions: function(updateInfo){
+                resetTagEditLabel: function(){
                     var def = $.Deferred();
 
-                    $.when(App.Database.TransactionCollection.getAllTransactions())
-                        .then(function(transactions){
+                    $.when(App.Database.TagCollection.resetEditLabel())
+                        .done(function(){
+                            def.resolve();
+                        }).fail(function(){
+                            def.reject();
+                        });
 
-                            var transactionToSave = [];
+                    return def.promise();
+                },
 
-                            transactions.each( function(transaction){
-                                var tags = transaction.get('tags');
-                                var isChange = false;
-                                _.each(updateInfo, function(oneTagUpdate){
-                                    var index = $.inArray(oneTagUpdate.idBefore, tags);
-                                    if( index != -1 ){
-                                        isChange = true;
-                                        tags.splice(index, 1, oneTagUpdate.idActual);
-                                    }
-                                })
+                removeRemovedTag: function(){
+                    var def = $.Deferred();
+                    $.when(App.Database.TagModel.removeTags({
+                        label: 'remove'
+                    }))
+                        .done(function(){
+                            def.resolve();
+                        }).fail(function(){
+                            def.reject();
+                        });
 
-                                if(isChange) transaction.set({
-                                    tags: tags
-                                });
+                    return def.promise();
+                },
 
-                                transactionToSave.push(transaction);
+                //api for server - client
 
-                            })
+                removeTagById: function(id){
+                    var def = $.Deferred();
 
-                            var methods = [];
-                            _.each(transactionToSave, function(transaction){
-                                methods.push(function(callback){
-                                    $.when(transaction.saveTransaction())
-                                        .done(function(){callback(null)})
-                                        .fail(function(){callback(1)});
-                                });
-                            });
-
-                            async.parallel(methods, function(err){
-                                if(err){
-                                    return def.reject();
-                                }
-                                def.resolve();
-                            });
-
-
+                    $.when(App.Database.TagModel.removeTags({_id: id}))
+                        .done(function(){
+                            def.resolve();
                         })
+                        .fail(function(){
+                            def.reject();
+                        });
+
+                    return def.promise();
+                },
+
+                editOrCreateTag: function(tag){
+                    var def = $.Deferred();
+                    var tag = new App.Database.TagModel(tag);
+                    $.when(tag.saveTag())
+                        .done(function(){
+                            def.resolve();
+                        })
+                        .fail(function(){
+                            def.reject();
+                        });
+
+
+                    return def.promise();
+                },
+
+                removeTransactionById: function(id){
+                    var def = $.Deferred();
+
+                    $.when(App.Database.TransactionModel.removeById(id))
+                        .done(function(){
+                            def.resolve();
+                        })
+                        .fail(function(){
+                            def.reject();
+                        });
+
+                    return def.promise();
+                },
+
+                editOrCreateTransaction: function(transaction){
+                    var def = $.Deferred();
+                    delete transaction.isDeleted;
+                    var transaction = new App.Database.TransactionModel(transaction);
+                    $.when(transaction.saveTransaction())
+                        .done(function(){
+                            def.resolve();
+                        })
+                        .fail(function(){
+                            def.reject();
+                        });
+
 
                     return def.promise();
                 }
 
-            })
+            });
 
             App.on('initialize:before', function(){
                 var controller = new Controller();
 
+                App.reqres.setHandler(config.reqres['service:db:removeTransactionById'], controller.removeTransactionById);
+                App.reqres.setHandler(config.reqres['service:db:removeTagById'], controller.removeTagById);
+                App.reqres.setHandler(config.reqres['service:db:editOrCreateTag'], controller.editOrCreateTag);
+                App.reqres.setHandler(config.reqres['service:db:editOrCreateTransaction'], controller.editOrCreateTransaction);
+
                 App.reqres.setHandler(config.reqres['service:db:getChangingData'], controller.getChangingData);
                 App.reqres.setHandler(config.reqres['service:db:updateTagsId'], controller.updateTagsId);
+                App.reqres.setHandler(config.reqres['service:db:resetTagEditLabel'], controller.resetTagEditLabel);
+                App.reqres.setHandler(config.reqres['service:db:resetTransactionEditLabel'], controller.resetTransactionEditLabel);
                 App.reqres.setHandler(config.reqres['service:db:removeRemovedTag'], controller.removeRemovedTag);
                 App.reqres.setHandler(config.reqres['service:db:updateTransactionsId'], controller.updateTransactionsId);
                 App.reqres.setHandler(config.reqres['service:db:removeRemovedTransactions'], controller.removeRemovedTransactions);

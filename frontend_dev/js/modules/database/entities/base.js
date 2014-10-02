@@ -27,13 +27,7 @@ define([
                     }
 
                     if( this.db ){
-
-                        if( this.db.onStoreReady() ){
-                            return def.resolve(_this);
-                        }else{
-                            return def.reject(_this);
-                        }
-
+                        return def.resolve(_this);
                     }else{
                         var options = {
                             dbVersion: 1,

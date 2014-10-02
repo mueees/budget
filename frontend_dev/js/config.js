@@ -25,6 +25,7 @@ requirejs.config({
         "backbone.syphon": "vendor/libs/backbone/backbone.syphon",
         idb: "vendor/libs/idb",
         async: "vendor/libs/async",
+        storage: "vendor/libs/storage",
 
         bootstrap: "vendor/libs/bootstrap/js/bootstrap.min",
         raphael: "vendor/libs/raphael.min",

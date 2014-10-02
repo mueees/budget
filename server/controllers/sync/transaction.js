@@ -30,47 +30,79 @@ TransactionController.prototype.updateTagsId = function(createdTagId){
     });
 };
 
-TransactionController.prototype._create = function(currentTransaction, cb){
+TransactionController.prototype.filterTags = function(tags){
+    var deferred = Q.defer();
     var _this = this;
+    var result = [];
 
-    var transaction = new TransactionModel({
-        userId: this.userId,
-        count: currentTransaction.count,
-        tags: currentTransaction.tags
+    var methods = [];
+
+    _.each(tags, function(tagId){
+        methods.push(function(callback){
+            TagModel.isHasTag(tagId, _this.userId, function(err, tag){
+                if(err){
+                    return callback(err);
+                }
+                if( tag && !tag.isDeleted ) result.push(tagId);
+                callback(null);
+            })
+        });
     });
 
-    async.waterfall([
-        function(cb){
-            transaction.validate(function(err){
-                ( err ) ? cb(null, transaction) : cb(err);
-            })
-        },
-        function(cb){
-            transaction.save(function(err){
-                if(err) {
-                    cb(err);
-                }
-                cb(null, transaction);
-            })
-        }
-    ], function(err, transaction){
+    async.parallel(methods, function(err){
         if(err){
             logger.error(err);
-            return cb(err);
+            return deferred.reject(err);
         }
 
-        _this.createdTransactions.push({
-            idBefore: currentTransaction._id,
-            idActual: transaction._id
+        deferred.resolve(result);
+    });
+
+    return deferred.promise;
+};
+
+TransactionController.prototype._create = function(currentTransaction, cb){
+    var _this = this;
+    this.filterTags(currentTransaction.tags).then(function(tags){
+        var transaction = new TransactionModel({
+            userId: _this.userId,
+            count: currentTransaction.count,
+            tags: tags
         });
 
-        cb(null);
+        async.waterfall([
+            function(cb){
+                transaction.validate(function(err){
+                    ( err ) ? cb(null, transaction) : cb(err);
+                })
+            },
+            function(cb){
+                transaction.save(function(err){
+                    if(err) {
+                        cb(err);
+                    }
+                    cb(null, transaction);
+                })
+            }
+        ], function(err, transaction){
+            if(err){
+                logger.error(err);
+                return cb(err);
+            }
+
+            _this.createdTransactions.push({
+                idBefore: currentTransaction._id,
+                idActual: transaction._id
+            });
+
+            cb(null);
+        })
     })
 };
 
 TransactionController.prototype.getCreatedId = function(){
     return this.createdTransactions;
-}
+};
 
 TransactionController.prototype._remove = function(currentTransaction, cb){
     TransactionModel.deleteById(currentTransaction._id, function(err, transaction){
@@ -85,7 +117,7 @@ TransactionController.prototype._remove = function(currentTransaction, cb){
 TransactionController.prototype._edit = function(currentTransaction, cb){
     TransactionModel.findById( currentTransaction._id, function ( err, transaction ){
 
-        if( !transaction ) return cb(null);
+        if( !transaction || transaction.isDeleted ) return cb(null);
 
         if( currentTransaction.count ) transaction.count = currentTransaction.count;
         if( currentTransaction.tags ) transaction.tags = currentTransaction.tags;

@@ -51,6 +51,7 @@ define([
                             if( _this.data.comment ) newData.comment = _this.data.comment;
                             if( _this.data.tags ) newData.tags = _this.data.tags;
                             if( _this.data.date ) newData.date = new Date(_this.data.date);
+                            newData.label = 'edit';
 
                             transaction.set(newData);
 

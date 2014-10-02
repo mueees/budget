@@ -62,6 +62,10 @@ define([
         window.location.reload();
     };
 
+    App.reloadCurrentApp = function(){
+        Backbone.history.loadUrl(Backbone.history.fragment);
+    };
+
     App.registerChannel = function(name){
         if(App.channels.modules[name]) return App.channels.modules[name];
 

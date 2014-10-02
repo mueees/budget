@@ -73,10 +73,6 @@ define([
 
                 get: function(){
                     var _this = this;
-                    var tag = new App.Database.TagModel({
-                        tagName: (new Date()).getTime()
-                    });
-
                     var tagsCollection = new App.Database.TagCollection();
                     $.when(tagsCollection.getTags()).done(function(tags){
                         _this.def.resolve(tags.toJSON());
