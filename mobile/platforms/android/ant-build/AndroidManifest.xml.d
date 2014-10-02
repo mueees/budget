@@ -1,2 +1,2 @@
-/home/mue/web/projects/budget_/platforms/android/ant-build/AndroidManifest.xml : \
-/home/mue/web/projects/budget_/platforms/android/AndroidManifest.xml \
+/home/mue/web/projects/budget/mobile/platforms/android/ant-build/AndroidManifest.xml : \
+/home/mue/web/projects/budget/mobile/platforms/android/AndroidManifest.xml \

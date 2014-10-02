@@ -27,9 +27,10 @@ requirejs.config({
         "backbone.syphon": "frontend_dev/js/vendor/libs/backbone/backbone.syphon",
         bootstrap: "frontend_dev/js/vendor/libs/bootstrap/js/bootstrap.min",
         raphael: "frontend_dev/js/vendor/libs/raphael.min",
-        async: "frontend_dev/js/vendor/libs/async",
         morris: "frontend_dev/js/vendor/libs/morris.min",
         idb: "frontend_dev/js/vendor/libs/idb",
+        async: "frontend_dev/js/vendor/libs/async",
+        storage: "frontend_dev/js/vendor/libs/storage",
 
         /*plugins*/
         moment: "frontend_dev/js/vendor/plugins/moment.min",
