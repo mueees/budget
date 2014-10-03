@@ -11,3 +11,161 @@
 {"level":"info","message":"Mongoose open connection: mongodb://localhost/budget","timestamp":"2014-08-14T19:39:22.724Z"}
 {"level":"info","message":"Web server listening: 5001","timestamp":"2014-08-14T19:40:11.172Z"}
 {"level":"info","message":"Mongoose open connection: mongodb://localhost/budget","timestamp":"2014-08-14T19:40:11.556Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-08-16T13:26:08.904Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://localhost/budget","timestamp":"2014-08-16T13:26:08.986Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-16T13:27:35.834Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-16T13:27:35.971Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-08-16T13:35:07.545Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://localhost/budget","timestamp":"2014-08-16T13:35:08.353Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-08-16T14:04:29.453Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://localhost/budget","timestamp":"2014-08-16T14:04:29.619Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-16T17:16:03.547Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-16T17:16:03.914Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-16T17:25:07.578Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-16T17:25:07.914Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-16T17:25:08.035Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-16T21:21:54.909Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-16T21:21:55.949Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-17T07:40:14.156Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-17T11:41:34.933Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-17T11:41:35.021Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-17T11:41:35.074Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-17T19:40:45.836Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-17T19:40:45.935Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-17T19:40:45.990Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-18T04:49:22.571Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-18T05:16:14.269Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-18T07:18:13.117Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-18T07:28:57.467Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-18T09:58:21.090Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-18T11:48:08.745Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-18T11:48:08.954Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-19T06:40:08.551Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-19T09:10:14.555Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-19T18:02:46.946Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-19T18:02:47.040Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-19T18:02:47.108Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-19T18:02:47.184Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-20T03:07:35.667Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-20T03:07:35.747Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-20T03:07:35.805Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-20T06:55:40.681Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-20T20:37:27.153Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-21T09:21:09.647Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-21T09:21:09.761Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-21T14:48:15.941Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-21T14:48:16.048Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-21T14:48:16.109Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-22T10:33:33.338Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-22T12:36:12.629Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-22T12:36:12.728Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-22T22:05:10.408Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-22T22:06:58.881Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-08-27T05:35:34.000Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://localhost/budget","timestamp":"2014-08-27T05:35:34.293Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-27T06:06:26.194Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-27T06:06:26.291Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-27T06:06:26.351Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-27T07:36:04.960Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-27T12:39:54.873Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-27T18:33:21.276Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-27T18:33:21.345Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-27T18:33:21.404Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-27T21:23:21.333Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-27T21:23:21.384Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-27T21:23:21.425Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-28T12:08:56.714Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-28T12:08:56.842Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-28T12:08:56.913Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-28T17:38:27.670Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-29T11:01:09.302Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-29T11:01:09.871Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-29T11:01:10.242Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-30T05:53:07.678Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-30T07:08:23.001Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-30T16:42:40.798Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-30T16:42:41.173Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-30T16:42:41.258Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-31T10:48:33.862Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-08-31T10:48:34.966Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-01T10:14:02.035Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-01T10:14:02.269Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-01T10:14:02.338Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-01T12:24:25.203Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-01T12:24:26.189Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-01T12:24:26.384Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-01T13:41:29.239Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-01T13:41:29.420Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-01T13:41:29.489Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-02T19:00:10.983Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-02T19:00:11.261Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-03T08:09:16.444Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-03T08:09:16.532Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-03T08:09:16.625Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-03T08:49:33.279Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-03T08:49:33.394Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-03T08:49:33.480Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-03T08:49:33.577Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-03T09:48:13.466Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-03T09:48:13.559Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-03T21:07:43.649Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-03T21:07:43.717Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-03T21:07:43.757Z"}
+{"level":"error","message":"","timestamp":"2014-09-04T00:54:51.646Z"}
+{"level":"error","message":"","timestamp":"2014-09-04T00:54:52.587Z"}
+{"level":"error","message":"","timestamp":"2014-09-04T00:54:53.573Z"}
+{"level":"error","message":"","timestamp":"2014-09-04T00:54:54.579Z"}
+{"level":"error","message":"","timestamp":"2014-09-04T00:54:55.582Z"}
+{"level":"error","message":"","timestamp":"2014-09-04T00:54:56.585Z"}
+{"level":"error","message":"","timestamp":"2014-09-04T00:54:57.593Z"}
+{"level":"error","message":"","timestamp":"2014-09-04T00:54:58.595Z"}
+{"level":"error","message":"","timestamp":"2014-09-04T00:54:59.597Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-09-05T09:54:11.861Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://localhost/budget","timestamp":"2014-09-05T09:54:12.459Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-09-05T19:44:35.682Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://localhost/budget","timestamp":"2014-09-05T19:44:35.746Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-05T20:52:18.901Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-05T20:52:19.035Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-05T20:52:19.134Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-05T20:52:19.188Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-06T06:16:10.058Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-06T09:13:36.523Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-07T10:56:22.580Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-07T11:33:39.469Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-07T11:33:40.484Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-09T09:50:29.762Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-09T09:50:30.089Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-09T15:01:28.845Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-09T15:01:32.024Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-09T15:01:32.839Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-09T15:01:33.616Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-09T17:59:16.245Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-09T17:59:16.330Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-09T17:59:16.411Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-09T17:59:16.498Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-10T12:16:49.672Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-10T12:16:51.241Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-10T21:53:29.543Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-10T21:53:32.015Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-10T23:27:53.706Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-11T08:47:50.882Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-11T08:47:50.951Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-11T18:53:08.752Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-12T09:47:47.975Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-12T09:47:48.135Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-09-12T09:47:48.288Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-03T11:54:48.675Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://localhost/budget","timestamp":"2014-10-03T11:54:48.815Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-10-03T11:54:53.531Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-10-03T11:54:53.681Z"}
+{"status":404,"url":"/api/user/signin","level":"warn","message":"","timestamp":"2014-10-03T12:09:09.457Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-10-03T12:31:15.713Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-10-03T13:21:41.930Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-10-03T13:21:41.988Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-10-03T13:21:42.032Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-10-03T13:32:11.096Z"}
+{"status":404,"url":"/api/sync/clientserver","level":"warn","message":"","timestamp":"2014-10-03T13:41:00.888Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-10-03T13:41:18.437Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-10-03T13:41:18.482Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-10-03T13:41:18.534Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-10-03T15:04:37.125Z"}
