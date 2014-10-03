@@ -1,0 +1,38 @@
+{
+  "newTagId": [
+    {
+      "idBefore": "1663894703913",
+      "idActual": "54256203742ddf0807c208e8"
+    },
+    {
+      "idBefore": "1581979479951",
+      "idActual": "54256203742ddf0807c208e9"
+    },
+    {
+      "idBefore": "1502773989315",
+      "idActual": "54256203742ddf0807c208ea"
+    },
+    {
+      "idBefore": "1444834434409",
+      "idActual": "54256203742ddf0807c208eb"
+    }
+  ],
+  "newTransactionId": [
+    {
+      "idBefore": "1602615071182",
+      "idActual": "54256203742ddf0807c208ec"
+    },
+    {
+      "idBefore": "1570788579994",
+      "idActual": "54256203742ddf0807c208ed"
+    },
+    {
+      "idBefore": "1485473637661",
+      "idActual": "54256203742ddf0807c208ee"
+    },
+    {
+      "idBefore": "1483459575817",
+      "idActual": "54256203742ddf0807c208ef"
+    }
+  ]
+}

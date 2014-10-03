@@ -45,7 +45,7 @@ define([
                 xhr: null,
 
                 abortAjax: function(){
-                    if( this.xhr ){
+                    if( this.xhr  &&  this.xhr.abort ){
                         this.xhr.abort();
                         this.xhr = null;
                     }
@@ -76,7 +76,7 @@ define([
                 },
 
                 abortAjax: function(){
-                    if( this.xhr ){
+                    if( this.xhr  &&  this.xhr.abort ){
                         this.xhr.abort();
                         this.xhr = null;
                     }

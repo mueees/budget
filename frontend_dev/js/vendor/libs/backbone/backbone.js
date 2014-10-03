@@ -5,9 +5,8 @@ define([
     'backbone.routefilter',
     'backbone.validation',
     'backbone.stickit',
+    'backbone.server',
     'backbone.syphon'
 ], function(Backbone) {
-
     return Backbone;
-
 });

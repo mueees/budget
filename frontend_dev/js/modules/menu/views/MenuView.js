@@ -36,6 +36,11 @@ define([
                 isOpen: false
             };
 
+            if( path == 'sync' ){
+                this.model.trigger('sync');
+                return false;
+            }
+
             if(path || path != this.model.get('path')){
                 data.path = path;
             }

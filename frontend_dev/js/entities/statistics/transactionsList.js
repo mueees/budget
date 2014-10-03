@@ -51,7 +51,7 @@ define([
                         period: model.period
                     };
                     var defaults = {
-                        type: 'post',
+                        type: 'POST',
                         data: JSON.stringify(data)
                     };
 

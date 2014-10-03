@@ -122,7 +122,7 @@ define([
                     };
                     var defaults = {
                         url: this.urls.getById,
-                        type: 'post',
+                        type: 'POST',
                         data: JSON.stringify(data)
                     };
 
@@ -132,9 +132,10 @@ define([
                 }
 
             });
+
             Entities.TransactionCollections = Entities.ClearCollection.extend({
                 model: Entities.TransactionModel
-            })
+            });
 
             var API = {
                 getTrasactionModel: function(){

@@ -21,7 +21,9 @@ var controller = {
         async.waterfall([
             function(cb){
                 tagController.sync(function(err){
-                    if(err) return cb(err);
+                    if(err) {
+                        return cb(err);
+                    }
 
                     var createdTagId = tagController.getCreatedId();
                     if( createdTagId.length ){
@@ -40,10 +42,38 @@ var controller = {
                 logger.error(err);
                 return next(new HttpError(400, err.errors));
             }
-            res.send();
-            next();
+
+            res.send({
+                newTagId: tagController.getCreatedId(),
+                newTransactionId: transactionController.getCreatedId()
+            });
         })
     },
-    serverClient: function(req, res, next){}
+    serverClient: function(req, res, next){
+        var lastUpdate = req.body.lastUpdate;
+        if(!lastUpdate) lastUpdate = 0;
+
+        async.parallel([
+            function(callback){
+                TagModel.getLatestTags(lastUpdate, callback);
+            },
+            function(callback){
+                TransactionModel.getLatestTransactions(lastUpdate, callback);
+            }
+        ], function(err, data){
+            if(err){
+                logger.error(err);
+                return next(new HttpError(400, err.errors));
+            }
+
+            res.send({
+                tags: data[0] || [],
+                transactions: data[1] || []
+            });
+        })
+
+
+
+    }
 }
 module.exports = controller;

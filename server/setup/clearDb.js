@@ -5,5 +5,5 @@ UserModel.find({}).remove(function(err){
         console.log(err);
         return false;
     }
-    console.log('done');
+    console.log('UserModel was cleaned');
 });

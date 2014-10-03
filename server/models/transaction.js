@@ -64,7 +64,22 @@ Transaction.statics.removeTagById = function(tagId, userId, cb){
             cb(null);
         }
     )
-}
+};
+
+Transaction.statics.getLatestTransactions = function(lastUpdate, cb){
+    this.find(
+        {
+            updated_at: {
+                $gt: new Date(lastUpdate)
+            }
+        },
+        {
+            __v: 0,
+            userId: 0
+        },
+        cb
+    );
+};
 
 Transaction.statics.getTransactions = function(options, cb){
     options.isDeleted = false;
@@ -75,7 +90,7 @@ Transaction.statics.getTransactions = function(options, cb){
 
         cb(null, transactions);
     })
-}
+};
 
 Transaction.statics.getTotals = function(period, userId, cb){
 
@@ -108,7 +123,7 @@ Transaction.statics.getTotals = function(period, userId, cb){
 
         cb(null, result);
     })
-}
+};
 
 Transaction.statics.getTransactionById = function(_id, userId, cb){
     var query = {
@@ -124,8 +139,7 @@ Transaction.statics.getTransactionById = function(_id, userId, cb){
 
         cb(null, transactions[0]);
     })
-}
-
+};
 
 Transaction.statics.getTotalsByTag = function(period, userId, cb){
 
@@ -171,7 +185,7 @@ Transaction.statics.getTotalsByTag = function(period, userId, cb){
 
         cb(null, data);
     })
-}
+};
 
 Transaction.statics.getTransactionList = function(period, userId, cb){
 
@@ -201,7 +215,7 @@ Transaction.statics.getTransactionList = function(period, userId, cb){
         }
         cb(null, transactions);
     });
-}
+};
 
 Transaction.statics.deleteById = function(id, cb){
     this.findById( id, function ( err, transaction ){
@@ -222,7 +236,7 @@ Transaction.statics.deleteById = function(id, cb){
             }
         });
     });
-}
+};
 
 var TransactionModel = mongoose.model('Transaction', Transaction);
 module.exports = TransactionModel;
