@@ -42,7 +42,7 @@ var controller = {
                 _id: tag._id,
                 tagName: tag.tagName
             });
-            next(tag);
+            //next(tag);
         })
 
     },
@@ -67,7 +67,7 @@ var controller = {
                 res.send({
                     _id: tag._id
                 });
-                next(tag);
+                //next(tag);
             });
         });
     },
@@ -94,7 +94,7 @@ var controller = {
             }
 
             res.send({});
-            next();
+            //next();
         })
 
     },

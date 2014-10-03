@@ -44,7 +44,7 @@ var controller = {
             res.send({
                 _id: transaction._id
             });
-            next(transaction);
+            //next(transaction);
         })
 
     },
@@ -68,7 +68,7 @@ var controller = {
                 res.send({
                     _id: transaction._id
                 });
-                next(transaction);
+                //next(transaction);
             });
         });
     },
@@ -247,9 +247,6 @@ var controller = {
 
                 result.push(data);
             })
-
-            console.log('RESULT')
-            console.log(result);
 
             res.send({
                 data: result
