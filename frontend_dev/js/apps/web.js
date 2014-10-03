@@ -34,6 +34,5 @@ require([
     'apps/transaction/module'
 
 ], function(App){
-
     App.start();
 });

@@ -1,14 +1,18 @@
 define([], function(){
 
     var serverConfig = Budget || {};
+    var prefix = Budget.prefix || "";
+
+    //http://budget.batros.in.ua
 
     return {
         data: {
+            prefix: prefix,
             user: {
                 email: serverConfig.user.email,
                 id: serverConfig.user.id
             },
-            db: 'local'
+            db: Budget.db || ""
         },
         reqres: {
 
@@ -65,34 +69,32 @@ define([], function(){
         },
 
         api: {
-            signup: '/api/user/signup',
-            signin: '/api/user/signin',
-            logout: "api/user/logout",
+            signup: prefix + '/api/user/signup',
+            signin: prefix +'/api/user/signin',
+            logout: prefix +"api/user/logout",
 
             //tag
-            tagCreate: '/api/tag/create',
-            tagRemove: '/api/tag/remove',
-            tagGet: '/api/tag/get',
-            tagEdit: '/api/tag/edit',
+            tagCreate: prefix +'/api/tag/create',
+            tagRemove: prefix +'/api/tag/remove',
+            tagGet: prefix +'/api/tag/get',
+            tagEdit: prefix +'/api/tag/edit',
 
             //transaction
-            transactionCreate: '/api/transaction/create',
-            transactionRemove: '/api/transaction/remove',
-            transactionEdit: '/api/transaction/edit',
-            transactionGetById: '/api/transaction/getById',
+            transactionCreate: prefix +'/api/transaction/create',
+            transactionRemove: prefix +'/api/transaction/remove',
+            transactionEdit: prefix +'/api/transaction/edit',
+            transactionGetById: prefix +'/api/transaction/getById',
 
             statistic: {
-                total: '/api/transaction/total',
-                totalByTag: '/api/transaction/totalByTag',
-                listTransactions: "/api/transaction/list"
+                total: prefix + '/api/transaction/total',
+                totalByTag: prefix + '/api/transaction/totalByTag',
+                listTransactions: prefix + "/api/transaction/list"
             },
 
             sync: {
-                clientServer: '/api/sync/clientserver',
-                serverClient: '/api/sync/serverclient'
+                clientServer: prefix + '/api/sync/clientserver',
+                serverClient: prefix + '/api/sync/serverclient'
             }
-
-
         },
 
         showLog: true

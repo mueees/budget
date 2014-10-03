@@ -36,6 +36,7 @@ module.exports = function(grunt) {
             mobile: {
                 files: [
                     {expand: true, src: ['<%= configPath.dev %>' + '/fonts'], dest: '<%= configPath.public_mobile %>', flatten: true},
+                    {expand: true, src: ['<%= configPath.dev %>' + '/mobile/index.html'], dest: '<%= configPath.public_mobile %>', flatten: true},
                     {expand: true, src: ['<%= configPath.dev %>' + '/fonts/*'], dest: '<%= configPath.public_mobile %>/fonts', flatten: true},
                     {expand: true, src: ['<%= configPath.dev %>' + '/img'], dest: '<%= configPath.public_mobile %>', flatten: true},
                     {expand: true, src: ['<%= configPath.dev %>' + '/img/*'], dest: '<%= configPath.public_mobile %>/img', flatten: true},
@@ -98,6 +99,13 @@ module.exports = function(grunt) {
                 tasks: ['develop'],
                 files: [
                         '<%= configPath.dev %>'+'/css/stylus/*.styl'
+                ]
+            },
+
+            mobile: {
+                tasks: ['production:mobile'],
+                files: [
+                        '<%= configPath.dev %>'+'/js/*.js'
                 ]
             }
         }

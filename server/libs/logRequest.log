@@ -415,3 +415,99 @@
 {"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-02T17:04:05.676Z"}
 {"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-02T17:04:38.182Z"}
 {"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-02T17:16:34.907Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-03T08:05:33.789Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-03T08:05:33.810Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-10-03T08:05:47.916Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-03T08:06:28.517Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-03T08:06:28.543Z"}
+{"status":404,"url":"/js/require.js","level":"warn","message":"","timestamp":"2014-10-03T09:11:50.518Z"}
+{"status":404,"url":"/js/script.js","level":"warn","message":"","timestamp":"2014-10-03T09:11:51.026Z"}
+{"status":404,"url":"/config.xml","level":"warn","message":"","timestamp":"2014-10-03T09:11:53.014Z"}
+{"status":404,"url":"/js/require.js","level":"warn","message":"","timestamp":"2014-10-03T09:11:53.468Z"}
+{"status":404,"url":"/js/script.js","level":"warn","message":"","timestamp":"2014-10-03T09:11:53.521Z"}
+{"status":404,"url":"/js/require.js","level":"warn","message":"","timestamp":"2014-10-03T09:12:03.767Z"}
+{"status":404,"url":"/js/script.js","level":"warn","message":"","timestamp":"2014-10-03T09:12:03.796Z"}
+{"status":404,"url":"/config.xml","level":"warn","message":"","timestamp":"2014-10-03T09:12:04.415Z"}
+{"status":404,"url":"/js/require.js","level":"warn","message":"","timestamp":"2014-10-03T09:12:04.749Z"}
+{"status":404,"url":"/js/script.js","level":"warn","message":"","timestamp":"2014-10-03T09:12:04.781Z"}
+{"status":404,"url":"/js/script.js","level":"warn","message":"","timestamp":"2014-10-03T09:12:41.368Z"}
+{"status":404,"url":"/js/require.js","level":"warn","message":"","timestamp":"2014-10-03T09:12:41.392Z"}
+{"status":404,"url":"/config.xml","level":"warn","message":"","timestamp":"2014-10-03T09:12:42.122Z"}
+{"status":404,"url":"/js/require.js","level":"warn","message":"","timestamp":"2014-10-03T09:12:42.612Z"}
+{"status":404,"url":"/js/script.js","level":"warn","message":"","timestamp":"2014-10-03T09:12:42.640Z"}
+{"status":404,"url":"/js/require.js","level":"warn","message":"","timestamp":"2014-10-03T09:12:46.643Z"}
+{"status":404,"url":"/js/script.js","level":"warn","message":"","timestamp":"2014-10-03T09:12:46.660Z"}
+{"status":404,"url":"/js/script.js","level":"warn","message":"","timestamp":"2014-10-03T09:12:49.392Z"}
+{"status":404,"url":"/js/require.js","level":"warn","message":"","timestamp":"2014-10-03T09:12:49.421Z"}
+{"status":404,"url":"/js/require.js","level":"warn","message":"","timestamp":"2014-10-03T10:15:18.726Z"}
+{"status":404,"url":"/js/script.js","level":"warn","message":"","timestamp":"2014-10-03T10:15:18.764Z"}
+{"status":404,"url":"/js/script.js","level":"warn","message":"","timestamp":"2014-10-03T10:15:21.590Z"}
+{"status":404,"url":"/js/require.js","level":"warn","message":"","timestamp":"2014-10-03T10:15:21.623Z"}
+{"status":404,"url":"/js/require.js","level":"warn","message":"","timestamp":"2014-10-03T10:15:36.582Z"}
+{"status":404,"url":"/js/script.js","level":"warn","message":"","timestamp":"2014-10-03T10:15:36.614Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-03T11:42:23.811Z"}
+{"level":"error","message":"","timestamp":"2014-10-03T11:42:23.818Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-03T11:42:39.503Z"}
+{"level":"error","message":"","timestamp":"2014-10-03T11:42:39.509Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-03T11:44:05.950Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-03T11:44:05.972Z"}
+{"status":404,"url":"/cordova.js","level":"warn","message":"","timestamp":"2014-10-03T11:44:09.407Z"}
+{"status":404,"url":"/js/require.js","level":"warn","message":"","timestamp":"2014-10-03T11:44:09.562Z"}
+{"status":404,"url":"/js/script.js","level":"warn","message":"","timestamp":"2014-10-03T11:44:09.604Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-10-03T11:44:09.706Z"}
+{"status":404,"url":"/cordova.js","level":"warn","message":"","timestamp":"2014-10-03T11:44:11.628Z"}
+{"status":404,"url":"/js/require.js","level":"warn","message":"","timestamp":"2014-10-03T11:44:11.665Z"}
+{"status":404,"url":"/js/script.js","level":"warn","message":"","timestamp":"2014-10-03T11:44:11.692Z"}
+{"status":404,"url":"/cordova.js","level":"warn","message":"","timestamp":"2014-10-03T11:44:11.954Z"}
+{"status":404,"url":"/js/require.js","level":"warn","message":"","timestamp":"2014-10-03T11:44:11.988Z"}
+{"status":404,"url":"/js/script.js","level":"warn","message":"","timestamp":"2014-10-03T11:44:12.009Z"}
+{"status":404,"url":"/cordova.js","level":"warn","message":"","timestamp":"2014-10-03T11:44:12.164Z"}
+{"status":404,"url":"/js/require.js","level":"warn","message":"","timestamp":"2014-10-03T11:44:12.197Z"}
+{"status":404,"url":"/js/script.js","level":"warn","message":"","timestamp":"2014-10-03T11:44:12.218Z"}
+{"status":404,"url":"/cordova.js","level":"warn","message":"","timestamp":"2014-10-03T11:44:12.387Z"}
+{"status":404,"url":"/js/require.js","level":"warn","message":"","timestamp":"2014-10-03T11:44:12.410Z"}
+{"status":404,"url":"/js/script.js","level":"warn","message":"","timestamp":"2014-10-03T11:44:12.429Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-03T12:06:19.995Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-03T12:06:20.016Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-03T12:26:24.614Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-03T12:26:24.635Z"}
+{"status":404,"url":"/cordova.js","level":"warn","message":"","timestamp":"2014-10-03T12:26:25.774Z"}
+{"status":404,"url":"/js/require.js","level":"warn","message":"","timestamp":"2014-10-03T12:26:25.901Z"}
+{"status":404,"url":"/js/script.js","level":"warn","message":"","timestamp":"2014-10-03T12:26:25.952Z"}
+{"status":404,"url":"/js/require.js","level":"warn","message":"","timestamp":"2014-10-03T12:31:14.286Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-10-03T12:31:15.928Z"}
+{"status":404,"url":"/cordova.js","level":"warn","message":"","timestamp":"2014-10-03T12:41:00.193Z"}
+{"status":404,"url":"/js/require.js","level":"warn","message":"","timestamp":"2014-10-03T12:41:00.259Z"}
+{"status":404,"url":"/js/script.js","level":"warn","message":"","timestamp":"2014-10-03T12:41:00.506Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-10-03T12:41:00.914Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-03T13:42:40.568Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-03T13:42:40.590Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-03T13:42:50.890Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://localhost/budget","timestamp":"2014-10-03T13:42:50.915Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-10-03T13:42:56.101Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-10-03T13:42:56.146Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-03T13:44:04.679Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-03T13:44:04.700Z"}
+{"status":404,"url":"/cordova.js","level":"warn","message":"","timestamp":"2014-10-03T13:44:05.174Z"}
+{"status":404,"url":"/js/require.js","level":"warn","message":"","timestamp":"2014-10-03T13:44:05.362Z"}
+{"status":404,"url":"/js/script.js","level":"warn","message":"","timestamp":"2014-10-03T13:44:05.415Z"}
+{"status":404,"url":"/cordova.js","level":"warn","message":"","timestamp":"2014-10-03T13:44:07.665Z"}
+{"status":404,"url":"/js/require.js","level":"warn","message":"","timestamp":"2014-10-03T13:44:07.729Z"}
+{"status":404,"url":"/js/script.js","level":"warn","message":"","timestamp":"2014-10-03T13:44:07.797Z"}
+{"status":404,"url":"/api/tag/remove","level":"warn","message":"","timestamp":"2014-10-03T14:28:17.617Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-03T14:29:23.433Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://localhost/budget","timestamp":"2014-10-03T14:29:23.455Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-03T14:29:40.081Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://localhost/budget","timestamp":"2014-10-03T14:29:40.103Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-03T14:31:22.903Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://localhost/budget","timestamp":"2014-10-03T14:31:22.926Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-03T14:32:24.038Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://localhost/budget","timestamp":"2014-10-03T14:32:24.059Z"}
+{"level":"info","message":"Message sent: undefined","timestamp":"2014-10-03T14:32:29.956Z"}
+{"level":"info","message":"User confirmed account","timestamp":"2014-10-03T14:32:46.257Z"}
+{"level":"info","message":"Message sent: undefined","timestamp":"2014-10-03T14:32:47.898Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-03T14:34:49.742Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-03T14:34:49.765Z"}
+{"status":404,"url":"/api/tag/remove","level":"warn","message":"","timestamp":"2014-10-03T14:42:37.654Z"}
+{"status":404,"url":"/api/tag/remove","level":"warn","message":"","timestamp":"2014-10-03T14:42:38.793Z"}
+{"status":404,"url":"/api/tag/remove","level":"warn","message":"","timestamp":"2014-10-03T14:44:20.642Z"}

@@ -29,3 +29,14 @@ mocha -t 10000
 sudo rm /var/lib/mongodb/mongod.lock
 mongod --repair
 sudo service mongodb start
+
+
+
+In
+/etc/environment
+add this line:
+JAVA_HOME=/usr/lib/jvm/java-7-oracle
+logout
+
+chromium-browser --disable-web-security
+ripple emulate --path platforms/android/assets/www

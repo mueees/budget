@@ -261,7 +261,12 @@ define([
                         .done(function(){
                             _this.syncController.close();
                             _this.syncController = false;
-                            storage.set(config.storage['lastUpdate'], (new Date()).getTime());
+
+                            var date = new Date();
+                            var time = date.getTime();
+                            time += (date.getTimezoneOffset() / 60) * 3600000;
+
+                            storage.set(config.storage['lastUpdate'], time);
                         })
                         .fail(function(){
                             _this.syncController.close();

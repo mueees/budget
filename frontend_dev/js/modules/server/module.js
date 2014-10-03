@@ -25,11 +25,10 @@ define([
                 },
 
                 initRouting: function(){
-                    //tag
                     this.server.addRoutes({
                         //tags
                         createTag: {
-                            urlExp: "/api/tag/create",
+                            urlExp: config.api.tagCreate,
                             httpMethod: "POST",
                             handler: function(context){
                                 var def = new $.Deferred();
@@ -38,7 +37,7 @@ define([
                             }
                         },
                         getTag: {
-                            urlExp: "/api/tag/get",
+                            urlExp: config.api.tagGet,
                             httpMethod: "GET",
                             handler: function(context){
                                 var def = new $.Deferred();
@@ -47,7 +46,7 @@ define([
                             }
                         },
                         editTag: {
-                            urlExp: "/api/tag/edit",
+                            urlExp: config.api.tagEdit,
                             httpMethod: "POST",
                             handler: function(context){
                                 var def = new $.Deferred();
@@ -56,7 +55,7 @@ define([
                             }
                         },
                         removeTag: {
-                            urlExp: "/api/tag/remove",
+                            urlExp: config.api.tagRemove,
                             httpMethod: "POST",
                             handler: function(context){
                                 var def = new $.Deferred();
@@ -67,7 +66,7 @@ define([
 
                         //transaction
                         createTransaction: {
-                            urlExp: "/api/transaction/create",
+                            urlExp: config.api.transactionCreate,
                             httpMethod: "POST",
                             handler: function(context){
                                 var def = new $.Deferred();
@@ -76,7 +75,7 @@ define([
                             }
                         },
                         editTransaction: {
-                            urlExp: "/api/transaction/edit",
+                            urlExp: config.api.transactionEdit,
                             httpMethod: "POST",
                             handler: function(context){
                                 var def = new $.Deferred();
@@ -85,7 +84,7 @@ define([
                             }
                         },
                         removeTransaction: {
-                            urlExp: "/api/transaction/remove",
+                            urlExp: config.api.transactionRemove,
                             httpMethod: "POST",
                             handler: function(context){
                                 var def = new $.Deferred();
@@ -94,7 +93,7 @@ define([
                             }
                         },
                         getTransactionData: {
-                            urlExp: "/api/transaction/getById",
+                            urlExp: config.api.transactionGetById,
                             httpMethod: "POST",
                             handler: function(context){
                                 var def = new $.Deferred();
@@ -104,7 +103,7 @@ define([
                         },
 
                         getTransactionList: {
-                            urlExp: "/api/transaction/list",
+                            urlExp: config.api.statistic.listTransactions,
                             httpMethod: "POST",
                             handler: function(context){
                                 var def = new $.Deferred();

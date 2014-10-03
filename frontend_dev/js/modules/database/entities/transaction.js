@@ -243,7 +243,7 @@ define([
 
                 $.when(App.Database.TransactionModel.findById(_id)).done(function(transaction){
                     if(!transaction){
-                        _this.def.reject('Cannot find transaction');
+                        def.resolve();
                         return false;
                     }else{
                         if( transaction.get('label') && transaction.get('label') == 'create' ){
