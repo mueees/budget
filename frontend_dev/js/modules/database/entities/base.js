@@ -30,7 +30,7 @@ define([
                         return def.resolve(_this);
                     }else{
                         var options = {
-                            dbVersion: 1,
+                            dbVersion: 2,
                             storeName: _this.storeName,
                             keyPath: 'id',
                             autoIncrement: true,
@@ -38,6 +38,7 @@ define([
                                 def.resolve(_this);
                             },
                             onError: function(err){
+                                alert('Error connect to database!');
                                 console.log(err);
                                 def.reject(_this);
                             }

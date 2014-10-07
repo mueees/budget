@@ -6270,13 +6270,10 @@ define('backbone',[
     'backbone.routefilter',
     'backbone.validation',
     'backbone.stickit',
-    /*'backbone.mobile',*/
     'backbone.server',
     'backbone.syphon'
 ], function(Backbone) {
-
     return Backbone;
-
 });
 // MarionetteJS (Backbone.Marionette)
 // ----------------------------------
@@ -11058,7 +11055,7 @@ define('modules/database/entities/base',[
                         return def.resolve(_this);
                     }else{
                         var options = {
-                            dbVersion: 1,
+                            dbVersion: 2,
                             storeName: _this.storeName,
                             keyPath: 'id',
                             autoIncrement: true,
@@ -11066,6 +11063,7 @@ define('modules/database/entities/base',[
                                 def.resolve(_this);
                             },
                             onError: function(err){
+                                alert('Error connect to database!');
                                 console.log(err);
                                 def.reject(_this);
                             }
@@ -12335,8 +12333,9 @@ define('modules/database/entities/tag',[
                             alert('createNew tag error');
                             def.reject(error);
                         })
-                    }).fail(function(){
+                    }).fail(function(err){
                         alert('connect tag error');
+                        alert(err);
                         def.reject(error);
                     });
 
@@ -15961,6 +15960,12 @@ define('modules/widget/widgets/transaction/list/views/ListView',[
 
         initialize: function(){
             this.collection = this.model.get('data');
+            this.listenTo(this.model, 'change', this.changeHandler);
+        },
+
+        changeHandler: function(){
+            this.collection = this.model.get('data');
+            this.render();
         },
 
         onCompositeRendered : function() {
@@ -16361,6 +16366,31 @@ define('modules/widget/widgets/statistics/totals/index',[
 
 define('text!modules/widget/widgets/statistics/totalByTagChart/templates/TotalByTagTemp.html',[],function () { return '<div class="chart"></div>';});
 
+
+define('text!modules/widget/widgets/base/templates/SignTemp.html',[],function () { return '';});
+
+define('modules/widget/widgets/base/views/BaseView',[
+    'marionette',
+    'text!../templates/SignTemp.html'
+], function(Marionette, template){
+    return Marionette.ItemView.extend({
+
+        template: _.template(template),
+
+        initialize: function(){
+            this.listenTo(this.model, "change:data", this.dataHandler);
+        },
+
+        dataHandler: function(){
+            this.render();
+        },
+
+        onClose: function(){
+
+        }
+
+    });
+});
 // ┌────────────────────────────────────────────────────────────────────┐ \\
 // │ Raphaël 2.1.0 - JavaScript Vector Library                          │ \\
 // ├────────────────────────────────────────────────────────────────────┤ \\
@@ -16389,14 +16419,20 @@ define("morris", ["jquery","raphael"], (function (global) {
 define('modules/widget/widgets/statistics/totalByTagChart/views/TotalByTagView',[
     'marionette',
     'text!../templates/TotalByTagTemp.html',
+    '../../../base/views/BaseView',
     'morris'
-], function(Marionette, template){
+], function(Marionette, template, BaseView){
     return Marionette.ItemView.extend({
 
         template: _.template(template),
 
         initialize: function(){
+            BaseView.prototype.initialize.apply(this, arguments);
+        },
 
+        dataHandler: function(){
+            this.render();
+            this.onShow();
         },
 
         onShow: function(){
@@ -16431,9 +16467,7 @@ define('modules/widget/widgets/statistics/totalByTagChart/views/TotalByTagView',
             return result;
         },
 
-        onClose: function(){
-
-        }
+        onClose: function(){}
 
     });
 });
@@ -16485,14 +16519,15 @@ define('text!modules/widget/widgets/statistics/totalByTag/templates/TotalByTagTe
 
 define('modules/widget/widgets/statistics/totalByTag/views/TotalByTagView',[
     'marionette',
-    'text!../templates/TotalByTagTemp.html'
-], function(Marionette, template){
-    return Marionette.ItemView.extend({
+    'text!../templates/TotalByTagTemp.html',
+    '../../../base/views/BaseView'
+], function(Marionette, template, BaseView){
+    return BaseView.extend({
 
         template: _.template(template),
 
         initialize: function(){
-            
+            BaseView.prototype.initialize.apply(this, arguments);
         },
 
         onClose: function(){
@@ -18794,6 +18829,13 @@ require([
 
 ], function(App){
     document.addEventListener("deviceready", function(){
+
+        if("indexedDB" in window) {
+            alert("YES!!! I CAN DO IT!!! WOOT!!!");
+        } else {
+            alert("I has a sad.");
+        }
+
         App.start();
     }, false);
 

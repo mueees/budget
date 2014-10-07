@@ -17,7 +17,7 @@
        under the License.
  */
 
-package com.batros.budget;
+package ua.in.budget.batros;
 
 import android.os.Bundle;
 import org.apache.cordova.*;

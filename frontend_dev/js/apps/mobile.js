@@ -35,6 +35,13 @@ require([
 
 ], function(App){
     document.addEventListener("deviceready", function(){
+
+        if("indexedDB" in window) {
+            alert("YES!!! I CAN DO IT!!! WOOT!!!");
+        } else {
+            alert("I has a sad.");
+        }
+
         App.start();
     }, false);
 

@@ -78,8 +78,9 @@ define([
                             alert('createNew tag error');
                             def.reject(error);
                         })
-                    }).fail(function(){
+                    }).fail(function(err){
                         alert('connect tag error');
+                        alert(err);
                         def.reject(error);
                     });
 

@@ -1,0 +1,5 @@
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-07T13:07:04.207Z"}
+{"level":"error","message":"","timestamp":"2014-10-07T13:07:04.222Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-07T13:13:21.462Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-07T13:13:21.484Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-10-07T13:13:23.083Z"}
