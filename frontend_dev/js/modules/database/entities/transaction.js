@@ -17,26 +17,15 @@ define([
 
             Database.TransactionModel = Database.BaseModel.extend({
 
-                storeName: 'Transaction',
-
-                dbOptions: {
-                    indexes: [
-                        {
-                            name: '_id'
-                        },
-                        {
-                            name: 'date'
-                        }
-                    ]
-                },
+                tableName: 'transactions',
 
                 defaults: {
 
                     count: 0,
 
-                    date: new Date(),
+                    date: moment.utc(),
 
-                    updated_at: new Date(),
+                    updated_at: moment.utc(),
 
                     comment: '',
 
@@ -58,59 +47,68 @@ define([
                 },
 
                 saveTransaction: function(){
+                    var _this = this;
+                    var arg = arguments;
+
+
                     if( !this.get('_id') ){
                         return this.createNew(arguments);
                     } else{
-                        this.editTransaction(arguments);
+                        if( this.get('_idBefore') ){
+                            //we have this transaction now
+                            return this.editTransaction(arguments);
+                        }else{
+                            var def = $.Deferred();
+
+                            //check, does we have this transaction or no ?
+                            $.when(Database.TransactionModel.findById(this.get('_id')))
+                                .done(function(tag){
+                                    if(tag){
+                                        // if we have transaction now, so we just edit them
+                                        $.when(_this.editTransaction(arg))
+                                            .done(function(){
+                                                def.resolve();
+                                            })
+                                            .fail(function(){def.reject()})
+                                    }else{
+                                        // if we don't have transaction now, so we just create them
+                                        $.when(_this.createNew(arg))
+                                            .done(function(){
+                                                def.resolve();
+                                            })
+                                            .fail(function(){def.reject()})
+                                    }
+                                })
+                                .fail(function(){
+                                    def.reject();
+                                })
+
+                            return def.promise();
+                        }
                     }
                 },
 
                 editTransaction: function(options){
                     var _this = this;
                     var def = new $.Deferred();
+                    var idForUpdate = this.get('_idBefore') || this.get('_id');
 
-                    var data = this.toJSON();
-                    delete data.id;
+                    var data = [
+                        this.get('_id'),
+                        this.get('count'),
+                        this.get('tags'),
+                        this.convertMomentDateToDatetime( this.get('date') ),
+                        this.convertMomentDateToDatetime( this.get('updated_at') ),
+                        this.get('comment'),
+                        this.get('label')
+                    ];
 
-                    if( this.get('id') ) data.id = this.get('id');
-                    if(_.isString(data.updated_at) ) data.updated_at = new Date(data.updated_at);
-                    if(_.isString(data.date) ) data.date = new Date(data.date);
+                    var sql = "UPDATE " + this.tableName + " SET _id=?, count=?, tags = ?, date=?,  updated_at=?, comment=?, label=? WHERE _id=" + "'"+idForUpdate+"'";
 
-                    var methods = [];
-
-                    if( !this.get('id') ) {
-                        //get id and then save transactions
-                        methods.push(function(cb){
-                            $.when(_this.getIdBy_Id())
-                                .done(function(id){
-                                    if(id) data.id = id;
-                                    cb(null);
-                                })
-                                .fail(function(){
-                                    cb(1);
-                                })
-                        })
-                    }
-
-                    methods.push(function(cb){
-                        $.when(_this.connect()).done(function(){
-                            _this.db.put(data, function(){
-                                cb(null)
-                            }, function(error){
-                                cb(error);
-                            })
-                        }).fail(function(){
-                            cb(error);
-                        });
-                    });
-
-                    async.waterfall(methods, function(err){
-                        if(err){
-                            def.reject();
-                            return false;
-                        }
-
-                        def.resolve(_this);
+                    this.makeRequest(sql, data, function(tx, results){
+                        def.resolve(_this)
+                    }, function(tx, err){
+                        def.reject(err);
                     });
 
                     return def.promise();
@@ -119,29 +117,34 @@ define([
                 createNew: function(options){
                     var _this = this;
                     var def = new $.Deferred();
-                    var _id = this._generateId();
+                    var _id = this.get('_id') || this._generateId();
+                    var momentDate = moment.utc();
                     var model = this.toJSON();
+                    var dateMoment = moment.utc(model.date);
+                    var label = (this.get('label') || this.get('label') === '') ? this.get('label') : 'create';
+
                     this.set('_id', _id);
+                    this.set('label', 'create');
+                    this.set('updated_at', momentDate);
+                    this.set('date', dateMoment);
 
-                    var data = {
-                        _id: _id,
-                        count: model.count,
-                        date: model.date,
-                        updated_at: new Date(),
-                        comment: model.comment,
-                        tags: model.tags,
-                        label: 'create'
-                    }
+                    var data = [
+                        _id,
+                        model.count,
+                        model.tags,
+                        this.convertMomentDateToDatetime(dateMoment),
+                        this.convertMomentDateToDatetime(momentDate),
+                        model.comment,
+                        label
+                    ];
 
-                    $.when(this.connect()).done(function(){
-                        _this.db.put(data, function(){
-                            def.resolve(_this);
-                        }, function(error){
-                            alert('createNew transaction error');
-                        })
-                    }).fail(function(){
-                        def.reject();
-                    })
+                    var sql = "INSERT INTO " + this.tableName + " ( _id, count, tags, date, updated_at, comment, label ) VALUES(?, ?, ?, ?, ?, ?, ?)";
+
+                    this.makeRequest(sql, data, function(tx, results){
+                        def.resolve(_this);
+                    }, function(tx, err){
+                        def.reject(err);
+                    });
 
                     return def.promise();
                 },
@@ -178,44 +181,36 @@ define([
 
                 getData: function(){
                     var _this = this;
-                    var _id =  this.get('_id');
                     var def = new $.Deferred();
-                    var result;
 
-                    $.when(this.connect()).done(function(){
-                        var range = _this.db.makeKeyRange({
-                            lower: _id,
-                            upper: _id
-                        });
+                    var sql = "SELECT * FROM " + this.tableName + " WHERE _id=" + "'"+this.get('_id')+"'";
 
-                        _this.db.iterate(function(data, cursor, transaction){
-                            result = new App.Database.TransactionModel(data);
-                        }, {
-                            order: 'DESC',
-                            index: '_id',
-                            keyRange: range,
-                            onEnd: function(){
-                                def.resolve(result);
-                            }
-                        })
-                    })
+                    this.makeRequest(sql, [], function(tx, results){
+                        var data = _this.collectResult(results);
+                        var tag;
+                        if(data[0]){
+                            tag = new App.Database.TransactionModel(data[0]);
+                        }
+
+                        def.resolve(tag);
+                    }, function(tx, err){
+                        alert(err);
+                        def.reject();
+                    });
                     return def.promise();
                 },
 
                 removeFromLocalDb: function(){
                     var def = new $.Deferred();
-                    var id = this.get('id');
                     var _this = this;
 
-                    $.when(this.connect()).done(function(){
-                        _this.db.remove(id, function(){
-                            def.resolve();
-                        }, function(){
-                            def.reject();
-                        });
-                    }).fail(function(){
+                    var sql = "DELETE FROM "+ this.tableName +" WHERE _id=" + "'"+this.get('_id')+"'";
+
+                    this.makeRequest(sql, [], function(tx, results){
+                        def.resolve(_this)
+                    }, function(){
                         def.reject();
-                    })
+                    });
 
                     return def.promise();
                 }
@@ -230,7 +225,8 @@ define([
 
                 $.when(transaction.getData()).done(function(transaction){
                     def.resolve(transaction);
-                }).fail(function(){
+                }).fail(function(tx, err){
+                    alert(err);
                     def.reject();
                 });
 
@@ -270,28 +266,30 @@ define([
             };
 
             Database.TransactionModel.removeTagById = function(tagId){
-                var def = new $.Deferred();
+                var def = $.Deferred();
                 var transactions = new Database.TransactionCollection();
+
                 $.when(transactions.getTransactionByTagId(tagId)).done(function(transactions){
 
                     transactions.each(function(transaction){
-                        var data= {};
-                        var tags = transaction.get('tags');
-                        var index = _.indexOf(transaction.get('tags'), tagId);
-                        tags.splice(index, 1);
-                        data.tags = tags;
+                        transaction.set({
+                            'tags': '',
+                            updated_at:  moment.utc()
+                        });
 
-                        if( !transaction.get('label') ){
-                            data.label = 'edit';
-                            data.updated_at = new Date();
-                        }
+                        if( !transaction.get('label') ) transaction.get('edit');
+                    })
 
-                        transaction.set(data);
-                        transaction.saveTransaction();
-                    });
+                    $.when( transactions.saveTransactions())
+                        .done(function(){
+                            def.resolve();
+                        })
+                        .fail(function(err){
+                            def.reject(err);
+                        });
 
-                }).fail(function(){
-                    alert('fail');
+                }).fail(function(err){
+                    def.reject();
                 })
                 return def.promise();
             };
@@ -324,57 +322,28 @@ define([
 
             Database.TransactionCollection = Database.BaseCollection.extend({
 
-                dbOptions: {
-                    indexes: [
-                        {
-                            name: '_id'
-                        },
-                        {
-                            name: 'date'
-                        }
-                    ]
-                },
-
-                storeName: 'Transaction',
+                tableName: 'transactions',
 
                 model: Database.TransactionModel,
 
                 initialize: function(attributes, options) {
-                    //Database.BaseCollection.prototype.initialize.apply(this, arguments);
+                    Database.BaseCollection.prototype.initialize.apply(this, arguments);
                 },
 
                 getTransactionList: function(period){
                     var _this = this;
                     var def = new $.Deferred();
 
-                    $.when(this.connect()).done(function(){
-                        var range;
-                        if(period){
-                            range = _this.db.makeKeyRange({
-                                lower: new Date(period.start),
-                                upper: new Date(period.end)
-                            });
-                        }else{
-                            range = null;
-                        }
+                    var sql = "SELECT * FROM "+ this.tableName +" WHERE label != 'remove' AND datetime(date) > datetime('"+period.start+"') AND datetime(date) < datetime('"+period.end+"')";
 
-                        _this.db.query(function(transactionData, cursor, transaction){
-                            var result = [];
-                            _.each(transactionData, function(transaction){
-                                if(transaction.label != 'remove') result.push(new App.Database.TransactionModel(transaction));
-                            });
-
-                            def.resolve(result);
-                            //result.push(new App.Database.TransactionModel(transactionData));
-                        }, {
-                            order: 'DESC',
-                            index: 'date',
-                            keyRange: range
-                        });
-
-                    }).fail(function(){
+                    this.makeRequest(sql, [], function(tx, results){
+                        var data = _this.collectResult(results);
+                        _this.add(data);
+                        def.resolve(_this);
+                    }, function(tx, err){
+                        alert(err)
                         def.reject();
-                    })
+                    });
 
                     return def.promise();
                 },
@@ -383,30 +352,15 @@ define([
                     var _this = this;
                     var def = new $.Deferred();
 
-                    $.when(this.connect()).done(function(){
-                        _this.db.query(function(transactions, cursor, transaction){
-                            var result = [];
+                    var sql = "SELECT * FROM " + this.tableName + " WHERE tags = '"+ tagId +"'";
 
-                            _.each(transactions, function(transaction){
-
-                                if( transaction.tags.length &&
-                                    transaction.label != 'remove' &&
-                                    $.inArray(tagId, transaction.tags) != -1
-                                    ){
-                                    //result.push(new App.Database.TransactionModel(transaction));
-                                    result.push(transaction);
-                                }
-                            });
-                            _this.add(result);
-                            def.resolve(_this);
-                        }, {
-                            order: 'DESC',
-                            index: 'date'
-                        });
-
-                    }).fail(function(){
+                    this.makeRequest(sql, [], function(tx, results){
+                        var data = _this.collectResult(results);
+                        _this.add(data);
+                        def.resolve(_this);
+                    }, function(tx, err){
                         def.reject();
-                    })
+                    });
 
                     return def.promise();
                 },
@@ -414,26 +368,16 @@ define([
                 getChangingData: function(){
                     var _this = this;
                     var def = new $.Deferred();
-                    $.when(this.connect())
-                        .done(function(){
-                            _this.db.query(function(transactions, cursor, transaction){
 
-                                var changingTransactions = _.filter(transactions, function(transaction){
-                                    if (transaction.label){
-                                        return transaction;
-                                    }
-                                });
-                                _this.add(changingTransactions);
-                                def.resolve(_this);
+                    var sql = "SELECT * FROM " + this.tableName + " WHERE label <> ''";
 
-                            }, {
-                                order: 'DESC',
-                                index: '_id'
-                            })
-                        })
-                        .fail(function(){
-                            def.reject();
-                        });
+                    this.makeRequest(sql, [], function(tx, results){
+                        var data = _this.collectResult(results);
+                        _this.add(data);
+                        def.resolve(_this)
+                    }, function(tx, err){
+                        def.reject();
+                    });
 
                     return def.promise();
                 },
@@ -442,18 +386,44 @@ define([
                     var _this = this;
                     var def = new $.Deferred();
 
-                    $.when(this.connect())
-                        .done(function(){
-                            _this.db.getAll(function(data){
-                                _this.add(data);
-                                def.resolve(_this);
-                            }, function(){});
-                        })
-                        .fail(function(){
-                            def.reject(arguments);
-                        });
+                    var sql = "SELECT * FROM " + this.tableName;
+
+                    this.makeRequest(sql, [], function(tx, results){
+                        var data = _this.collectResult(results);
+                        _this.add(data);
+                        def.resolve(_this);
+                    }, function(){
+                        def.reject();
+                    });
 
                     return def.promise();
+                },
+
+                saveTransactions: function(){
+                    var def = $.Deferred();
+                    var methods = [];
+                    this.each(function(trnasaction){
+                        methods.push(function(cb){
+                            $.when(trnasaction.saveTransaction())
+                                .done(function(){
+                                    cb(null);
+                                })
+                                .fail(function(err){
+                                    cb(err);
+                                })
+                        })
+                    })
+
+                    async.parallel(methods, function(err){
+                        if(err){
+                            return def.reject(err);
+                        }
+                        def.resolve();
+                    })
+
+                    return def.promise();
+
+
                 }
             })
 

@@ -17,7 +17,6 @@ define([
 
             var SyncController = Marionette.Controller.extend({
                 initialize: function(){
-
                     _.bindAll(this, "serverClient",
                         "updateSCState",
                         "updateTransactions");
@@ -27,8 +26,6 @@ define([
                     var def = $.Deferred();
                     var _this = this;
                     App.execute(config.commands['notify:showNotify:side'], {text: 'Synchronization...', isAutoHide: false});
-
-                    //async.waterfall([], function(){})
 
                     this.clientServer()
                         .then(this.serverClient )
@@ -83,24 +80,46 @@ define([
                 updateCSState: function(updateInfo){
                     var def = $.Deferred();
 
-                    $.when(
-                        App.reqres.request(config.reqres['service:db:resetTagEditLabel']),
-                        App.reqres.request(config.reqres['service:db:updateTagsId'], updateInfo.newTagId),
-                        App.reqres.request(config.reqres['service:db:removeRemovedTag']),
+                    var methods = [];
+                    methods.push(function(cb){
+                        $.when(App.reqres.request(config.reqres['service:db:resetTagEditLabel']))
+                            .done(function(){cb(null);})
+                    })
+                    methods.push(function(cb){
+                        $.when(App.reqres.request(config.reqres['service:db:updateTagsId'], updateInfo.newTagId))
+                            .done(function(){cb(null);})
+                    })
+                    methods.push(function(cb){
+                        $.when(App.reqres.request(config.reqres['service:db:removeRemovedTag']))
+                            .done(function(){cb(null);})
+                    })
+                    methods.push(function(cb){
+                        $.when( App.reqres.request(config.reqres['service:db:resetTransactionEditLabel']) )
+                            .done(function(){cb(null);})
+                    })
 
-                        App.reqres.request(config.reqres['service:db:resetTransactionEditLabel']),
-                        App.reqres.request(config.reqres['service:db:updateTransactionsId'], updateInfo.newTransactionId),
-                        App.reqres.request(config.reqres['service:db:removeRemovedTransactions']),
+                    methods.push(function(cb){
+                        $.when( App.reqres.request(config.reqres['service:db:updateTransactionsId'], updateInfo.newTransactionId) )
+                            .done(function(){cb(null);})
+                    })
 
-                        App.reqres.request(config.reqres['service:db:updateTagIdInTransactions'], updateInfo.newTagId)
-                    )
-                        .done(function(){
+                    methods.push(function(cb){
+                        $.when( App.reqres.request(config.reqres['service:db:removeRemovedTransactions']) )
+                            .done(function(){cb(null);})
+                    })
 
-                            def.resolve();
-                        })
-                        .fail(function(){
-                            def.reject();
-                        });
+                    methods.push(function(cb){
+                        $.when( App.reqres.request(config.reqres['service:db:updateTagIdInTransactions'], updateInfo.newTagId) )
+                            .done(function(){cb(null);})
+                    })
+
+                    async.waterfall(methods, function(err){
+                        if(err){
+                            return def.reject();
+                        }
+                        def.resolve();
+                    });
+
                     return def.promise();
                 },
 
@@ -156,8 +175,13 @@ define([
 
                     var methods = [];
                     _.each(tags, function(tag){
+                        tag.label = '';
+                        var isDeleted = _.clone(tag.isDeleted);
+                        delete tag.isDeleted;
 
-                        if( tag.isDeleted ){
+                        if( isDeleted ){
+                            delete tag.isDeleted;
+
                             methods.push(function(cb){
                                 $.when(App.reqres.request(config.reqres['service:db:removeTagById'], tag._id))
                                     .done(function(){
@@ -196,8 +220,11 @@ define([
 
                     var methods = [];
                     _.each(transactions, function(transaction){
+                        transaction.label = '';
+                        var isDeleted = _.clone(transaction.isDeleted);
+                        delete transaction.isDeleted;
 
-                        if( transaction.isDeleted ){
+                        if( isDeleted ){
                             methods.push(function(cb){
                                 $.when(App.reqres.request(config.reqres['service:db:removeTransactionById'], transaction._id))
                                     .done(function(){
@@ -262,11 +289,8 @@ define([
                             _this.syncController.close();
                             _this.syncController = false;
 
-                            var date = new Date();
-                            var time = date.getTime();
-                            time += (date.getTimezoneOffset() / 60) * 3600000;
-
-                            storage.set(config.storage['lastUpdate'], time);
+                            var time = moment.utc();
+                            storage.set(config.storage['lastUpdate'], time.toDate().getTime());
                         })
                         .fail(function(){
                             _this.syncController.close();

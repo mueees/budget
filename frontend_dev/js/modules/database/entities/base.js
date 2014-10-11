@@ -5,8 +5,8 @@ define([
     'marionette',
     'app',
     'config',
-    'idb'
-], function($, _, Backbone, Marionette, App, config, IDBStore){
+    'moment'
+], function($, _, Backbone, Marionette, App, config, moment){
 
     App.module("Database", {
 
@@ -15,85 +15,88 @@ define([
         define: function( Database, App, Backbone, Marionette, $, _ ){
 
             Database.BaseModel = Backbone.Model.extend({
-                initialize: function(){},
+                initialize: function(attributes){
+                    this.db = null;
+                    if(_.isString(attributes.updated_at)){
+                        this.set('updated_at', moment.utc(attributes.updated_at));
+                    }
+
+                    if(_.isString(attributes.date)){
+                        this.set('date', moment.utc(attributes.date));
+                    }
+
+                    this.connect();
+                },
 
                 connect: function(){
-                    var def = new $.Deferred();
-                    var _this = this;
+                    this.db = Database.db;
+                },
 
-                    if(!_this.storeName) {
-                        alert("don't have store name");
-                        return false;
+                convertMomentDateToDatetime: function(momentDate){
+                    return momentDate.format("YYYY-MM-DD HH:mm:ss");
+                },
+
+                convertDatetimeToMomentDate: function(datetime){
+                    return moment(datetime);
+                },
+
+                makeRequest: function(sql, param, success, error){
+                    if(config.showLog) console.log('sql: ' + sql);
+                    this.db.transaction(function(tx){
+                        tx.executeSql(sql, param, success, error);
+                    });
+                },
+
+                collectResult: function(results){
+                    var data = [];
+                    for (var i = 0; i < results.rows.length; i++) {
+                        var row = _.clone(results.rows.item(i));
+                        if( row.updated_at ) row.updated_at = this.convertDatetimeToMomentDate(row.updated_at);
+                        if( row.date ) row.date = this.convertDatetimeToMomentDate(row.date);
+                        data.push(row);
                     }
 
-                    if( this.db ){
-                        return def.resolve(_this);
-                    }else{
-                        var options = {
-                            dbVersion: 2,
-                            storeName: _this.storeName,
-                            keyPath: 'id',
-                            autoIncrement: true,
-                            onStoreReady: function(){
-                                def.resolve(_this);
-                            },
-                            onError: function(err){
-                                alert('Error connect to database!');
-                                console.log(err);
-                                def.reject(_this);
-                            }
-                        }
-
-                        $.extend(options, this.dbOptions || {});
-                        this.db = new IDBStore(options);
-                    }
-
-                    return def.promise();
+                    return data;
                 }
 
             });
 
             Database.BaseCollection = Backbone.Collection.extend({
 
-                initialize: function(){},
+                initialize: function(){
+                    this.db = null;
+                    this.connect();
+                },
 
                 connect: function(){
-                    var def = new $.Deferred();
-                    var _this = this;
+                    this.db = Database.db;
+                },
 
-                    if(!_this.storeName) {
-                        alert("don't have store name");
-                        return false;
+                makeRequest: function(sql, param, success, error){
+                    if(config.showLog) console.log('sql: ' + sql);
+                    this.db.transaction(function(tx){
+                        tx.executeSql(sql, param, success, error);
+                    });
+                },
+
+                convertMomentDateToDatetime: function(momentDate){
+                    return momentDate.format("YYYY-MM-DD HH:mm:ss");
+                },
+
+                convertDatetimeToMomentDate: function(datetime){
+                    return moment(datetime);
+                },
+
+                collectResult: function(results){
+                    var data = [];
+                    for (var i = 0; i < results.rows.length; i++) {
+                        var row = _.clone(results.rows.item(i));
+                        if( row.updated_at ) row.updated_at = this.convertDatetimeToMomentDate(row.updated_at);
+                        if( row.date ) row.date = this.convertDatetimeToMomentDate(row.date);
+                        data.push(row);
                     }
 
-                    if( this.db ){
-
-                        if( this.db.onStoreReady() ){
-                            return def.resolve(_this);
-                        }else{
-                            return def.reject(_this);
-                        }
-
-                    }else{
-                        var options = {
-                            dbVersion: 1,
-                            storeName: _this.storeName,
-                            keyPath: 'id',
-                            autoIncrement: true,
-                            onStoreReady: function(){
-                                def.resolve(_this);
-                            },
-                            onError: function(err){
-                                console.log(err);
-                                def.reject(_this);
-                            }
-                        }
-
-                        $.extend(options, this.dbOptions || {});
-                        this.db = new IDBStore(options);
-                    }
-
-                    return def.promise();
+                    return data;
                 }
             })
 

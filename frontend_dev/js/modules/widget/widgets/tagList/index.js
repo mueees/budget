@@ -96,6 +96,7 @@ define([
                     App.modal.show(notice);
 
                     this.listenToOnce(notice, "accept", function(){
+
                         if(!notice.value.length){
                             App.execute(config.commands['notify:showNotify:side'], {text: 'Name is required.', type: "error"});
                             return false;

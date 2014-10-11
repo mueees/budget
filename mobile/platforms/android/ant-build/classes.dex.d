@@ -1,4 +1,10 @@
 /home/mue/web/projects/budget/mobile/platforms/android/ant-build/classes.dex : \
+/home/mue/web/projects/budget/mobile/platforms/android/ant-build/classes/org/pgsqlite/SQLitePlugin$DBQuery.class \
+/home/mue/web/projects/budget/mobile/platforms/android/ant-build/classes/org/pgsqlite/SQLitePlugin$Action.class \
+/home/mue/web/projects/budget/mobile/platforms/android/ant-build/classes/org/pgsqlite/SQLitePlugin$QueryType.class \
+/home/mue/web/projects/budget/mobile/platforms/android/ant-build/classes/org/pgsqlite/SQLitePlugin.class \
+/home/mue/web/projects/budget/mobile/platforms/android/ant-build/classes/org/pgsqlite/SQLitePlugin$1.class \
+/home/mue/web/projects/budget/mobile/platforms/android/ant-build/classes/org/pgsqlite/SQLitePlugin$DBRunner.class \
 /home/mue/web/projects/budget/mobile/platforms/android/ant-build/classes/ua/in/budget/batros/R.class \
 /home/mue/web/projects/budget/mobile/platforms/android/ant-build/classes/ua/in/budget/batros/R$xml.class \
 /home/mue/web/projects/budget/mobile/platforms/android/ant-build/classes/ua/in/budget/batros/R$string.class \

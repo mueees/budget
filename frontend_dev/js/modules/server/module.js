@@ -5,11 +5,12 @@ define([
     'app',
     'config',
     'backbone.server',
+    'storage',
 
     /*controllers*/
     './controllers/tag',
     './controllers/transaction'
-], function(jQuery, Backbone, Marionette, App, config, server){
+], function(jQuery, Backbone, Marionette, App, config, server, storage){
     App.module("Server", {
 
         startWithParent: true,
@@ -117,10 +118,21 @@ define([
 
             App.on('initialize:before', function(){
                 if( config.data.db == "local" ){
-                    var controller = new Controller({
-                        server: server,
-                        db: config.data.db
-                    });
+
+                    if(!storage.get(config.storage['isInitDatabase'])){
+                        $.when(App.Database.initDatabase()).then(function(){
+                             new Controller({
+                                server: server,
+                                db: config.data.db
+                            });
+                            storage.set(config.storage['isInitDatabase'], true);
+                        })
+                    }else{
+                        new Controller({
+                            server: server,
+                            db: config.data.db
+                        });
+                    }
                 }else{
                     server.enable(false);
                 }

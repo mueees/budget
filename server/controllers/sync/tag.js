@@ -19,6 +19,7 @@ TagControler.prototype._create = function(currentTag, cb){
 
     var _this = this;
 
+    //debugger
     var tag = new TagModel({
         tagName: currentTag.tagName,
         userId: this.userId

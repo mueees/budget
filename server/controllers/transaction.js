@@ -234,7 +234,7 @@ var controller = {
                 var data = {
                     count: countByTag.count
                 };
-                if( countByTag._id.length ){
+                if( countByTag._id ){
                     data.tagId = countByTag._id[0];
 
                     _.each(tags, function(tag){
@@ -251,7 +251,6 @@ var controller = {
             res.send({
                 data: result
             });
-            //next(result);
         })
     }
 }

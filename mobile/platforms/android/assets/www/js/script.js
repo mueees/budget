@@ -8917,8 +8917,7 @@ define('config',[], function(){
 
     var serverConfig = Budget || {};
     var prefix = Budget.prefix || "";
-
-    //http://budget.batros.in.ua
+    var db = 'local' || Budget.db || "";
 
     return {
         data: {
@@ -8927,7 +8926,14 @@ define('config',[], function(){
                 email: serverConfig.user.email,
                 id: serverConfig.user.id
             },
-            db: Budget.db || ""
+            db: db,
+
+            dbOptions: {
+                db_name: "budget",
+                version: '1',
+                description: 'Budget local database',
+                dbSize: 30 * 1024 * 1024 //30Mb
+            }
         },
         reqres: {
 
@@ -8962,7 +8968,8 @@ define('config',[], function(){
         },
 
         storage: {
-            "lastUpdate": 'lastUpdate'
+            "lastUpdate": 'lastUpdate',
+            "isInitDatabase" : "isInitDatabase"
         },
 
         commands: {
@@ -9778,6 +9785,173 @@ define('modules/log/module',[
     })
 
 });
+;(function(win){
+    var store = {},
+        doc = win.document,
+        localStorageName = 'localStorage',
+        scriptTag = 'script',
+        storage
+
+    store.disabled = false
+    store.set = function(key, value) {}
+    store.get = function(key) {}
+    store.remove = function(key) {}
+    store.clear = function() {}
+    store.transact = function(key, defaultVal, transactionFn) {
+        var val = store.get(key)
+        if (transactionFn == null) {
+            transactionFn = defaultVal
+            defaultVal = null
+        }
+        if (typeof val == 'undefined') { val = defaultVal || {} }
+        transactionFn(val)
+        store.set(key, val)
+    }
+    store.getAll = function() {}
+    store.forEach = function() {}
+
+    store.serialize = function(value) {
+        return JSON.stringify(value)
+    }
+    store.deserialize = function(value) {
+        if (typeof value != 'string') { return undefined }
+        try { return JSON.parse(value) }
+        catch(e) { return value || undefined }
+    }
+
+    // Functions to encapsulate questionable FireFox 3.6.13 behavior
+    // when about.config::dom.storage.enabled === false
+    // See https://github.com/marcuswestin/store.js/issues#issue/13
+    function isLocalStorageNameSupported() {
+        try { return (localStorageName in win && win[localStorageName]) }
+        catch(err) { return false }
+    }
+
+    if (isLocalStorageNameSupported()) {
+        storage = win[localStorageName]
+        store.set = function(key, val) {
+            if (val === undefined) { return store.remove(key) }
+            storage.setItem(key, store.serialize(val))
+            return val
+        }
+        store.get = function(key) { return store.deserialize(storage.getItem(key)) }
+        store.remove = function(key) { storage.removeItem(key) }
+        store.clear = function() { storage.clear() }
+        store.getAll = function() {
+            var ret = {}
+            store.forEach(function(key, val) {
+                ret[key] = val
+            })
+            return ret
+        }
+        store.forEach = function(callback) {
+            for (var i=0; i<storage.length; i++) {
+                var key = storage.key(i)
+                callback(key, store.get(key))
+            }
+        }
+    } else if (doc.documentElement.addBehavior) {
+        var storageOwner,
+            storageContainer
+        // Since #userData storage applies only to specific paths, we need to
+        // somehow link our data to a specific path.  We choose /favicon.ico
+        // as a pretty safe option, since all browsers already make a request to
+        // this URL anyway and being a 404 will not hurt us here.  We wrap an
+        // iframe pointing to the favicon in an ActiveXObject(htmlfile) object
+        // (see: http://msdn.microsoft.com/en-us/library/aa752574(v=VS.85).aspx)
+        // since the iframe access rules appear to allow direct access and
+        // manipulation of the document element, even for a 404 page.  This
+        // document can be used instead of the current document (which would
+        // have been limited to the current path) to perform #userData storage.
+        try {
+            storageContainer = new ActiveXObject('htmlfile')
+            storageContainer.open()
+            storageContainer.write('<'+scriptTag+'>document.w=window</'+scriptTag+'><iframe src="/favicon.ico"></iframe>')
+            storageContainer.close()
+            storageOwner = storageContainer.w.frames[0].document
+            storage = storageOwner.createElement('div')
+        } catch(e) {
+            // somehow ActiveXObject instantiation failed (perhaps some special
+            // security settings or otherwse), fall back to per-path storage
+            storage = doc.createElement('div')
+            storageOwner = doc.body
+        }
+        function withIEStorage(storeFunction) {
+            return function() {
+                var args = Array.prototype.slice.call(arguments, 0)
+                args.unshift(storage)
+                // See http://msdn.microsoft.com/en-us/library/ms531081(v=VS.85).aspx
+                // and http://msdn.microsoft.com/en-us/library/ms531424(v=VS.85).aspx
+                storageOwner.appendChild(storage)
+                storage.addBehavior('#default#userData')
+                storage.load(localStorageName)
+                var result = storeFunction.apply(store, args)
+                storageOwner.removeChild(storage)
+                return result
+            }
+        }
+
+        // In IE7, keys cannot start with a digit or contain certain chars.
+        // See https://github.com/marcuswestin/store.js/issues/40
+        // See https://github.com/marcuswestin/store.js/issues/83
+        var forbiddenCharsRegex = new RegExp("[!\"#$%&'()*+,/\\\\:;<=>?@[\\]^`{|}~]", "g")
+        function ieKeyFix(key) {
+            return key.replace(/^d/, '___$&').replace(forbiddenCharsRegex, '___')
+        }
+        store.set = withIEStorage(function(storage, key, val) {
+            key = ieKeyFix(key)
+            if (val === undefined) { return store.remove(key) }
+            storage.setAttribute(key, store.serialize(val))
+            storage.save(localStorageName)
+            return val
+        })
+        store.get = withIEStorage(function(storage, key) {
+            key = ieKeyFix(key)
+            return store.deserialize(storage.getAttribute(key))
+        })
+        store.remove = withIEStorage(function(storage, key) {
+            key = ieKeyFix(key)
+            storage.removeAttribute(key)
+            storage.save(localStorageName)
+        })
+        store.clear = withIEStorage(function(storage) {
+            var attributes = storage.XMLDocument.documentElement.attributes
+            storage.load(localStorageName)
+            for (var i=0, attr; attr=attributes[i]; i++) {
+                storage.removeAttribute(attr.name)
+            }
+            storage.save(localStorageName)
+        })
+        store.getAll = function(storage) {
+            var ret = {}
+            store.forEach(function(key, val) {
+                ret[key] = val
+            })
+            return ret
+        }
+        store.forEach = withIEStorage(function(storage, callback) {
+            var attributes = storage.XMLDocument.documentElement.attributes
+            for (var i=0, attr; attr=attributes[i]; ++i) {
+                callback(attr.name, store.deserialize(storage.getAttribute(attr.name)))
+            }
+        })
+    }
+
+    try {
+        var testKey = '__storejs__'
+        store.set(testKey, testKey)
+        if (store.get(testKey) != testKey) { store.disabled = true }
+        store.remove(testKey)
+    } catch(e) {
+        store.disabled = true
+    }
+    store.enabled = !store.disabled
+
+    if (typeof module != 'undefined' && module.exports && this.module !== module) { module.exports = store }
+    else if (typeof define === 'function' && define.amd) { define('storage',store) }
+    else { win.store = store }
+
+})(Function('return this')());
 /*global window:false, self:false, define:false, module:false */
 
 /**
@@ -11023,110 +11197,6 @@ define('modules/server/controllers/base',[
 
 
 });
-define('modules/database/entities/base',[
-    'jquery',
-    'underscore',
-    'backbone',
-    'marionette',
-    'app',
-    'config',
-    'idb'
-], function($, _, Backbone, Marionette, App, config, IDBStore){
-
-    App.module("Database", {
-
-        startWithParent: true,
-
-        define: function( Database, App, Backbone, Marionette, $, _ ){
-
-            Database.BaseModel = Backbone.Model.extend({
-                initialize: function(){},
-
-                connect: function(){
-                    var def = new $.Deferred();
-                    var _this = this;
-
-                    if(!_this.storeName) {
-                        alert("don't have store name");
-                        return false;
-                    }
-
-                    if( this.db ){
-                        return def.resolve(_this);
-                    }else{
-                        var options = {
-                            dbVersion: 2,
-                            storeName: _this.storeName,
-                            keyPath: 'id',
-                            autoIncrement: true,
-                            onStoreReady: function(){
-                                def.resolve(_this);
-                            },
-                            onError: function(err){
-                                alert('Error connect to database!');
-                                console.log(err);
-                                def.reject(_this);
-                            }
-                        }
-
-                        $.extend(options, this.dbOptions || {});
-                        this.db = new IDBStore(options);
-                    }
-
-                    return def.promise();
-                }
-
-            });
-
-            Database.BaseCollection = Backbone.Collection.extend({
-
-                initialize: function(){},
-
-                connect: function(){
-                    var def = new $.Deferred();
-                    var _this = this;
-
-                    if(!_this.storeName) {
-                        alert("don't have store name");
-                        return false;
-                    }
-
-                    if( this.db ){
-
-                        if( this.db.onStoreReady() ){
-                            return def.resolve(_this);
-                        }else{
-                            return def.reject(_this);
-                        }
-
-                    }else{
-                        var options = {
-                            dbVersion: 1,
-                            storeName: _this.storeName,
-                            keyPath: 'id',
-                            autoIncrement: true,
-                            onStoreReady: function(){
-                                def.resolve(_this);
-                            },
-                            onError: function(err){
-                                console.log(err);
-                                def.reject(_this);
-                            }
-                        }
-
-                        $.extend(options, this.dbOptions || {});
-                        this.db = new IDBStore(options);
-                    }
-
-                    return def.promise();
-                }
-            })
-
-        }
-    })
-
-
-});
 /*!
  * async
  * https://github.com/caolan/async
@@ -12253,6 +12323,119 @@ define('modules/database/entities/base',[
     }
 
 }());
+// moment.js
+// version : 2.0.0
+// author : Tim Wood
+// license : MIT
+// momentjs.com
+(function(e){function O(e,t){return function(n){return j(e.call(this,n),t)}}function M(e){return function(t){return this.lang().ordinal(e.call(this,t))}}function _(){}function D(e){H(this,e)}function P(e){var t=this._data={},n=e.years||e.year||e.y||0,r=e.months||e.month||e.M||0,i=e.weeks||e.week||e.w||0,s=e.days||e.day||e.d||0,o=e.hours||e.hour||e.h||0,u=e.minutes||e.minute||e.m||0,a=e.seconds||e.second||e.s||0,f=e.milliseconds||e.millisecond||e.ms||0;this._milliseconds=f+a*1e3+u*6e4+o*36e5,this._days=s+i*7,this._months=r+n*12,t.milliseconds=f%1e3,a+=B(f/1e3),t.seconds=a%60,u+=B(a/60),t.minutes=u%60,o+=B(u/60),t.hours=o%24,s+=B(o/24),s+=i*7,t.days=s%30,r+=B(s/30),t.months=r%12,n+=B(r/12),t.years=n}function H(e,t){for(var n in t)t.hasOwnProperty(n)&&(e[n]=t[n]);return e}function B(e){return e<0?Math.ceil(e):Math.floor(e)}function j(e,t){var n=e+"";while(n.length<t)n="0"+n;return n}function F(e,t,n){var r=t._milliseconds,i=t._days,s=t._months,o;r&&e._d.setTime(+e+r*n),i&&e.date(e.date()+i*n),s&&(o=e.date(),e.date(1).month(e.month()+s*n).date(Math.min(o,e.daysInMonth())))}function I(e){return Object.prototype.toString.call(e)==="[object Array]"}function q(e,t){var n=Math.min(e.length,t.length),r=Math.abs(e.length-t.length),i=0,s;for(s=0;s<n;s++)~~e[s]!==~~t[s]&&i++;return i+r}function R(e,t){return t.abbr=e,s[e]||(s[e]=new _),s[e].set(t),s[e]}function U(e){return e?(!s[e]&&o&&require("./lang/"+e),s[e]):t.fn._lang}function z(e){return e.match(/\[.*\]/)?e.replace(/^\[|\]$/g,""):e.replace(/\\/g,"")}function W(e){var t=e.match(a),n,r;for(n=0,r=t.length;n<r;n++)A[t[n]]?t[n]=A[t[n]]:t[n]=z(t[n]);return function(i){var s="";for(n=0;n<r;n++)s+=typeof t[n].call=="function"?t[n].call(i,e):t[n];return s}}function X(e,t){function r(t){return e.lang().longDateFormat(t)||t}var n=5;while(n--&&f.test(t))t=t.replace(f,r);return C[t]||(C[t]=W(t)),C[t](e)}function V(e){switch(e){case"DDDD":return p;case"YYYY":return d;case"YYYYY":return v;case"S":case"SS":case"SSS":case"DDD":return h;case"MMM":case"MMMM":case"dd":case"ddd":case"dddd":case"a":case"A":return m;case"X":return b;case"Z":case"ZZ":return g;case"T":return y;case"MM":case"DD":case"YY":case"HH":case"hh":case"mm":case"ss":case"M":case"D":case"d":case"H":case"h":case"m":case"s":return c;default:return new RegExp(e.replace("\\",""))}}function $(e,t,n){var r,i,s=n._a;switch(e){case"M":case"MM":s[1]=t==null?0:~~t-1;break;case"MMM":case"MMMM":r=U(n._l).monthsParse(t),r!=null?s[1]=r:n._isValid=!1;break;case"D":case"DD":case"DDD":case"DDDD":t!=null&&(s[2]=~~t);break;case"YY":s[0]=~~t+(~~t>68?1900:2e3);break;case"YYYY":case"YYYYY":s[0]=~~t;break;case"a":case"A":n._isPm=(t+"").toLowerCase()==="pm";break;case"H":case"HH":case"h":case"hh":s[3]=~~t;break;case"m":case"mm":s[4]=~~t;break;case"s":case"ss":s[5]=~~t;break;case"S":case"SS":case"SSS":s[6]=~~(("0."+t)*1e3);break;case"X":n._d=new Date(parseFloat(t)*1e3);break;case"Z":case"ZZ":n._useUTC=!0,r=(t+"").match(x),r&&r[1]&&(n._tzh=~~r[1]),r&&r[2]&&(n._tzm=~~r[2]),r&&r[0]==="+"&&(n._tzh=-n._tzh,n._tzm=-n._tzm)}t==null&&(n._isValid=!1)}function J(e){var t,n,r=[];if(e._d)return;for(t=0;t<7;t++)e._a[t]=r[t]=e._a[t]==null?t===2?1:0:e._a[t];r[3]+=e._tzh||0,r[4]+=e._tzm||0,n=new Date(0),e._useUTC?(n.setUTCFullYear(r[0],r[1],r[2]),n.setUTCHours(r[3],r[4],r[5],r[6])):(n.setFullYear(r[0],r[1],r[2]),n.setHours(r[3],r[4],r[5],r[6])),e._d=n}function K(e){var t=e._f.match(a),n=e._i,r,i;e._a=[];for(r=0;r<t.length;r++)i=(V(t[r]).exec(n)||[])[0],i&&(n=n.slice(n.indexOf(i)+i.length)),A[t[r]]&&$(t[r],i,e);e._isPm&&e._a[3]<12&&(e._a[3]+=12),e._isPm===!1&&e._a[3]===12&&(e._a[3]=0),J(e)}function Q(e){var t,n,r,i=99,s,o,u;while(e._f.length){t=H({},e),t._f=e._f.pop(),K(t),n=new D(t);if(n.isValid()){r=n;break}u=q(t._a,n.toArray()),u<i&&(i=u,r=n)}H(e,r)}function G(e){var t,n=e._i;if(w.exec(n)){e._f="YYYY-MM-DDT";for(t=0;t<4;t++)if(S[t][1].exec(n)){e._f+=S[t][0];break}g.exec(n)&&(e._f+=" Z"),K(e)}else e._d=new Date(n)}function Y(t){var n=t._i,r=u.exec(n);n===e?t._d=new Date:r?t._d=new Date(+r[1]):typeof n=="string"?G(t):I(n)?(t._a=n.slice(0),J(t)):t._d=n instanceof Date?new Date(+n):new Date(n)}function Z(e,t,n,r,i){return i.relativeTime(t||1,!!n,e,r)}function et(e,t,n){var i=r(Math.abs(e)/1e3),s=r(i/60),o=r(s/60),u=r(o/24),a=r(u/365),f=i<45&&["s",i]||s===1&&["m"]||s<45&&["mm",s]||o===1&&["h"]||o<22&&["hh",o]||u===1&&["d"]||u<=25&&["dd",u]||u<=45&&["M"]||u<345&&["MM",r(u/30)]||a===1&&["y"]||["yy",a];return f[2]=t,f[3]=e>0,f[4]=n,Z.apply({},f)}function tt(e,n,r){var i=r-n,s=r-e.day();return s>i&&(s-=7),s<i-7&&(s+=7),Math.ceil(t(e).add("d",s).dayOfYear()/7)}function nt(e){var n=e._i,r=e._f;return n===null||n===""?null:(typeof n=="string"&&(e._i=n=U().preparse(n)),t.isMoment(n)?(e=H({},n),e._d=new Date(+n._d)):r?I(r)?Q(e):K(e):Y(e),new D(e))}function rt(e,n){t.fn[e]=t.fn[e+"s"]=function(e){var t=this._isUTC?"UTC":"";return e!=null?(this._d["set"+t+n](e),this):this._d["get"+t+n]()}}function it(e){t.duration.fn[e]=function(){return this._data[e]}}function st(e,n){t.duration.fn["as"+e]=function(){return+this/n}}var t,n="2.0.0",r=Math.round,i,s={},o=typeof module!="undefined"&&module.exports,u=/^\/?Date\((\-?\d+)/i,a=/(\[[^\[]*\])|(\\)?(Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|YYYYY|YYYY|YY|a|A|hh?|HH?|mm?|ss?|SS?S?|X|zz?|ZZ?|.)/g,f=/(\[[^\[]*\])|(\\)?(LT|LL?L?L?|l{1,4})/g,l=/([0-9a-zA-Z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+)/gi,c=/\d\d?/,h=/\d{1,3}/,p=/\d{3}/,d=/\d{1,4}/,v=/[+\-]?\d{1,6}/,m=/[0-9]*[a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+|[\u0600-\u06FF]+\s*?[\u0600-\u06FF]+/i,g=/Z|[\+\-]\d\d:?\d\d/i,y=/T/i,b=/[\+\-]?\d+(\.\d{1,3})?/,w=/^\s*\d{4}-\d\d-\d\d((T| )(\d\d(:\d\d(:\d\d(\.\d\d?\d?)?)?)?)?([\+\-]\d\d:?\d\d)?)?/,E="YYYY-MM-DDTHH:mm:ssZ",S=[["HH:mm:ss.S",/(T| )\d\d:\d\d:\d\d\.\d{1,3}/],["HH:mm:ss",/(T| )\d\d:\d\d:\d\d/],["HH:mm",/(T| )\d\d:\d\d/],["HH",/(T| )\d\d/]],x=/([\+\-]|\d\d)/gi,T="Month|Date|Hours|Minutes|Seconds|Milliseconds".split("|"),N={Milliseconds:1,Seconds:1e3,Minutes:6e4,Hours:36e5,Days:864e5,Months:2592e6,Years:31536e6},C={},k="DDD w W M D d".split(" "),L="M D H h m s w W".split(" "),A={M:function(){return this.month()+1},MMM:function(e){return this.lang().monthsShort(this,e)},MMMM:function(e){return this.lang().months(this,e)},D:function(){return this.date()},DDD:function(){return this.dayOfYear()},d:function(){return this.day()},dd:function(e){return this.lang().weekdaysMin(this,e)},ddd:function(e){return this.lang().weekdaysShort(this,e)},dddd:function(e){return this.lang().weekdays(this,e)},w:function(){return this.week()},W:function(){return this.isoWeek()},YY:function(){return j(this.year()%100,2)},YYYY:function(){return j(this.year(),4)},YYYYY:function(){return j(this.year(),5)},a:function(){return this.lang().meridiem(this.hours(),this.minutes(),!0)},A:function(){return this.lang().meridiem(this.hours(),this.minutes(),!1)},H:function(){return this.hours()},h:function(){return this.hours()%12||12},m:function(){return this.minutes()},s:function(){return this.seconds()},S:function(){return~~(this.milliseconds()/100)},SS:function(){return j(~~(this.milliseconds()/10),2)},SSS:function(){return j(this.milliseconds(),3)},Z:function(){var e=-this.zone(),t="+";return e<0&&(e=-e,t="-"),t+j(~~(e/60),2)+":"+j(~~e%60,2)},ZZ:function(){var e=-this.zone(),t="+";return e<0&&(e=-e,t="-"),t+j(~~(10*e/6),4)},X:function(){return this.unix()}};while(k.length)i=k.pop(),A[i+"o"]=M(A[i]);while(L.length)i=L.pop(),A[i+i]=O(A[i],2);A.DDDD=O(A.DDD,3),_.prototype={set:function(e){var t,n;for(n in e)t=e[n],typeof t=="function"?this[n]=t:this["_"+n]=t},_months:"January_February_March_April_May_June_July_August_September_October_November_December".split("_"),months:function(e){return this._months[e.month()]},_monthsShort:"Jan_Feb_Mar_Apr_May_Jun_Jul_Aug_Sep_Oct_Nov_Dec".split("_"),monthsShort:function(e){return this._monthsShort[e.month()]},monthsParse:function(e){var n,r,i,s;this._monthsParse||(this._monthsParse=[]);for(n=0;n<12;n++){this._monthsParse[n]||(r=t([2e3,n]),i="^"+this.months(r,"")+"|^"+this.monthsShort(r,""),this._monthsParse[n]=new RegExp(i.replace(".",""),"i"));if(this._monthsParse[n].test(e))return n}},_weekdays:"Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday".split("_"),weekdays:function(e){return this._weekdays[e.day()]},_weekdaysShort:"Sun_Mon_Tue_Wed_Thu_Fri_Sat".split("_"),weekdaysShort:function(e){return this._weekdaysShort[e.day()]},_weekdaysMin:"Su_Mo_Tu_We_Th_Fr_Sa".split("_"),weekdaysMin:function(e){return this._weekdaysMin[e.day()]},_longDateFormat:{LT:"h:mm A",L:"MM/DD/YYYY",LL:"MMMM D YYYY",LLL:"MMMM D YYYY LT",LLLL:"dddd, MMMM D YYYY LT"},longDateFormat:function(e){var t=this._longDateFormat[e];return!t&&this._longDateFormat[e.toUpperCase()]&&(t=this._longDateFormat[e.toUpperCase()].replace(/MMMM|MM|DD|dddd/g,function(e){return e.slice(1)}),this._longDateFormat[e]=t),t},meridiem:function(e,t,n){return e>11?n?"pm":"PM":n?"am":"AM"},_calendar:{sameDay:"[Today at] LT",nextDay:"[Tomorrow at] LT",nextWeek:"dddd [at] LT",lastDay:"[Yesterday at] LT",lastWeek:"[last] dddd [at] LT",sameElse:"L"},calendar:function(e,t){var n=this._calendar[e];return typeof n=="function"?n.apply(t):n},_relativeTime:{future:"in %s",past:"%s ago",s:"a few seconds",m:"a minute",mm:"%d minutes",h:"an hour",hh:"%d hours",d:"a day",dd:"%d days",M:"a month",MM:"%d months",y:"a year",yy:"%d years"},relativeTime:function(e,t,n,r){var i=this._relativeTime[n];return typeof i=="function"?i(e,t,n,r):i.replace(/%d/i,e)},pastFuture:function(e,t){var n=this._relativeTime[e>0?"future":"past"];return typeof n=="function"?n(t):n.replace(/%s/i,t)},ordinal:function(e){return this._ordinal.replace("%d",e)},_ordinal:"%d",preparse:function(e){return e},postformat:function(e){return e},week:function(e){return tt(e,this._week.dow,this._week.doy)},_week:{dow:0,doy:6}},t=function(e,t,n){return nt({_i:e,_f:t,_l:n,_isUTC:!1})},t.utc=function(e,t,n){return nt({_useUTC:!0,_isUTC:!0,_l:n,_i:e,_f:t})},t.unix=function(e){return t(e*1e3)},t.duration=function(e,n){var r=t.isDuration(e),i=typeof e=="number",s=r?e._data:i?{}:e,o;return i&&(n?s[n]=e:s.milliseconds=e),o=new P(s),r&&e.hasOwnProperty("_lang")&&(o._lang=e._lang),o},t.version=n,t.defaultFormat=E,t.lang=function(e,n){var r;if(!e)return t.fn._lang._abbr;n?R(e,n):s[e]||U(e),t.duration.fn._lang=t.fn._lang=U(e)},t.langData=function(e){return e&&e._lang&&e._lang._abbr&&(e=e._lang._abbr),U(e)},t.isMoment=function(e){return e instanceof D},t.isDuration=function(e){return e instanceof P},t.fn=D.prototype={clone:function(){return t(this)},valueOf:function(){return+this._d},unix:function(){return Math.floor(+this._d/1e3)},toString:function(){return this.format("ddd MMM DD YYYY HH:mm:ss [GMT]ZZ")},toDate:function(){return this._d},toJSON:function(){return t.utc(this).format("YYYY-MM-DD[T]HH:mm:ss.SSS[Z]")},toArray:function(){var e=this;return[e.year(),e.month(),e.date(),e.hours(),e.minutes(),e.seconds(),e.milliseconds()]},isValid:function(){return this._isValid==null&&(this._a?this._isValid=!q(this._a,(this._isUTC?t.utc(this._a):t(this._a)).toArray()):this._isValid=!isNaN(this._d.getTime())),!!this._isValid},utc:function(){return this._isUTC=!0,this},local:function(){return this._isUTC=!1,this},format:function(e){var n=X(this,e||t.defaultFormat);return this.lang().postformat(n)},add:function(e,n){var r;return typeof e=="string"?r=t.duration(+n,e):r=t.duration(e,n),F(this,r,1),this},subtract:function(e,n){var r;return typeof e=="string"?r=t.duration(+n,e):r=t.duration(e,n),F(this,r,-1),this},diff:function(e,n,r){var i=this._isUTC?t(e).utc():t(e).local(),s=(this.zone()-i.zone())*6e4,o,u;return n&&(n=n.replace(/s$/,"")),n==="year"||n==="month"?(o=(this.daysInMonth()+i.daysInMonth())*432e5,u=(this.year()-i.year())*12+(this.month()-i.month()),u+=(this-t(this).startOf("month")-(i-t(i).startOf("month")))/o,n==="year"&&(u/=12)):(o=this-i-s,u=n==="second"?o/1e3:n==="minute"?o/6e4:n==="hour"?o/36e5:n==="day"?o/864e5:n==="week"?o/6048e5:o),r?u:B(u)},from:function(e,n){return t.duration(this.diff(e)).lang(this.lang()._abbr).humanize(!n)},fromNow:function(e){return this.from(t(),e)},calendar:function(){var e=this.diff(t().startOf("day"),"days",!0),n=e<-6?"sameElse":e<-1?"lastWeek":e<0?"lastDay":e<1?"sameDay":e<2?"nextDay":e<7?"nextWeek":"sameElse";return this.format(this.lang().calendar(n,this))},isLeapYear:function(){var e=this.year();return e%4===0&&e%100!==0||e%400===0},isDST:function(){return this.zone()<t([this.year()]).zone()||this.zone()<t([this.year(),5]).zone()},day:function(e){var t=this._isUTC?this._d.getUTCDay():this._d.getDay();return e==null?t:this.add({d:e-t})},startOf:function(e){e=e.replace(/s$/,"");switch(e){case"year":this.month(0);case"month":this.date(1);case"week":case"day":this.hours(0);case"hour":this.minutes(0);case"minute":this.seconds(0);case"second":this.milliseconds(0)}return e==="week"&&this.day(0),this},endOf:function(e){return this.startOf(e).add(e.replace(/s?$/,"s"),1).subtract("ms",1)},isAfter:function(e,n){return n=typeof n!="undefined"?n:"millisecond",+this.clone().startOf(n)>+t(e).startOf(n)},isBefore:function(e,n){return n=typeof n!="undefined"?n:"millisecond",+this.clone().startOf(n)<+t(e).startOf(n)},isSame:function(e,n){return n=typeof n!="undefined"?n:"millisecond",+this.clone().startOf(n)===+t(e).startOf(n)},zone:function(){return this._isUTC?0:this._d.getTimezoneOffset()},daysInMonth:function(){return t.utc([this.year(),this.month()+1,0]).date()},dayOfYear:function(e){var n=r((t(this).startOf("day")-t(this).startOf("year"))/864e5)+1;return e==null?n:this.add("d",e-n)},isoWeek:function(e){var t=tt(this,1,4);return e==null?t:this.add("d",(e-t)*7)},week:function(e){var t=this.lang().week(this);return e==null?t:this.add("d",(e-t)*7)},lang:function(t){return t===e?this._lang:(this._lang=U(t),this)}};for(i=0;i<T.length;i++)rt(T[i].toLowerCase().replace(/s$/,""),T[i]);rt("year","FullYear"),t.fn.days=t.fn.day,t.fn.weeks=t.fn.week,t.fn.isoWeeks=t.fn.isoWeek,t.duration.fn=P.prototype={weeks:function(){return B(this.days()/7)},valueOf:function(){return this._milliseconds+this._days*864e5+this._months*2592e6},humanize:function(e){var t=+this,n=et(t,!e,this.lang());return e&&(n=this.lang().pastFuture(t,n)),this.lang().postformat(n)},lang:t.fn.lang};for(i in N)N.hasOwnProperty(i)&&(st(i,N[i]),it(i.toLowerCase()));st("Weeks",6048e5),t.lang("en",{ordinal:function(e){var t=e%10,n=~~(e%100/10)===1?"th":t===1?"st":t===2?"nd":t===3?"rd":"th";return e+n}}),o&&(module.exports=t),typeof ender=="undefined"&&(this.moment=t),typeof define=="function"&&define.amd&&define("moment",[],function(){return t})}).call(this);
+define('modules/database/entities/base',[
+    'jquery',
+    'underscore',
+    'backbone',
+    'marionette',
+    'app',
+    'config',
+    'moment'
+], function($, _, Backbone, Marionette, App, config, moment){
+
+    App.module("Database", {
+
+        startWithParent: true,
+
+        define: function( Database, App, Backbone, Marionette, $, _ ){
+
+            Database.BaseModel = Backbone.Model.extend({
+                initialize: function(attributes){
+                    this.db = null;
+                    if(_.isString(attributes.updated_at)){
+                        this.set('updated_at', moment.utc(attributes.updated_at));
+                    }
+
+                    if(_.isString(attributes.date)){
+                        this.set('date', moment.utc(attributes.date));
+                    }
+
+                    this.connect();
+                },
+
+                connect: function(){
+                    this.db = Database.db;
+                },
+
+                convertMomentDateToDatetime: function(momentDate){
+                    return momentDate.format("YYYY-MM-DD HH:mm:ss");
+                },
+
+                convertDatetimeToMomentDate: function(datetime){
+                    return moment(datetime);
+                },
+
+                makeRequest: function(sql, param, success, error){
+                    if(config.showLog) console.log('sql: ' + sql);
+                    this.db.transaction(function(tx){
+                        tx.executeSql(sql, param, success, error);
+                    });
+                },
+
+                collectResult: function(results){
+                    var data = [];
+                    for (var i = 0; i < results.rows.length; i++) {
+                        var row = _.clone(results.rows.item(i));
+                        if( row.updated_at ) row.updated_at = this.convertDatetimeToMomentDate(row.updated_at);
+                        if( row.date ) row.date = this.convertDatetimeToMomentDate(row.date);
+                        data.push(row);
+                    }
+
+                    return data;
+                }
+
+            });
+
+            Database.BaseCollection = Backbone.Collection.extend({
+
+                initialize: function(){
+                    this.db = null;
+                    this.connect();
+                },
+
+                connect: function(){
+                    this.db = Database.db;
+                },
+
+                makeRequest: function(sql, param, success, error){
+                    if(config.showLog) console.log('sql: ' + sql);
+                    this.db.transaction(function(tx){
+                        tx.executeSql(sql, param, success, error);
+                    });
+                },
+
+                convertMomentDateToDatetime: function(momentDate){
+                    return momentDate.format("YYYY-MM-DD HH:mm:ss");
+                },
+
+                convertDatetimeToMomentDate: function(datetime){
+                    return moment(datetime);
+                },
+
+                collectResult: function(results){
+                    var data = [];
+                    for (var i = 0; i < results.rows.length; i++) {
+                        var row = _.clone(results.rows.item(i));
+                        if( row.updated_at ) row.updated_at = this.convertDatetimeToMomentDate(row.updated_at);
+                        if( row.date ) row.date = this.convertDatetimeToMomentDate(row.date);
+                        data.push(row);
+                    }
+
+                    return data;
+                }
+            })
+
+        }
+    })
+
+
+});
 define('modules/database/entities/tag',[
     'jquery',
     'underscore',
@@ -12261,8 +12444,9 @@ define('modules/database/entities/tag',[
     'app',
     'config',
     'async',
+    'moment',
     './base'
-], function($, _, Backbone, Marionette, App, config, async){
+], function($, _, Backbone, Marionette, App, config, async, moment){
 
     App.module("Database", {
 
@@ -12272,15 +12456,7 @@ define('modules/database/entities/tag',[
 
             Database.TagModel = Database.BaseModel.extend({
 
-                storeName: 'Tags',
-
-                dbOptions: {
-                    indexes: [
-                        {
-                            name: '_id'
-                        }
-                    ]
-                },
+                tableName: 'tags', // table name
 
                 defaults: {
 
@@ -12306,162 +12482,129 @@ define('modules/database/entities/tag',[
                 },
 
                 saveTag: function(){
+                    var _this = this;
+                    var arg = arguments;
+
                     if( !this.get('_id') ){
                         return this.createNew(arguments);
                     } else{
-                        return this.editTag(arguments);
+                        if( this.get('_idBefore') ){
+                            //we have this tag now
+                            return this.editTag(arguments);
+                        }else{
+                            var def = $.Deferred();
+
+                            //check, does we have this tag or no ?
+                            $.when(Database.TagModel.findById(this.get('_id')))
+                                .done(function(tag){
+                                    if(tag){
+                                        // if we have tag now, so we just edit them
+                                        $.when(_this.editTag(arg))
+                                            .done(function(){
+                                                def.resolve();
+                                            })
+                                            .fail(function(){def.reject()})
+                                    }else{
+                                        // if we don'thave tag now, so we just create them
+                                        $.when(_this.createNew(arg))
+                                            .done(function(){
+                                                def.resolve();
+                                            })
+                                            .fail(function(){def.reject()})
+                                    }
+                                })
+                                .fail(function(){
+                                    def.reject();
+                                })
+
+                            return def.promise();
+                        }
                     }
+
                 },
 
                 createNew: function(options){
                     var _this = this;
                     var def = new $.Deferred();
-                    var _id = this._generateId();
+                    var _id = this.get('_id') || this._generateId();
+                    var label = (this.get('label') || this.get('label') === '') ? this.get('label') : 'create';
+                    var momentDate = moment.utc();
+
+
                     this.set('_id', _id);
+                    this.set('updated_at', momentDate);
 
-                    var data = {
-                        tagName: this.get('tagName'),
-                        updated_at: new Date(),
-                        _id: this.get('_id'),
-                        label: 'create'
-                    }
+                    var data = [
+                        this.get('_id'),
+                        this.get('tagName'),
+                        this.convertMomentDateToDatetime(momentDate),
+                        label
+                    ];
 
-                    $.when(this.connect()).done(function(){
-                        _this.db.put(data, function(){
-                            def.resolve(_this);
-                        }, function(error){
-                            alert('createNew tag error');
-                            def.reject(error);
-                        })
-                    }).fail(function(err){
-                        alert('connect tag error');
+                    var sql = "INSERT INTO " + this.tableName + " ( _id, tagName, updated_at, label ) VALUES(?, ?, ?, ?)";
+
+                    this.makeRequest(sql, data, function(tx, results){
+                        def.resolve(_this)
+                    }, function(tx, err){
                         alert(err);
-                        def.reject(error);
+                        def.reject();
                     });
 
                     return def.promise();
                 },
 
                 editTag: function(options){
-
                     var _this = this;
                     var def = new $.Deferred();
+                    var idForUpdate = this.get('_idBefore') || this.get('_id');
 
-                    var data = {
-                        tagName: this.get('tagName'),
-                        label: this.get('label'),
-                        updated_at: new Date(),
-                        _id: this.get('_id')
-                    };
+                    var data = [
+                        this.get('_id'),
+                        this.get('tagName'),
+                        this.convertMomentDateToDatetime(this.get('updated_at')),
+                        this.get('label')
+                    ];
 
-                    if( this.get('id') ) data.id = this.get('id');
-                    if(_.isString(data.updated_at) ) data.updated_at = new Date(data.updated_at);
+                    var sql = "UPDATE " + this.tableName + " SET _id=?, tagName=?, updated_at=?, label=? WHERE _id=" + "'"+idForUpdate+"'";
 
-                    var methods = [];
-
-                    if( !this.get('id') ) {
-                        //get id and then save tag
-                        methods.push(function(cb){
-                            $.when(_this.getIdBy_Id())
-                                .done(function(id){
-                                    if(id) data.id = id;
-                                    cb(null);
-                                })
-                                .fail(function(){
-                                    cb(1);
-                                })
-                        })
-                    }
-
-                    methods.push(function(cb){
-                        $.when(_this.connect())
-                            .done(function(){
-                                _this.db.put(data, function(){
-                                    cb(null)
-                                }, function(error){
-                                    cb(error);
-                                })
-                            })
-                            .fail(function(error){
-                                cb(error);
-                            })
+                    this.makeRequest(sql, data, function(tx, results){
+                        def.resolve(_this)
+                    }, function(){
+                        def.reject();
                     });
 
-                    async.waterfall(methods, function(err){
-                        if(err){
-                            def.reject();
-                            return false;
-                        }
-
-                        def.resolve(_this);
-                    });
-
-                    return def.promise();
-                },
-
-                getIdBy_Id: function(){
-                    var _this = this;
-                    var _id =  this.get('_id');
-                    var def = $.Deferred();
-                    $.when(this.connect())
-                        .done(function(){
-                            var range = _this.db.makeKeyRange({
-                                lower: _id,
-                                upper: _id
-                            });
-                            _this.db.query(function(tags, cursor, transaction){
-                                var result;
-                                if( tags.length ){
-                                    result = tags[0].id;
-                                }
-                                def.resolve(result);
-                            }, {
-                                order: 'DESC',
-                                index: '_id',
-                                keyRange: range
-                            })
-                        })
                     return def.promise();
                 },
 
                 getData: function(){
                     var _this = this;
-                    var _id =  this.get('_id');
                     var def = $.Deferred();
-                    var result = null;
-                    $.when(this.connect()).done(function(){
-                        var range = _this.db.makeKeyRange({
-                            lower: _id,
-                            upper: _id
-                        });
-                        _this.db.iterate(function(tag, cursor, transaction){
-                            result = new App.Database.TagModel(tag);
-                        }, {
-                            order: 'DESC',
-                            index: '_id',
-                            keyRange: range,
-                            onEnd: function(){
-                                def.resolve(result);
-                            }
-                        })
-                    })
+                    var sql = "SELECT * FROM " + this.tableName + " WHERE _id=" + "'"+this.get('_id')+"'";
+
+                    this.makeRequest(sql, [], function(tx, results){
+                        var data = _this.collectResult(results);
+                        var tag;
+                        if(data[0]){
+                            tag = new App.Database.TagModel(data[0]);
+                        }
+                        def.resolve(tag);
+                    }, function(){
+                        def.reject();
+                    });
                     return def.promise();
                 },
 
                 removeFromLocalDb: function(){
                     var def = new $.Deferred();
-                    var id = this.get('id');
                     var _this = this;
 
-                    $.when(this.connect()).done(function(){
-                        _this.db.remove(id, function(){
-                            def.resolve();
-                        }, function(){
-                            def.reject();
-                        });
-                    }).fail(function(){
+                    var sql = "DELETE FROM "+ this.tableName +" WHERE _id=" + "'"+this.get('_id')+"'";
+
+                    this.makeRequest(sql, [], function(tx, results){
+                        def.resolve(_this)
+                    }, function(){
                         def.reject();
-                    })
+                    });
 
                     return def.promise();
                 }
@@ -12538,40 +12681,27 @@ define('modules/database/entities/tag',[
 
             Database.TagCollection = Database.BaseCollection.extend({
 
-                dbOptions: {
-                    indexes: [
-                        {
-                            name: '_id'
-                        }
-                    ]
-                },
-
-                storeName: 'Tags',
+                tableName: 'tags',
 
                 model: Database.TagModel,
 
                 initialize: function(attributes, options) {
-                    //Database.BaseCollection.prototype.initialize.apply(this, arguments);
+                    Database.BaseCollection.prototype.initialize.apply(this, arguments);
                 },
 
                 getTags: function(){
                     var _this = this;
                     var def = new $.Deferred();
 
-                    $.when(this.connect())
-                        .done(function(){
-                            _this.db.getAll(function(data){
-                                var result = new App.Database.TagCollection();
-                                _.each(data, function(tag){
-                                    if(tag.label != 'remove') result.add(tag);
-                                });
+                    var sql = "SELECT * FROM "+ this.tableName +" WHERE label != 'remove'";
 
-                                def.resolve(result);
-                            }, function(){});
-                        })
-                        .fail(function(){
-                            def.reject(arguments);
-                        });
+                    this.makeRequest(sql, [], function(tx, results){
+                        var data = _this.collectResult(results);
+                        _this.add(data);
+                        def.resolve(_this);
+                    }, function(){
+                        def.reject();
+                    });
 
                     return def.promise();
                 },
@@ -12580,17 +12710,15 @@ define('modules/database/entities/tag',[
                     var _this = this;
                     var def = new $.Deferred();
 
-                    $.when(this.connect())
-                        .done(function(){
-                            _this.db.getAll(function(data){
-                                var tags = new App.Database.TagCollection();
-                                tags.add(data);
-                                def.resolve(tags);
-                            }, function(){});
-                        })
-                        .fail(function(){
-                            def.reject(arguments);
-                        });
+                    var sql = "SELECT * FROM " + this.tableName;
+
+                    this.makeRequest(sql, [], function(tx, results){
+                        var data = _this.collectResult(results);
+                        _this.add(data);
+                        def.resolve(_this);
+                    }, function(){
+                        def.reject();
+                    });
 
                     return def.promise();
                 },
@@ -12598,26 +12726,16 @@ define('modules/database/entities/tag',[
                 getChangingData: function(){
                     var _this = this;
                     var def = new $.Deferred();
-                    $.when(this.connect())
-                        .done(function(){
-                            _this.db.query(function(tags, cursor, transaction){
 
-                                var changingTags = _.filter(tags, function(tag){
-                                    if (tag.label){
-                                        return tag;
-                                    }
-                                });
-                                _this.add(changingTags);
-                                def.resolve(_this);
+                    var sql = "SELECT * FROM " + this.tableName + " WHERE label <> ''";
 
-                            }, {
-                                order: 'DESC',
-                                index: '_id'
-                            })
-                        })
-                        .fail(function(){
-                            def.reject();
-                        });
+                    this.makeRequest(sql, [], function(tx, results){
+                        var data = _this.collectResult(results);
+                        _this.add(data);
+                        def.resolve(_this);
+                    }, function(tx, err){
+                        def.reject();
+                    });
 
                     return def.promise();
                 }
@@ -12714,26 +12832,15 @@ define('modules/database/entities/transaction',[
 
             Database.TransactionModel = Database.BaseModel.extend({
 
-                storeName: 'Transaction',
-
-                dbOptions: {
-                    indexes: [
-                        {
-                            name: '_id'
-                        },
-                        {
-                            name: 'date'
-                        }
-                    ]
-                },
+                tableName: 'transactions',
 
                 defaults: {
 
                     count: 0,
 
-                    date: new Date(),
+                    date: moment.utc(),
 
-                    updated_at: new Date(),
+                    updated_at: moment.utc(),
 
                     comment: '',
 
@@ -12755,59 +12862,68 @@ define('modules/database/entities/transaction',[
                 },
 
                 saveTransaction: function(){
+                    var _this = this;
+                    var arg = arguments;
+
+
                     if( !this.get('_id') ){
                         return this.createNew(arguments);
                     } else{
-                        this.editTransaction(arguments);
+                        if( this.get('_idBefore') ){
+                            //we have this transaction now
+                            return this.editTransaction(arguments);
+                        }else{
+                            var def = $.Deferred();
+
+                            //check, does we have this transaction or no ?
+                            $.when(Database.TransactionModel.findById(this.get('_id')))
+                                .done(function(tag){
+                                    if(tag){
+                                        // if we have transaction now, so we just edit them
+                                        $.when(_this.editTransaction(arg))
+                                            .done(function(){
+                                                def.resolve();
+                                            })
+                                            .fail(function(){def.reject()})
+                                    }else{
+                                        // if we don't have transaction now, so we just create them
+                                        $.when(_this.createNew(arg))
+                                            .done(function(){
+                                                def.resolve();
+                                            })
+                                            .fail(function(){def.reject()})
+                                    }
+                                })
+                                .fail(function(){
+                                    def.reject();
+                                })
+
+                            return def.promise();
+                        }
                     }
                 },
 
                 editTransaction: function(options){
                     var _this = this;
                     var def = new $.Deferred();
+                    var idForUpdate = this.get('_idBefore') || this.get('_id');
 
-                    var data = this.toJSON();
-                    delete data.id;
+                    var data = [
+                        this.get('_id'),
+                        this.get('count'),
+                        this.get('tags'),
+                        this.convertMomentDateToDatetime( this.get('date') ),
+                        this.convertMomentDateToDatetime( this.get('updated_at') ),
+                        this.get('comment'),
+                        this.get('label')
+                    ];
 
-                    if( this.get('id') ) data.id = this.get('id');
-                    if(_.isString(data.updated_at) ) data.updated_at = new Date(data.updated_at);
-                    if(_.isString(data.date) ) data.date = new Date(data.date);
+                    var sql = "UPDATE " + this.tableName + " SET _id=?, count=?, tags = ?, date=?,  updated_at=?, comment=?, label=? WHERE _id=" + "'"+idForUpdate+"'";
 
-                    var methods = [];
-
-                    if( !this.get('id') ) {
-                        //get id and then save transactions
-                        methods.push(function(cb){
-                            $.when(_this.getIdBy_Id())
-                                .done(function(id){
-                                    if(id) data.id = id;
-                                    cb(null);
-                                })
-                                .fail(function(){
-                                    cb(1);
-                                })
-                        })
-                    }
-
-                    methods.push(function(cb){
-                        $.when(_this.connect()).done(function(){
-                            _this.db.put(data, function(){
-                                cb(null)
-                            }, function(error){
-                                cb(error);
-                            })
-                        }).fail(function(){
-                            cb(error);
-                        });
-                    });
-
-                    async.waterfall(methods, function(err){
-                        if(err){
-                            def.reject();
-                            return false;
-                        }
-
-                        def.resolve(_this);
+                    this.makeRequest(sql, data, function(tx, results){
+                        def.resolve(_this)
+                    }, function(tx, err){
+                        def.reject(err);
                     });
 
                     return def.promise();
@@ -12816,29 +12932,34 @@ define('modules/database/entities/transaction',[
                 createNew: function(options){
                     var _this = this;
                     var def = new $.Deferred();
-                    var _id = this._generateId();
+                    var _id = this.get('_id') || this._generateId();
+                    var momentDate = moment.utc();
                     var model = this.toJSON();
+                    var dateMoment = moment.utc(model.date);
+                    var label = (this.get('label') || this.get('label') === '') ? this.get('label') : 'create';
+
                     this.set('_id', _id);
+                    this.set('label', 'create');
+                    this.set('updated_at', momentDate);
+                    this.set('date', dateMoment);
 
-                    var data = {
-                        _id: _id,
-                        count: model.count,
-                        date: model.date,
-                        updated_at: new Date(),
-                        comment: model.comment,
-                        tags: model.tags,
-                        label: 'create'
-                    }
+                    var data = [
+                        _id,
+                        model.count,
+                        model.tags,
+                        this.convertMomentDateToDatetime(dateMoment),
+                        this.convertMomentDateToDatetime(momentDate),
+                        model.comment,
+                        label
+                    ];
 
-                    $.when(this.connect()).done(function(){
-                        _this.db.put(data, function(){
-                            def.resolve(_this);
-                        }, function(error){
-                            alert('createNew transaction error');
-                        })
-                    }).fail(function(){
-                        def.reject();
-                    })
+                    var sql = "INSERT INTO " + this.tableName + " ( _id, count, tags, date, updated_at, comment, label ) VALUES(?, ?, ?, ?, ?, ?, ?)";
+
+                    this.makeRequest(sql, data, function(tx, results){
+                        def.resolve(_this);
+                    }, function(tx, err){
+                        def.reject(err);
+                    });
 
                     return def.promise();
                 },
@@ -12875,44 +12996,36 @@ define('modules/database/entities/transaction',[
 
                 getData: function(){
                     var _this = this;
-                    var _id =  this.get('_id');
                     var def = new $.Deferred();
-                    var result;
 
-                    $.when(this.connect()).done(function(){
-                        var range = _this.db.makeKeyRange({
-                            lower: _id,
-                            upper: _id
-                        });
+                    var sql = "SELECT * FROM " + this.tableName + " WHERE _id=" + "'"+this.get('_id')+"'";
 
-                        _this.db.iterate(function(data, cursor, transaction){
-                            result = new App.Database.TransactionModel(data);
-                        }, {
-                            order: 'DESC',
-                            index: '_id',
-                            keyRange: range,
-                            onEnd: function(){
-                                def.resolve(result);
-                            }
-                        })
-                    })
+                    this.makeRequest(sql, [], function(tx, results){
+                        var data = _this.collectResult(results);
+                        var tag;
+                        if(data[0]){
+                            tag = new App.Database.TransactionModel(data[0]);
+                        }
+
+                        def.resolve(tag);
+                    }, function(tx, err){
+                        alert(err);
+                        def.reject();
+                    });
                     return def.promise();
                 },
 
                 removeFromLocalDb: function(){
                     var def = new $.Deferred();
-                    var id = this.get('id');
                     var _this = this;
 
-                    $.when(this.connect()).done(function(){
-                        _this.db.remove(id, function(){
-                            def.resolve();
-                        }, function(){
-                            def.reject();
-                        });
-                    }).fail(function(){
+                    var sql = "DELETE FROM "+ this.tableName +" WHERE _id=" + "'"+this.get('_id')+"'";
+
+                    this.makeRequest(sql, [], function(tx, results){
+                        def.resolve(_this)
+                    }, function(){
                         def.reject();
-                    })
+                    });
 
                     return def.promise();
                 }
@@ -12927,7 +13040,8 @@ define('modules/database/entities/transaction',[
 
                 $.when(transaction.getData()).done(function(transaction){
                     def.resolve(transaction);
-                }).fail(function(){
+                }).fail(function(tx, err){
+                    alert(err);
                     def.reject();
                 });
 
@@ -12967,28 +13081,30 @@ define('modules/database/entities/transaction',[
             };
 
             Database.TransactionModel.removeTagById = function(tagId){
-                var def = new $.Deferred();
+                var def = $.Deferred();
                 var transactions = new Database.TransactionCollection();
+
                 $.when(transactions.getTransactionByTagId(tagId)).done(function(transactions){
 
                     transactions.each(function(transaction){
-                        var data= {};
-                        var tags = transaction.get('tags');
-                        var index = _.indexOf(transaction.get('tags'), tagId);
-                        tags.splice(index, 1);
-                        data.tags = tags;
+                        transaction.set({
+                            'tags': '',
+                            updated_at:  moment.utc()
+                        });
 
-                        if( !transaction.get('label') ){
-                            data.label = 'edit';
-                            data.updated_at = new Date();
-                        }
+                        if( !transaction.get('label') ) transaction.get('edit');
+                    })
 
-                        transaction.set(data);
-                        transaction.saveTransaction();
-                    });
+                    $.when( transactions.saveTransactions())
+                        .done(function(){
+                            def.resolve();
+                        })
+                        .fail(function(err){
+                            def.reject(err);
+                        });
 
-                }).fail(function(){
-                    alert('fail');
+                }).fail(function(err){
+                    def.reject();
                 })
                 return def.promise();
             };
@@ -13021,57 +13137,28 @@ define('modules/database/entities/transaction',[
 
             Database.TransactionCollection = Database.BaseCollection.extend({
 
-                dbOptions: {
-                    indexes: [
-                        {
-                            name: '_id'
-                        },
-                        {
-                            name: 'date'
-                        }
-                    ]
-                },
-
-                storeName: 'Transaction',
+                tableName: 'transactions',
 
                 model: Database.TransactionModel,
 
                 initialize: function(attributes, options) {
-                    //Database.BaseCollection.prototype.initialize.apply(this, arguments);
+                    Database.BaseCollection.prototype.initialize.apply(this, arguments);
                 },
 
                 getTransactionList: function(period){
                     var _this = this;
                     var def = new $.Deferred();
 
-                    $.when(this.connect()).done(function(){
-                        var range;
-                        if(period){
-                            range = _this.db.makeKeyRange({
-                                lower: new Date(period.start),
-                                upper: new Date(period.end)
-                            });
-                        }else{
-                            range = null;
-                        }
+                    var sql = "SELECT * FROM "+ this.tableName +" WHERE label != 'remove' AND datetime(date) > datetime('"+period.start+"') AND datetime(date) < datetime('"+period.end+"')";
 
-                        _this.db.query(function(transactionData, cursor, transaction){
-                            var result = [];
-                            _.each(transactionData, function(transaction){
-                                if(transaction.label != 'remove') result.push(new App.Database.TransactionModel(transaction));
-                            });
-
-                            def.resolve(result);
-                            //result.push(new App.Database.TransactionModel(transactionData));
-                        }, {
-                            order: 'DESC',
-                            index: 'date',
-                            keyRange: range
-                        });
-
-                    }).fail(function(){
+                    this.makeRequest(sql, [], function(tx, results){
+                        var data = _this.collectResult(results);
+                        _this.add(data);
+                        def.resolve(_this);
+                    }, function(tx, err){
+                        alert(err)
                         def.reject();
-                    })
+                    });
 
                     return def.promise();
                 },
@@ -13080,30 +13167,15 @@ define('modules/database/entities/transaction',[
                     var _this = this;
                     var def = new $.Deferred();
 
-                    $.when(this.connect()).done(function(){
-                        _this.db.query(function(transactions, cursor, transaction){
-                            var result = [];
+                    var sql = "SELECT * FROM " + this.tableName + " WHERE tags = '"+ tagId +"'";
 
-                            _.each(transactions, function(transaction){
-
-                                if( transaction.tags.length &&
-                                    transaction.label != 'remove' &&
-                                    $.inArray(tagId, transaction.tags) != -1
-                                    ){
-                                    //result.push(new App.Database.TransactionModel(transaction));
-                                    result.push(transaction);
-                                }
-                            });
-                            _this.add(result);
-                            def.resolve(_this);
-                        }, {
-                            order: 'DESC',
-                            index: 'date'
-                        });
-
-                    }).fail(function(){
+                    this.makeRequest(sql, [], function(tx, results){
+                        var data = _this.collectResult(results);
+                        _this.add(data);
+                        def.resolve(_this);
+                    }, function(tx, err){
                         def.reject();
-                    })
+                    });
 
                     return def.promise();
                 },
@@ -13111,26 +13183,16 @@ define('modules/database/entities/transaction',[
                 getChangingData: function(){
                     var _this = this;
                     var def = new $.Deferred();
-                    $.when(this.connect())
-                        .done(function(){
-                            _this.db.query(function(transactions, cursor, transaction){
 
-                                var changingTransactions = _.filter(transactions, function(transaction){
-                                    if (transaction.label){
-                                        return transaction;
-                                    }
-                                });
-                                _this.add(changingTransactions);
-                                def.resolve(_this);
+                    var sql = "SELECT * FROM " + this.tableName + " WHERE label <> ''";
 
-                            }, {
-                                order: 'DESC',
-                                index: '_id'
-                            })
-                        })
-                        .fail(function(){
-                            def.reject();
-                        });
+                    this.makeRequest(sql, [], function(tx, results){
+                        var data = _this.collectResult(results);
+                        _this.add(data);
+                        def.resolve(_this)
+                    }, function(tx, err){
+                        def.reject();
+                    });
 
                     return def.promise();
                 },
@@ -13139,18 +13201,44 @@ define('modules/database/entities/transaction',[
                     var _this = this;
                     var def = new $.Deferred();
 
-                    $.when(this.connect())
-                        .done(function(){
-                            _this.db.getAll(function(data){
-                                _this.add(data);
-                                def.resolve(_this);
-                            }, function(){});
-                        })
-                        .fail(function(){
-                            def.reject(arguments);
-                        });
+                    var sql = "SELECT * FROM " + this.tableName;
+
+                    this.makeRequest(sql, [], function(tx, results){
+                        var data = _this.collectResult(results);
+                        _this.add(data);
+                        def.resolve(_this);
+                    }, function(){
+                        def.reject();
+                    });
 
                     return def.promise();
+                },
+
+                saveTransactions: function(){
+                    var def = $.Deferred();
+                    var methods = [];
+                    this.each(function(trnasaction){
+                        methods.push(function(cb){
+                            $.when(trnasaction.saveTransaction())
+                                .done(function(){
+                                    cb(null);
+                                })
+                                .fail(function(err){
+                                    cb(err);
+                                })
+                        })
+                    })
+
+                    async.parallel(methods, function(err){
+                        if(err){
+                            return def.reject(err);
+                        }
+                        def.resolve();
+                    })
+
+                    return def.promise();
+
+
                 }
             })
 
@@ -13229,16 +13317,71 @@ define('modules/database/module',[
     'marionette',
     'app',
     'config',
+    'async',
     './entities/base',
     './entities/tag',
-    './entities/transaction',
-    'idb'
-], function(jQuery, Backbone, Marionette, App, config, server){
+    './entities/transaction'
+], function(jQuery, Backbone, Marionette, App, config, async){
     App.module("Database", {
 
         startWithParent: true,
 
-        define: function( Database, App, Backbone, Marionette, $, _ ){}
+        define: function( Database, App, Backbone, Marionette, $, _ ){
+
+            Database.initDatabase = function(){
+                var def = $.Deferred();
+
+                Database.db.transaction(function(tx){
+                    tx.executeSql("DROP TABLE IF EXISTS `tags`");
+                    tx.executeSql("CREATE TABLE `tags` (_id unique, tagName, updated_at, label)");
+                    tx.executeSql("DROP TABLE IF EXISTS `transactions`" );
+                    tx.executeSql("CREATE TABLE `transactions` (_id unique, count, date, updated_at, comment, tags, label)");
+                    def.resolve();
+                });
+
+                return def.promise();
+            }
+
+            App.on('initialize:before', function(){
+
+                Database.db = window.sqlitePlugin.openDatabase(
+                    config.data.dbOptions.db_name,
+                    config.data.dbOptions.version,
+                    config.data.dbOptions.description,
+                    config.data.dbOptions.dbSize
+                );
+
+                //todo: поставить просчитываться на ночь
+                /*var count = 1000000;
+                var start = new Date();
+                var methods = [];
+
+                for(var i = 0; i < count; i++){
+                    methods.push(function(cb){
+                        var tag = new Database.TagModel({
+                            tagName: (new Date()).getTime() + ''
+                        });
+                        $.when(tag.saveTag())
+                            .done(function(){
+                                cb();
+                            })
+                    })
+                }
+
+                async.waterfall(methods, function(){
+                    console.log(new Date() - start);
+                })*/
+
+                //waterfall - 100 - 11701
+                //waterfall - 1000 - 124516
+                //waterfall - 10000 - 2094690
+
+                //parallel - 100 - 10965
+
+
+            })
+
+        }
     })
 
 
@@ -13288,10 +13431,13 @@ define('modules/server/controllers/tag',[
                             _this.def.reject('Cannot find tag');
                             return false;
                         }else{
-                            tag.set({
-                                tagName: newTagName,
-                                label: 'edit'
-                            });
+
+                            var data = {
+                                tagName: newTagName
+                            }
+                            if( tag.get('label') === '') data.label = 'edit';
+
+                            tag.set(data);
 
                             $.when(tag.saveTag()).done( function(){
                                 _this.def.resolve();
@@ -13305,7 +13451,7 @@ define('modules/server/controllers/tag',[
                 remove: function(){
                     var _this = this;
 
-                    //remove tag
+                    //todo: remove tag
                     $.when(
                         App.Database.TagModel.removeById(this.data._id),
                         App.Database.TransactionModel.removeTagById(this.data._id)
@@ -13357,7 +13503,7 @@ define('modules/server/controllers/transaction',[
                     var _this = this;
                     var transaction = new App.Database.TransactionModel({
                         count: this.data.count || 0,
-                        date: new Date(this.data.date),
+                        date: moment.utc(this.data.date),
                         comment: this.data.comment || "",
                         tags: this.data.tags || []
                     });
@@ -13382,8 +13528,8 @@ define('modules/server/controllers/transaction',[
                             if( _this.data.count ) newData.count = _this.data.count;
                             if( _this.data.comment ) newData.comment = _this.data.comment;
                             if( _this.data.tags ) newData.tags = _this.data.tags;
-                            if( _this.data.date ) newData.date = new Date(_this.data.date);
-                            newData.label = 'edit';
+                            if( _this.data.date ) newData.date = moment.utc(_this.data.date);
+                            if( transaction.get('label') === '') newData.label = 'edit';
 
                             transaction.set(newData);
 
@@ -13427,23 +13573,23 @@ define('modules/server/controllers/transaction',[
                             (new App.Database.TransactionCollection()).getTransactionList(this.data.period),
                             (new App.Database.TagCollection()).getTags()
                         ).done(function(transactions, tags){
-
                             var result = [];
 
-                            _.each(transactions, function(transaction){
-                                var resultTags = [];
-                                _.each(transaction.get('tags'), function(transactionTagId){
-                                    var result = {
-                                        id: transactionTagId + ''
-                                    };
-                                    tags.each(function(tag){
-                                        if(tag.get('_id')+'' == transactionTagId+'') {
-                                            result.tagName = tag.get('tagName');
+                            transactions.each(function(transaction){
+                                var tagItem;
+                                var tagId = transaction.get('tags') + '';
+
+
+                                tags.each(function(tag){
+                                    if(tag.get('_id')+'' == tagId) {
+                                        tagItem = {
+                                            _id: tagId,
+                                            tagName: tag.get('tagName')
                                         }
-                                    })
-                                    resultTags.push(result);
+                                        return;
+                                    }
                                 })
-                                transaction.set('tags', resultTags);
+                                transaction.set('tags', tagItem);
                                 result.push(transaction.toJSON());
                             })
 
@@ -13467,11 +13613,12 @@ define('modules/server/module',[
     'app',
     'config',
     'backbone.server',
+    'storage',
 
     /*controllers*/
     './controllers/tag',
     './controllers/transaction'
-], function(jQuery, Backbone, Marionette, App, config, server){
+], function(jQuery, Backbone, Marionette, App, config, server, storage){
     App.module("Server", {
 
         startWithParent: true,
@@ -13579,10 +13726,21 @@ define('modules/server/module',[
 
             App.on('initialize:before', function(){
                 if( config.data.db == "local" ){
-                    var controller = new Controller({
-                        server: server,
-                        db: config.data.db
-                    });
+
+                    if(!storage.get(config.storage['isInitDatabase'])){
+                        $.when(App.Database.initDatabase()).then(function(){
+                             new Controller({
+                                server: server,
+                                db: config.data.db
+                            });
+                            storage.set(config.storage['isInitDatabase'], true);
+                        })
+                    }else{
+                        new Controller({
+                            server: server,
+                            db: config.data.db
+                        });
+                    }
                 }else{
                     server.enable(false);
                 }
@@ -13625,8 +13783,8 @@ define('modules/service/services/db',[
                     )
                         .done(function(transactions, tags){
                             def.resolve({
-                                transactions: transactions,
-                                tags: tags
+                                transactions: transactions.toJSON() || [],
+                                tags: tags.toJSON() || []
                             })
                         })
                         .fail(function(){
@@ -13672,6 +13830,7 @@ define('modules/service/services/db',[
                             }
                             transaction.set({
                                 _id: data.idActual,
+                                _idBefore: data.idBefore,
                                 label: ''
                             });
                             $.when(transaction.saveTransaction())
@@ -13720,26 +13879,16 @@ define('modules/service/services/db',[
 
                     $.when(App.Database.TransactionCollection.getAllTransactions())
                         .then(function(transactions){
-
                             var transactionToSave = [];
 
                             transactions.each( function(transaction){
                                 var tags = transaction.get('tags');
-                                var isChange = false;
                                 _.each(updateInfo, function(oneTagUpdate){
-                                    var index = $.inArray(oneTagUpdate.idBefore, tags);
-                                    if( index != -1 ){
-                                        isChange = true;
-                                        tags.splice(index, 1, oneTagUpdate.idActual);
+                                    if( oneTagUpdate.idBefore == tags ){
+                                        transaction.set('tags', oneTagUpdate.idActual);
+                                        transactionToSave.push(transaction);
                                     }
                                 })
-
-                                if(isChange) {
-                                    transaction.set({
-                                        tags: tags
-                                    });
-                                    transactionToSave.push(transaction);
-                                }
                             })
 
                             var methods = [];
@@ -13801,6 +13950,7 @@ define('modules/service/services/db',[
                             }
                             tag.set({
                                 _id: data.idActual,
+                                _idBefore: data.idBefore,
                                 label: null
                             });
                             $.when(tag.saveTag())
@@ -13862,6 +14012,7 @@ define('modules/service/services/db',[
 
                 editOrCreateTag: function(tag){
                     var def = $.Deferred();
+
                     var tag = new App.Database.TagModel(tag);
                     $.when(tag.saveTag())
                         .done(function(){
@@ -13950,173 +14101,6 @@ define('modules/service/module',[
     })
 
 });
-;(function(win){
-    var store = {},
-        doc = win.document,
-        localStorageName = 'localStorage',
-        scriptTag = 'script',
-        storage
-
-    store.disabled = false
-    store.set = function(key, value) {}
-    store.get = function(key) {}
-    store.remove = function(key) {}
-    store.clear = function() {}
-    store.transact = function(key, defaultVal, transactionFn) {
-        var val = store.get(key)
-        if (transactionFn == null) {
-            transactionFn = defaultVal
-            defaultVal = null
-        }
-        if (typeof val == 'undefined') { val = defaultVal || {} }
-        transactionFn(val)
-        store.set(key, val)
-    }
-    store.getAll = function() {}
-    store.forEach = function() {}
-
-    store.serialize = function(value) {
-        return JSON.stringify(value)
-    }
-    store.deserialize = function(value) {
-        if (typeof value != 'string') { return undefined }
-        try { return JSON.parse(value) }
-        catch(e) { return value || undefined }
-    }
-
-    // Functions to encapsulate questionable FireFox 3.6.13 behavior
-    // when about.config::dom.storage.enabled === false
-    // See https://github.com/marcuswestin/store.js/issues#issue/13
-    function isLocalStorageNameSupported() {
-        try { return (localStorageName in win && win[localStorageName]) }
-        catch(err) { return false }
-    }
-
-    if (isLocalStorageNameSupported()) {
-        storage = win[localStorageName]
-        store.set = function(key, val) {
-            if (val === undefined) { return store.remove(key) }
-            storage.setItem(key, store.serialize(val))
-            return val
-        }
-        store.get = function(key) { return store.deserialize(storage.getItem(key)) }
-        store.remove = function(key) { storage.removeItem(key) }
-        store.clear = function() { storage.clear() }
-        store.getAll = function() {
-            var ret = {}
-            store.forEach(function(key, val) {
-                ret[key] = val
-            })
-            return ret
-        }
-        store.forEach = function(callback) {
-            for (var i=0; i<storage.length; i++) {
-                var key = storage.key(i)
-                callback(key, store.get(key))
-            }
-        }
-    } else if (doc.documentElement.addBehavior) {
-        var storageOwner,
-            storageContainer
-        // Since #userData storage applies only to specific paths, we need to
-        // somehow link our data to a specific path.  We choose /favicon.ico
-        // as a pretty safe option, since all browsers already make a request to
-        // this URL anyway and being a 404 will not hurt us here.  We wrap an
-        // iframe pointing to the favicon in an ActiveXObject(htmlfile) object
-        // (see: http://msdn.microsoft.com/en-us/library/aa752574(v=VS.85).aspx)
-        // since the iframe access rules appear to allow direct access and
-        // manipulation of the document element, even for a 404 page.  This
-        // document can be used instead of the current document (which would
-        // have been limited to the current path) to perform #userData storage.
-        try {
-            storageContainer = new ActiveXObject('htmlfile')
-            storageContainer.open()
-            storageContainer.write('<'+scriptTag+'>document.w=window</'+scriptTag+'><iframe src="/favicon.ico"></iframe>')
-            storageContainer.close()
-            storageOwner = storageContainer.w.frames[0].document
-            storage = storageOwner.createElement('div')
-        } catch(e) {
-            // somehow ActiveXObject instantiation failed (perhaps some special
-            // security settings or otherwse), fall back to per-path storage
-            storage = doc.createElement('div')
-            storageOwner = doc.body
-        }
-        function withIEStorage(storeFunction) {
-            return function() {
-                var args = Array.prototype.slice.call(arguments, 0)
-                args.unshift(storage)
-                // See http://msdn.microsoft.com/en-us/library/ms531081(v=VS.85).aspx
-                // and http://msdn.microsoft.com/en-us/library/ms531424(v=VS.85).aspx
-                storageOwner.appendChild(storage)
-                storage.addBehavior('#default#userData')
-                storage.load(localStorageName)
-                var result = storeFunction.apply(store, args)
-                storageOwner.removeChild(storage)
-                return result
-            }
-        }
-
-        // In IE7, keys cannot start with a digit or contain certain chars.
-        // See https://github.com/marcuswestin/store.js/issues/40
-        // See https://github.com/marcuswestin/store.js/issues/83
-        var forbiddenCharsRegex = new RegExp("[!\"#$%&'()*+,/\\\\:;<=>?@[\\]^`{|}~]", "g")
-        function ieKeyFix(key) {
-            return key.replace(/^d/, '___$&').replace(forbiddenCharsRegex, '___')
-        }
-        store.set = withIEStorage(function(storage, key, val) {
-            key = ieKeyFix(key)
-            if (val === undefined) { return store.remove(key) }
-            storage.setAttribute(key, store.serialize(val))
-            storage.save(localStorageName)
-            return val
-        })
-        store.get = withIEStorage(function(storage, key) {
-            key = ieKeyFix(key)
-            return store.deserialize(storage.getAttribute(key))
-        })
-        store.remove = withIEStorage(function(storage, key) {
-            key = ieKeyFix(key)
-            storage.removeAttribute(key)
-            storage.save(localStorageName)
-        })
-        store.clear = withIEStorage(function(storage) {
-            var attributes = storage.XMLDocument.documentElement.attributes
-            storage.load(localStorageName)
-            for (var i=0, attr; attr=attributes[i]; i++) {
-                storage.removeAttribute(attr.name)
-            }
-            storage.save(localStorageName)
-        })
-        store.getAll = function(storage) {
-            var ret = {}
-            store.forEach(function(key, val) {
-                ret[key] = val
-            })
-            return ret
-        }
-        store.forEach = withIEStorage(function(storage, callback) {
-            var attributes = storage.XMLDocument.documentElement.attributes
-            for (var i=0, attr; attr=attributes[i]; ++i) {
-                callback(attr.name, store.deserialize(storage.getAttribute(attr.name)))
-            }
-        })
-    }
-
-    try {
-        var testKey = '__storejs__'
-        store.set(testKey, testKey)
-        if (store.get(testKey) != testKey) { store.disabled = true }
-        store.remove(testKey)
-    } catch(e) {
-        store.disabled = true
-    }
-    store.enabled = !store.disabled
-
-    if (typeof module != 'undefined' && module.exports && this.module !== module) { module.exports = store }
-    else if (typeof define === 'function' && define.amd) { define('storage',store) }
-    else { win.store = store }
-
-})(Function('return this')());
 define('modules/sync/module',[
     'jquery',
     'backbone',
@@ -14136,7 +14120,6 @@ define('modules/sync/module',[
 
             var SyncController = Marionette.Controller.extend({
                 initialize: function(){
-
                     _.bindAll(this, "serverClient",
                         "updateSCState",
                         "updateTransactions");
@@ -14146,8 +14129,6 @@ define('modules/sync/module',[
                     var def = $.Deferred();
                     var _this = this;
                     App.execute(config.commands['notify:showNotify:side'], {text: 'Synchronization...', isAutoHide: false});
-
-                    //async.waterfall([], function(){})
 
                     this.clientServer()
                         .then(this.serverClient )
@@ -14202,24 +14183,46 @@ define('modules/sync/module',[
                 updateCSState: function(updateInfo){
                     var def = $.Deferred();
 
-                    $.when(
-                        App.reqres.request(config.reqres['service:db:resetTagEditLabel']),
-                        App.reqres.request(config.reqres['service:db:updateTagsId'], updateInfo.newTagId),
-                        App.reqres.request(config.reqres['service:db:removeRemovedTag']),
+                    var methods = [];
+                    methods.push(function(cb){
+                        $.when(App.reqres.request(config.reqres['service:db:resetTagEditLabel']))
+                            .done(function(){cb(null);})
+                    })
+                    methods.push(function(cb){
+                        $.when(App.reqres.request(config.reqres['service:db:updateTagsId'], updateInfo.newTagId))
+                            .done(function(){cb(null);})
+                    })
+                    methods.push(function(cb){
+                        $.when(App.reqres.request(config.reqres['service:db:removeRemovedTag']))
+                            .done(function(){cb(null);})
+                    })
+                    methods.push(function(cb){
+                        $.when( App.reqres.request(config.reqres['service:db:resetTransactionEditLabel']) )
+                            .done(function(){cb(null);})
+                    })
 
-                        App.reqres.request(config.reqres['service:db:resetTransactionEditLabel']),
-                        App.reqres.request(config.reqres['service:db:updateTransactionsId'], updateInfo.newTransactionId),
-                        App.reqres.request(config.reqres['service:db:removeRemovedTransactions']),
+                    methods.push(function(cb){
+                        $.when( App.reqres.request(config.reqres['service:db:updateTransactionsId'], updateInfo.newTransactionId) )
+                            .done(function(){cb(null);})
+                    })
 
-                        App.reqres.request(config.reqres['service:db:updateTagIdInTransactions'], updateInfo.newTagId)
-                    )
-                        .done(function(){
+                    methods.push(function(cb){
+                        $.when( App.reqres.request(config.reqres['service:db:removeRemovedTransactions']) )
+                            .done(function(){cb(null);})
+                    })
 
-                            def.resolve();
-                        })
-                        .fail(function(){
-                            def.reject();
-                        });
+                    methods.push(function(cb){
+                        $.when( App.reqres.request(config.reqres['service:db:updateTagIdInTransactions'], updateInfo.newTagId) )
+                            .done(function(){cb(null);})
+                    })
+
+                    async.waterfall(methods, function(err){
+                        if(err){
+                            return def.reject();
+                        }
+                        def.resolve();
+                    });
+
                     return def.promise();
                 },
 
@@ -14275,8 +14278,13 @@ define('modules/sync/module',[
 
                     var methods = [];
                     _.each(tags, function(tag){
+                        tag.label = '';
+                        var isDeleted = _.clone(tag.isDeleted);
+                        delete tag.isDeleted;
 
-                        if( tag.isDeleted ){
+                        if( isDeleted ){
+                            delete tag.isDeleted;
+
                             methods.push(function(cb){
                                 $.when(App.reqres.request(config.reqres['service:db:removeTagById'], tag._id))
                                     .done(function(){
@@ -14315,8 +14323,11 @@ define('modules/sync/module',[
 
                     var methods = [];
                     _.each(transactions, function(transaction){
+                        transaction.label = '';
+                        var isDeleted = _.clone(transaction.isDeleted);
+                        delete transaction.isDeleted;
 
-                        if( transaction.isDeleted ){
+                        if( isDeleted ){
                             methods.push(function(cb){
                                 $.when(App.reqres.request(config.reqres['service:db:removeTransactionById'], transaction._id))
                                     .done(function(){
@@ -14381,11 +14392,8 @@ define('modules/sync/module',[
                             _this.syncController.close();
                             _this.syncController = false;
 
-                            var date = new Date();
-                            var time = date.getTime();
-                            time += (date.getTimezoneOffset() / 60) * 3600000;
-
-                            storage.set(config.storage['lastUpdate'], time);
+                            var time = moment.utc();
+                            storage.set(config.storage['lastUpdate'], time.toDate().getTime());
                         })
                         .fail(function(){
                             _this.syncController.close();
@@ -15183,12 +15191,6 @@ define('modules/widget/widgets/auth/sign/index',[
     })
 
 });
-// moment.js
-// version : 2.0.0
-// author : Tim Wood
-// license : MIT
-// momentjs.com
-(function(e){function O(e,t){return function(n){return j(e.call(this,n),t)}}function M(e){return function(t){return this.lang().ordinal(e.call(this,t))}}function _(){}function D(e){H(this,e)}function P(e){var t=this._data={},n=e.years||e.year||e.y||0,r=e.months||e.month||e.M||0,i=e.weeks||e.week||e.w||0,s=e.days||e.day||e.d||0,o=e.hours||e.hour||e.h||0,u=e.minutes||e.minute||e.m||0,a=e.seconds||e.second||e.s||0,f=e.milliseconds||e.millisecond||e.ms||0;this._milliseconds=f+a*1e3+u*6e4+o*36e5,this._days=s+i*7,this._months=r+n*12,t.milliseconds=f%1e3,a+=B(f/1e3),t.seconds=a%60,u+=B(a/60),t.minutes=u%60,o+=B(u/60),t.hours=o%24,s+=B(o/24),s+=i*7,t.days=s%30,r+=B(s/30),t.months=r%12,n+=B(r/12),t.years=n}function H(e,t){for(var n in t)t.hasOwnProperty(n)&&(e[n]=t[n]);return e}function B(e){return e<0?Math.ceil(e):Math.floor(e)}function j(e,t){var n=e+"";while(n.length<t)n="0"+n;return n}function F(e,t,n){var r=t._milliseconds,i=t._days,s=t._months,o;r&&e._d.setTime(+e+r*n),i&&e.date(e.date()+i*n),s&&(o=e.date(),e.date(1).month(e.month()+s*n).date(Math.min(o,e.daysInMonth())))}function I(e){return Object.prototype.toString.call(e)==="[object Array]"}function q(e,t){var n=Math.min(e.length,t.length),r=Math.abs(e.length-t.length),i=0,s;for(s=0;s<n;s++)~~e[s]!==~~t[s]&&i++;return i+r}function R(e,t){return t.abbr=e,s[e]||(s[e]=new _),s[e].set(t),s[e]}function U(e){return e?(!s[e]&&o&&require("./lang/"+e),s[e]):t.fn._lang}function z(e){return e.match(/\[.*\]/)?e.replace(/^\[|\]$/g,""):e.replace(/\\/g,"")}function W(e){var t=e.match(a),n,r;for(n=0,r=t.length;n<r;n++)A[t[n]]?t[n]=A[t[n]]:t[n]=z(t[n]);return function(i){var s="";for(n=0;n<r;n++)s+=typeof t[n].call=="function"?t[n].call(i,e):t[n];return s}}function X(e,t){function r(t){return e.lang().longDateFormat(t)||t}var n=5;while(n--&&f.test(t))t=t.replace(f,r);return C[t]||(C[t]=W(t)),C[t](e)}function V(e){switch(e){case"DDDD":return p;case"YYYY":return d;case"YYYYY":return v;case"S":case"SS":case"SSS":case"DDD":return h;case"MMM":case"MMMM":case"dd":case"ddd":case"dddd":case"a":case"A":return m;case"X":return b;case"Z":case"ZZ":return g;case"T":return y;case"MM":case"DD":case"YY":case"HH":case"hh":case"mm":case"ss":case"M":case"D":case"d":case"H":case"h":case"m":case"s":return c;default:return new RegExp(e.replace("\\",""))}}function $(e,t,n){var r,i,s=n._a;switch(e){case"M":case"MM":s[1]=t==null?0:~~t-1;break;case"MMM":case"MMMM":r=U(n._l).monthsParse(t),r!=null?s[1]=r:n._isValid=!1;break;case"D":case"DD":case"DDD":case"DDDD":t!=null&&(s[2]=~~t);break;case"YY":s[0]=~~t+(~~t>68?1900:2e3);break;case"YYYY":case"YYYYY":s[0]=~~t;break;case"a":case"A":n._isPm=(t+"").toLowerCase()==="pm";break;case"H":case"HH":case"h":case"hh":s[3]=~~t;break;case"m":case"mm":s[4]=~~t;break;case"s":case"ss":s[5]=~~t;break;case"S":case"SS":case"SSS":s[6]=~~(("0."+t)*1e3);break;case"X":n._d=new Date(parseFloat(t)*1e3);break;case"Z":case"ZZ":n._useUTC=!0,r=(t+"").match(x),r&&r[1]&&(n._tzh=~~r[1]),r&&r[2]&&(n._tzm=~~r[2]),r&&r[0]==="+"&&(n._tzh=-n._tzh,n._tzm=-n._tzm)}t==null&&(n._isValid=!1)}function J(e){var t,n,r=[];if(e._d)return;for(t=0;t<7;t++)e._a[t]=r[t]=e._a[t]==null?t===2?1:0:e._a[t];r[3]+=e._tzh||0,r[4]+=e._tzm||0,n=new Date(0),e._useUTC?(n.setUTCFullYear(r[0],r[1],r[2]),n.setUTCHours(r[3],r[4],r[5],r[6])):(n.setFullYear(r[0],r[1],r[2]),n.setHours(r[3],r[4],r[5],r[6])),e._d=n}function K(e){var t=e._f.match(a),n=e._i,r,i;e._a=[];for(r=0;r<t.length;r++)i=(V(t[r]).exec(n)||[])[0],i&&(n=n.slice(n.indexOf(i)+i.length)),A[t[r]]&&$(t[r],i,e);e._isPm&&e._a[3]<12&&(e._a[3]+=12),e._isPm===!1&&e._a[3]===12&&(e._a[3]=0),J(e)}function Q(e){var t,n,r,i=99,s,o,u;while(e._f.length){t=H({},e),t._f=e._f.pop(),K(t),n=new D(t);if(n.isValid()){r=n;break}u=q(t._a,n.toArray()),u<i&&(i=u,r=n)}H(e,r)}function G(e){var t,n=e._i;if(w.exec(n)){e._f="YYYY-MM-DDT";for(t=0;t<4;t++)if(S[t][1].exec(n)){e._f+=S[t][0];break}g.exec(n)&&(e._f+=" Z"),K(e)}else e._d=new Date(n)}function Y(t){var n=t._i,r=u.exec(n);n===e?t._d=new Date:r?t._d=new Date(+r[1]):typeof n=="string"?G(t):I(n)?(t._a=n.slice(0),J(t)):t._d=n instanceof Date?new Date(+n):new Date(n)}function Z(e,t,n,r,i){return i.relativeTime(t||1,!!n,e,r)}function et(e,t,n){var i=r(Math.abs(e)/1e3),s=r(i/60),o=r(s/60),u=r(o/24),a=r(u/365),f=i<45&&["s",i]||s===1&&["m"]||s<45&&["mm",s]||o===1&&["h"]||o<22&&["hh",o]||u===1&&["d"]||u<=25&&["dd",u]||u<=45&&["M"]||u<345&&["MM",r(u/30)]||a===1&&["y"]||["yy",a];return f[2]=t,f[3]=e>0,f[4]=n,Z.apply({},f)}function tt(e,n,r){var i=r-n,s=r-e.day();return s>i&&(s-=7),s<i-7&&(s+=7),Math.ceil(t(e).add("d",s).dayOfYear()/7)}function nt(e){var n=e._i,r=e._f;return n===null||n===""?null:(typeof n=="string"&&(e._i=n=U().preparse(n)),t.isMoment(n)?(e=H({},n),e._d=new Date(+n._d)):r?I(r)?Q(e):K(e):Y(e),new D(e))}function rt(e,n){t.fn[e]=t.fn[e+"s"]=function(e){var t=this._isUTC?"UTC":"";return e!=null?(this._d["set"+t+n](e),this):this._d["get"+t+n]()}}function it(e){t.duration.fn[e]=function(){return this._data[e]}}function st(e,n){t.duration.fn["as"+e]=function(){return+this/n}}var t,n="2.0.0",r=Math.round,i,s={},o=typeof module!="undefined"&&module.exports,u=/^\/?Date\((\-?\d+)/i,a=/(\[[^\[]*\])|(\\)?(Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|YYYYY|YYYY|YY|a|A|hh?|HH?|mm?|ss?|SS?S?|X|zz?|ZZ?|.)/g,f=/(\[[^\[]*\])|(\\)?(LT|LL?L?L?|l{1,4})/g,l=/([0-9a-zA-Z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+)/gi,c=/\d\d?/,h=/\d{1,3}/,p=/\d{3}/,d=/\d{1,4}/,v=/[+\-]?\d{1,6}/,m=/[0-9]*[a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+|[\u0600-\u06FF]+\s*?[\u0600-\u06FF]+/i,g=/Z|[\+\-]\d\d:?\d\d/i,y=/T/i,b=/[\+\-]?\d+(\.\d{1,3})?/,w=/^\s*\d{4}-\d\d-\d\d((T| )(\d\d(:\d\d(:\d\d(\.\d\d?\d?)?)?)?)?([\+\-]\d\d:?\d\d)?)?/,E="YYYY-MM-DDTHH:mm:ssZ",S=[["HH:mm:ss.S",/(T| )\d\d:\d\d:\d\d\.\d{1,3}/],["HH:mm:ss",/(T| )\d\d:\d\d:\d\d/],["HH:mm",/(T| )\d\d:\d\d/],["HH",/(T| )\d\d/]],x=/([\+\-]|\d\d)/gi,T="Month|Date|Hours|Minutes|Seconds|Milliseconds".split("|"),N={Milliseconds:1,Seconds:1e3,Minutes:6e4,Hours:36e5,Days:864e5,Months:2592e6,Years:31536e6},C={},k="DDD w W M D d".split(" "),L="M D H h m s w W".split(" "),A={M:function(){return this.month()+1},MMM:function(e){return this.lang().monthsShort(this,e)},MMMM:function(e){return this.lang().months(this,e)},D:function(){return this.date()},DDD:function(){return this.dayOfYear()},d:function(){return this.day()},dd:function(e){return this.lang().weekdaysMin(this,e)},ddd:function(e){return this.lang().weekdaysShort(this,e)},dddd:function(e){return this.lang().weekdays(this,e)},w:function(){return this.week()},W:function(){return this.isoWeek()},YY:function(){return j(this.year()%100,2)},YYYY:function(){return j(this.year(),4)},YYYYY:function(){return j(this.year(),5)},a:function(){return this.lang().meridiem(this.hours(),this.minutes(),!0)},A:function(){return this.lang().meridiem(this.hours(),this.minutes(),!1)},H:function(){return this.hours()},h:function(){return this.hours()%12||12},m:function(){return this.minutes()},s:function(){return this.seconds()},S:function(){return~~(this.milliseconds()/100)},SS:function(){return j(~~(this.milliseconds()/10),2)},SSS:function(){return j(this.milliseconds(),3)},Z:function(){var e=-this.zone(),t="+";return e<0&&(e=-e,t="-"),t+j(~~(e/60),2)+":"+j(~~e%60,2)},ZZ:function(){var e=-this.zone(),t="+";return e<0&&(e=-e,t="-"),t+j(~~(10*e/6),4)},X:function(){return this.unix()}};while(k.length)i=k.pop(),A[i+"o"]=M(A[i]);while(L.length)i=L.pop(),A[i+i]=O(A[i],2);A.DDDD=O(A.DDD,3),_.prototype={set:function(e){var t,n;for(n in e)t=e[n],typeof t=="function"?this[n]=t:this["_"+n]=t},_months:"January_February_March_April_May_June_July_August_September_October_November_December".split("_"),months:function(e){return this._months[e.month()]},_monthsShort:"Jan_Feb_Mar_Apr_May_Jun_Jul_Aug_Sep_Oct_Nov_Dec".split("_"),monthsShort:function(e){return this._monthsShort[e.month()]},monthsParse:function(e){var n,r,i,s;this._monthsParse||(this._monthsParse=[]);for(n=0;n<12;n++){this._monthsParse[n]||(r=t([2e3,n]),i="^"+this.months(r,"")+"|^"+this.monthsShort(r,""),this._monthsParse[n]=new RegExp(i.replace(".",""),"i"));if(this._monthsParse[n].test(e))return n}},_weekdays:"Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday".split("_"),weekdays:function(e){return this._weekdays[e.day()]},_weekdaysShort:"Sun_Mon_Tue_Wed_Thu_Fri_Sat".split("_"),weekdaysShort:function(e){return this._weekdaysShort[e.day()]},_weekdaysMin:"Su_Mo_Tu_We_Th_Fr_Sa".split("_"),weekdaysMin:function(e){return this._weekdaysMin[e.day()]},_longDateFormat:{LT:"h:mm A",L:"MM/DD/YYYY",LL:"MMMM D YYYY",LLL:"MMMM D YYYY LT",LLLL:"dddd, MMMM D YYYY LT"},longDateFormat:function(e){var t=this._longDateFormat[e];return!t&&this._longDateFormat[e.toUpperCase()]&&(t=this._longDateFormat[e.toUpperCase()].replace(/MMMM|MM|DD|dddd/g,function(e){return e.slice(1)}),this._longDateFormat[e]=t),t},meridiem:function(e,t,n){return e>11?n?"pm":"PM":n?"am":"AM"},_calendar:{sameDay:"[Today at] LT",nextDay:"[Tomorrow at] LT",nextWeek:"dddd [at] LT",lastDay:"[Yesterday at] LT",lastWeek:"[last] dddd [at] LT",sameElse:"L"},calendar:function(e,t){var n=this._calendar[e];return typeof n=="function"?n.apply(t):n},_relativeTime:{future:"in %s",past:"%s ago",s:"a few seconds",m:"a minute",mm:"%d minutes",h:"an hour",hh:"%d hours",d:"a day",dd:"%d days",M:"a month",MM:"%d months",y:"a year",yy:"%d years"},relativeTime:function(e,t,n,r){var i=this._relativeTime[n];return typeof i=="function"?i(e,t,n,r):i.replace(/%d/i,e)},pastFuture:function(e,t){var n=this._relativeTime[e>0?"future":"past"];return typeof n=="function"?n(t):n.replace(/%s/i,t)},ordinal:function(e){return this._ordinal.replace("%d",e)},_ordinal:"%d",preparse:function(e){return e},postformat:function(e){return e},week:function(e){return tt(e,this._week.dow,this._week.doy)},_week:{dow:0,doy:6}},t=function(e,t,n){return nt({_i:e,_f:t,_l:n,_isUTC:!1})},t.utc=function(e,t,n){return nt({_useUTC:!0,_isUTC:!0,_l:n,_i:e,_f:t})},t.unix=function(e){return t(e*1e3)},t.duration=function(e,n){var r=t.isDuration(e),i=typeof e=="number",s=r?e._data:i?{}:e,o;return i&&(n?s[n]=e:s.milliseconds=e),o=new P(s),r&&e.hasOwnProperty("_lang")&&(o._lang=e._lang),o},t.version=n,t.defaultFormat=E,t.lang=function(e,n){var r;if(!e)return t.fn._lang._abbr;n?R(e,n):s[e]||U(e),t.duration.fn._lang=t.fn._lang=U(e)},t.langData=function(e){return e&&e._lang&&e._lang._abbr&&(e=e._lang._abbr),U(e)},t.isMoment=function(e){return e instanceof D},t.isDuration=function(e){return e instanceof P},t.fn=D.prototype={clone:function(){return t(this)},valueOf:function(){return+this._d},unix:function(){return Math.floor(+this._d/1e3)},toString:function(){return this.format("ddd MMM DD YYYY HH:mm:ss [GMT]ZZ")},toDate:function(){return this._d},toJSON:function(){return t.utc(this).format("YYYY-MM-DD[T]HH:mm:ss.SSS[Z]")},toArray:function(){var e=this;return[e.year(),e.month(),e.date(),e.hours(),e.minutes(),e.seconds(),e.milliseconds()]},isValid:function(){return this._isValid==null&&(this._a?this._isValid=!q(this._a,(this._isUTC?t.utc(this._a):t(this._a)).toArray()):this._isValid=!isNaN(this._d.getTime())),!!this._isValid},utc:function(){return this._isUTC=!0,this},local:function(){return this._isUTC=!1,this},format:function(e){var n=X(this,e||t.defaultFormat);return this.lang().postformat(n)},add:function(e,n){var r;return typeof e=="string"?r=t.duration(+n,e):r=t.duration(e,n),F(this,r,1),this},subtract:function(e,n){var r;return typeof e=="string"?r=t.duration(+n,e):r=t.duration(e,n),F(this,r,-1),this},diff:function(e,n,r){var i=this._isUTC?t(e).utc():t(e).local(),s=(this.zone()-i.zone())*6e4,o,u;return n&&(n=n.replace(/s$/,"")),n==="year"||n==="month"?(o=(this.daysInMonth()+i.daysInMonth())*432e5,u=(this.year()-i.year())*12+(this.month()-i.month()),u+=(this-t(this).startOf("month")-(i-t(i).startOf("month")))/o,n==="year"&&(u/=12)):(o=this-i-s,u=n==="second"?o/1e3:n==="minute"?o/6e4:n==="hour"?o/36e5:n==="day"?o/864e5:n==="week"?o/6048e5:o),r?u:B(u)},from:function(e,n){return t.duration(this.diff(e)).lang(this.lang()._abbr).humanize(!n)},fromNow:function(e){return this.from(t(),e)},calendar:function(){var e=this.diff(t().startOf("day"),"days",!0),n=e<-6?"sameElse":e<-1?"lastWeek":e<0?"lastDay":e<1?"sameDay":e<2?"nextDay":e<7?"nextWeek":"sameElse";return this.format(this.lang().calendar(n,this))},isLeapYear:function(){var e=this.year();return e%4===0&&e%100!==0||e%400===0},isDST:function(){return this.zone()<t([this.year()]).zone()||this.zone()<t([this.year(),5]).zone()},day:function(e){var t=this._isUTC?this._d.getUTCDay():this._d.getDay();return e==null?t:this.add({d:e-t})},startOf:function(e){e=e.replace(/s$/,"");switch(e){case"year":this.month(0);case"month":this.date(1);case"week":case"day":this.hours(0);case"hour":this.minutes(0);case"minute":this.seconds(0);case"second":this.milliseconds(0)}return e==="week"&&this.day(0),this},endOf:function(e){return this.startOf(e).add(e.replace(/s?$/,"s"),1).subtract("ms",1)},isAfter:function(e,n){return n=typeof n!="undefined"?n:"millisecond",+this.clone().startOf(n)>+t(e).startOf(n)},isBefore:function(e,n){return n=typeof n!="undefined"?n:"millisecond",+this.clone().startOf(n)<+t(e).startOf(n)},isSame:function(e,n){return n=typeof n!="undefined"?n:"millisecond",+this.clone().startOf(n)===+t(e).startOf(n)},zone:function(){return this._isUTC?0:this._d.getTimezoneOffset()},daysInMonth:function(){return t.utc([this.year(),this.month()+1,0]).date()},dayOfYear:function(e){var n=r((t(this).startOf("day")-t(this).startOf("year"))/864e5)+1;return e==null?n:this.add("d",e-n)},isoWeek:function(e){var t=tt(this,1,4);return e==null?t:this.add("d",(e-t)*7)},week:function(e){var t=this.lang().week(this);return e==null?t:this.add("d",(e-t)*7)},lang:function(t){return t===e?this._lang:(this._lang=U(t),this)}};for(i=0;i<T.length;i++)rt(T[i].toLowerCase().replace(/s$/,""),T[i]);rt("year","FullYear"),t.fn.days=t.fn.day,t.fn.weeks=t.fn.week,t.fn.isoWeeks=t.fn.isoWeek,t.duration.fn=P.prototype={weeks:function(){return B(this.days()/7)},valueOf:function(){return this._milliseconds+this._days*864e5+this._months*2592e6},humanize:function(e){var t=+this,n=et(t,!e,this.lang());return e&&(n=this.lang().pastFuture(t,n)),this.lang().postformat(n)},lang:t.fn.lang};for(i in N)N.hasOwnProperty(i)&&(st(i,N[i]),it(i.toLowerCase()));st("Weeks",6048e5),t.lang("en",{ordinal:function(e){var t=e%10,n=~~(e%100/10)===1?"th":t===1?"st":t===2?"nd":t===3?"rd":"th";return e+n}}),o&&(module.exports=t),typeof ender=="undefined"&&(this.moment=t),typeof define=="function"&&define.amd&&define("moment",[],function(){return t})}).call(this);
 define('modules/widget/widgets/date/index',[
     'jquery',
     'backbone',
@@ -15458,6 +15460,7 @@ define('modules/widget/widgets/tagList/index',[
                     App.modal.show(notice);
 
                     this.listenToOnce(notice, "accept", function(){
+
                         if(!notice.value.length){
                             App.execute(config.commands['notify:showNotify:side'], {text: 'Name is required.', type: "error"});
                             return false;
@@ -15584,8 +15587,7 @@ define('modules/widget/widgets/transaction/add/views/AddView',[
         getData: function(){
             var data = Backbone.Syphon.serialize(this);
             var tag = this.ui.tags.find('.active').data('id');
-            data.tags = (tag) ? [tag + ""] : [];
-
+            data.tags = (tag) ? tag + "" : '';
             data.date = new Date(data.date);
             return data;
         },
@@ -15673,7 +15675,7 @@ define('modules/widget/widgets/transaction/add/index',[
 
 });
 
-define('text!modules/widget/widgets/transaction/edit/templates/EditTemp.html',[],function () { return '<h3 class="page-header">Edit transaction</h3>\n\n<form class="form-horizontal">\n    <fieldset>\n        <div class="form-group">\n            <div class="col-lg-10">\n                <input name="count" value="<%= transaction.count %>" type="number" class="form-control" id="count" placeholder="Count">\n            </div>\n            <div class="col-lg-10">\n                <div class="calculator">\n                    <div class="row small-grid-row">\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="1" type="button" class="btn btn-default">1</button>\n                        </div>\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="2" type="button" class="btn btn-default">2</button>\n                        </div>\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="3" type="button" class="btn btn-default">3</button>\n                        </div>\n                    </div>\n                    <div class="row small-grid-row">\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="4" type="button" class="btn btn-default">4</button>\n                        </div>\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="5" type="button" class="btn btn-default">5</button>\n                        </div>\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="6" type="button" class="btn btn-default">6</button>\n                        </div>\n                    </div>\n                    <div class="row small-grid-row">\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="7" type="button" class="btn btn-default">7</button>\n                        </div>\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="8" type="button" class="btn btn-default">8</button>\n                        </div>\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="9" type="button" class="btn btn-default">9</button>\n                        </div>\n                    </div>\n                    <div class="row small-grid-row">\n                        <div class="col-xs-4 small-grid ">\n                            <button data-value="clear" type="button" class="btn btn-default clear">clear</button>\n                        </div>\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="0" type="button" class="btn btn-default">0</button>\n                        </div>\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="backspace" type="button" class="btn btn-default backspace">\n                                <span class="text glyphicon glyphicon-chevron-left" ></span>\n                            </button>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n        <div class="form-group">\n            <div class="col-lg-10">\n                <ul class="tags">\n                    <% _.each(tags, function(tag){ %>\n                    <li data-id="<%= tag._id %>" class=" <%=  (tag._id == transaction.tags[0])? \'active\': \'\' %> ">\n                        <button type="button" class="btn btn-default ">\n                            <span class="glyphicon glyphicon-tag"></span>\n                            <span class="text"><%= tag.tagName %></span>\n                        </button>\n                    </li>\n                    <% }) %>\n                </ul>\n            </div>\n        </div>\n\n        <div class="form-group hidden-xs comment-container">\n            <div class="col-lg-10">\n                <textarea  name="comment" class="form-control" rows="3" id="comment" placeholder="Comment"><%= transaction.comment %></textarea>\n            </div>\n        </div>\n\n        <div class="form-group visible-xs comment-toggle">\n            <div class="col-lg-10">\n                <button type="button" class="btn btn-default comment">Comment</button>\n            </div>\n        </div>\n\n        <div class="form-group">\n            <div class="col-lg-10">\n                <input name="date" type="date" class="form-control" value="<%= date%>"  placeholder="Date"/>\n            </div>\n        </div>\n\n        <div class="messages"></div>\n\n        <div class="form-group">\n            <div class="col-lg-10">\n                <button type="button" class="btn btn-danger deleteBtn">Remove</button>\n                <button type="button" class="btn btn-default cancelBtn">Cancel</button>\n                <button type="submit" class="btn btn-primary editBtn">Edit</button>\n            </div>\n        </div>\n    </fieldset>\n</form>';});
+define('text!modules/widget/widgets/transaction/edit/templates/EditTemp.html',[],function () { return '<h3 class="page-header">Edit transaction</h3>\n\n<form class="form-horizontal">\n    <fieldset>\n        <div class="form-group">\n            <div class="col-lg-10">\n                <input name="count" value="<%= transaction.count %>" type="number" class="form-control" id="count" placeholder="Count">\n            </div>\n            <div class="col-lg-10">\n                <div class="calculator">\n                    <div class="row small-grid-row">\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="1" type="button" class="btn btn-default">1</button>\n                        </div>\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="2" type="button" class="btn btn-default">2</button>\n                        </div>\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="3" type="button" class="btn btn-default">3</button>\n                        </div>\n                    </div>\n                    <div class="row small-grid-row">\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="4" type="button" class="btn btn-default">4</button>\n                        </div>\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="5" type="button" class="btn btn-default">5</button>\n                        </div>\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="6" type="button" class="btn btn-default">6</button>\n                        </div>\n                    </div>\n                    <div class="row small-grid-row">\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="7" type="button" class="btn btn-default">7</button>\n                        </div>\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="8" type="button" class="btn btn-default">8</button>\n                        </div>\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="9" type="button" class="btn btn-default">9</button>\n                        </div>\n                    </div>\n                    <div class="row small-grid-row">\n                        <div class="col-xs-4 small-grid ">\n                            <button data-value="clear" type="button" class="btn btn-default clear">clear</button>\n                        </div>\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="0" type="button" class="btn btn-default">0</button>\n                        </div>\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="backspace" type="button" class="btn btn-default backspace">\n                                <span class="text glyphicon glyphicon-chevron-left" ></span>\n                            </button>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n        <div class="form-group">\n            <div class="col-lg-10">\n                <ul class="tags">\n                    <% _.each(tags, function(tag){ %>\n                    <li data-id="<%= tag._id %>" class=" <%=  (tag._id == transaction.tags)? \'active\': \'\' %> ">\n                        <button type="button" class="btn btn-default ">\n                            <span class="glyphicon glyphicon-tag"></span>\n                            <span class="text"><%= tag.tagName %></span>\n                        </button>\n                    </li>\n                    <% }) %>\n                </ul>\n            </div>\n        </div>\n\n        <div class="form-group hidden-xs comment-container">\n            <div class="col-lg-10">\n                <textarea  name="comment" class="form-control" rows="3" id="comment" placeholder="Comment"><%= transaction.comment %></textarea>\n            </div>\n        </div>\n\n        <div class="form-group visible-xs comment-toggle">\n            <div class="col-lg-10">\n                <button type="button" class="btn btn-default comment">Comment</button>\n            </div>\n        </div>\n\n        <div class="form-group">\n            <div class="col-lg-10">\n                <input name="date" type="date" class="form-control" value="<%= date%>"  placeholder="Date"/>\n            </div>\n        </div>\n\n        <div class="messages"></div>\n\n        <div class="form-group">\n            <div class="col-lg-10">\n                <button type="button" class="btn btn-danger deleteBtn">Remove</button>\n                <button type="button" class="btn btn-default cancelBtn">Cancel</button>\n                <button type="submit" class="btn btn-primary editBtn">Edit</button>\n            </div>\n        </div>\n    </fieldset>\n</form>';});
 
 define('modules/widget/widgets/transaction/edit/views/EditView',[
     'marionette',
@@ -15761,7 +15763,7 @@ define('modules/widget/widgets/transaction/edit/views/EditView',[
         getData: function(){
             var data = Backbone.Syphon.serialize(this);
             var tag = this.ui.tags.find('.active').data('id');
-            data.tags = (tag) ? [tag + ""] : [];
+            data.tags = (tag) ? tag + "" : "";
 
             data.date = new Date(data.date);
             return data;
@@ -15886,7 +15888,7 @@ define('modules/widget/widgets/transaction/edit/index',[
 define('text!modules/widget/widgets/transaction/list/templates/ListTemp.html',[],function () { return '<table class="table table-hover budget-table table-striped">\n    <thead>\n    <tr>\n        <th>Tag</th>\n        <th>Count</th>\n        <th>Date</th>\n        <th>Comment</th>\n    </tr>\n    </thead>\n    <tbody></tbody>\n</table>';});
 
 
-define('text!modules/widget/widgets/transaction/list/templates/TranactionTemp.html',[],function () { return '<td>\n    <% if(tags.length) {%>\n        <% _.each(tags, function(tag){%>\n        <span class="glyphicon glyphicon-tag"></span>\n        <span class="value"><%= tag.tagName %></span>\n        <%}) %>\n    <%}else{%>\n        <span class="glyphicon glyphicon-tag"></span>\n        <span class="value">-</span>\n    <% }%>\n</td>\n<td><%=  count  %></td>\n<td><%=  dateLabel  %></td>\n<td><%=  comment  %></td>\n<td>\n    <span class="glyphicon glyphicon-chevron-right"></span>\n</td>\n\n\n\n';});
+define('text!modules/widget/widgets/transaction/list/templates/TranactionTemp.html',[],function () { return '<td>\n    <% if(tags.tagName) {%>\n        <span class="glyphicon glyphicon-tag"></span>\n        <span class="value"><%= tags.tagName %></span>\n    <%}else{%>\n        <span class="glyphicon glyphicon-tag"></span>\n        <span class="value">-</span>\n    <% }%>\n</td>\n<td><%=  count  %></td>\n<td><%=  dateLabel  %></td>\n<td><%=  comment  %></td>\n<td>\n    <span class="glyphicon glyphicon-chevron-right"></span>\n</td>';});
 
 define('modules/widget/widgets/transaction/list/views/Transaction',[
     'marionette',
@@ -18829,13 +18831,6 @@ require([
 
 ], function(App){
     document.addEventListener("deviceready", function(){
-
-        if("indexedDB" in window) {
-            alert("YES!!! I CAN DO IT!!! WOOT!!!");
-        } else {
-            alert("I has a sad.");
-        }
-
         App.start();
     }, false);
 

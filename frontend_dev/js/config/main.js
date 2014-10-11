@@ -2,8 +2,7 @@ define([], function(){
 
     var serverConfig = Budget || {};
     var prefix = Budget.prefix || "";
-
-    //http://budget.batros.in.ua
+    var db = 'local' || Budget.db || "";
 
     return {
         data: {
@@ -12,7 +11,14 @@ define([], function(){
                 email: serverConfig.user.email,
                 id: serverConfig.user.id
             },
-            db: Budget.db || ""
+            db: db,
+
+            dbOptions: {
+                db_name: "budget",
+                version: '1',
+                description: 'Budget local database',
+                dbSize: 30 * 1024 * 1024 //30Mb
+            }
         },
         reqres: {
 
@@ -47,7 +53,8 @@ define([], function(){
         },
 
         storage: {
-            "lastUpdate": 'lastUpdate'
+            "lastUpdate": 'lastUpdate',
+            "isInitDatabase" : "isInitDatabase"
         },
 
         commands: {

@@ -19,9 +19,8 @@ TransactionController.prototype.updateTagsId = function(createdTagId){
     _.map(this.transactions, function(transaction){
 
         _.each(createdTagId, function(createdTag){
-            var index = _.indexOf(transaction.tags, createdTag.idBefore);
-            if(index != -1){
-                transaction.tags.splice(index, 1, createdTag.idActual);
+            if(transaction.tags == createdTag.idBefore){
+                transaction.tags = createdTag.idActual;
             }
         })
 
@@ -32,39 +31,34 @@ TransactionController.prototype.updateTagsId = function(createdTagId){
 
 TransactionController.prototype.filterTags = function(tags){
     var deferred = Q.defer();
-    var _this = this;
-    var result = [];
 
-    var methods = [];
+    //todo: tags rename to tagId
+    if(!tags){
+        deferred.resolve();
+    }else{
+        TagModel.isHasTag(tags, this.userId, function(err, tag){
+            if(err){
+                logger.error(err);
+                return deferred.reject(err);
+            }
 
-    _.each(tags, function(tagId){
-        methods.push(function(callback){
-            TagModel.isHasTag(tagId, _this.userId, function(err, tag){
-                if(err){
-                    return callback(err);
-                }
-                if( tag && !tag.isDeleted ) result.push(tagId);
-                callback(null);
-            })
-        });
-    });
-
-    async.parallel(methods, function(err){
-        if(err){
-            logger.error(err);
-            return deferred.reject(err);
-        }
-
-        deferred.resolve(result);
-    });
+            if( tag && !tag.isDeleted ) {
+                return deferred.resolve(tags);
+            }else{
+                return deferred.resolve();
+            }
+        })
+    }
 
     return deferred.promise;
 };
 
 TransactionController.prototype._create = function(currentTransaction, cb){
     var _this = this;
+
     this.filterTags(currentTransaction.tags).then(function(tags){
         var transaction = new TransactionModel({
+            date: new Date(currentTransaction.date),
             userId: _this.userId,
             count: currentTransaction.count,
             tags: tags
@@ -73,13 +67,17 @@ TransactionController.prototype._create = function(currentTransaction, cb){
         async.waterfall([
             function(cb){
                 transaction.validate(function(err){
-                    ( err ) ? cb(null, transaction) : cb(err);
+                    if( err ){
+                        cb(err);
+                    }else{
+                        cb(null, transaction);
+                    }
                 })
             },
-            function(cb){
+            function(transaction, cb){
                 transaction.save(function(err){
                     if(err) {
-                        cb(err);
+                        return cb(err);
                     }
                     cb(null, transaction);
                 })

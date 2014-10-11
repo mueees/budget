@@ -38,6 +38,15 @@ var Transaction = new Schema({
     }
 });
 
+Transaction.pre('save', function(next){
+    var now = new Date();
+    this.updated_at = now;
+    if ( !this.date ) {
+        this.date = now;
+    }
+    next();
+});
+
 Transaction.statics.removeTagById = function(tagId, userId, cb){
 
     this.update(
@@ -220,13 +229,13 @@ Transaction.statics.getTransactionList = function(period, userId, cb){
 Transaction.statics.deleteById = function(id, cb){
     this.findById( id, function ( err, transaction ){
 
-        transaction.isDeleted = true;
-        transaction.updated_at = Date.now();
-
         if( !transaction ){
             logger.error('transaction not found');
-            return cb('transaction not found');
+            return cb();
         }
+
+        transaction.isDeleted = true;
+        transaction.updated_at = Date.now();
 
         transaction.save( function ( err, transaction ){
             if( err ) {

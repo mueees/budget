@@ -27,6 +27,12 @@ requirejs.config({
         async: "vendor/libs/async",
         storage: "vendor/libs/storage",
 
+
+        persistence: "vendor/libs/persistense/persistence",
+        persistence_clear: "vendor/libs/persistense/persistence_clear",
+        "persistence.store.sql": "vendor/libs/persistense/persistence.store.sql",
+        "persistence.store.websql": "vendor/libs/persistense/persistence.store.websql",
+
         bootstrap: "vendor/libs/bootstrap/js/bootstrap.min",
         raphael: "vendor/libs/raphael.min",
         morris: "vendor/libs/morris.min",
@@ -52,7 +58,23 @@ requirejs.config({
             deps: ['jquery', 'raphael'],
             exports: "Morris"
         },
-        bootstrap: ['jquery']
+        bootstrap: ['jquery'],
+
+        persistence: {
+            export: "persistence"
+        },
+
+        persistence_clear: {
+            export: "persistence"
+        },
+
+        "persistence.store.sql": {
+            deps: ['persistence_clear']
+        },
+        "persistence.store.websql": {
+            deps: ['persistence_clear']
+        }
+
     },
     urlArgs: "no-cache=" + (new Date()).getTime()
 });

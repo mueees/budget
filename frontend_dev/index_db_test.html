@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>s
+</head>
+<body>
+
+
+<script>
+
+    var db = openDatabase('test', '1', 'my first database', 2 * 1024 * 10240);
+
+    //executeSql(sqlStatement, arguments, callback, errorCallback);
+
+    db.transaction(function (tx) {
+
+        tx.executeSql('CREATE TABLE IF NOT EXISTS foo (id unique, text)', [],
+                function(){
+                    debugger
+                },
+                function(){
+                    debugger
+                }
+        );
+
+        tx.executeSql('INSERT INTO foo VALUES (1, "sf4f34f2")', [],
+                function(){
+                    //success
+                    debugger
+                },
+                function(){
+                    //error
+                    debugger
+                }
+        );
+    });
+
+</script>
+
+</body>
+</html>

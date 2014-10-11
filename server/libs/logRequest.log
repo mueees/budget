@@ -1,5 +1,63 @@
-{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-07T13:07:04.207Z"}
-{"level":"error","message":"","timestamp":"2014-10-07T13:07:04.222Z"}
-{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-07T13:13:21.462Z"}
-{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-07T13:13:21.484Z"}
-{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-10-07T13:13:23.083Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-11T13:12:13.699Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-11T13:12:13.726Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"1503901495295","path":"_id","level":"error","timestamp":"2014-10-11T13:12:30.984Z"}
+{"level":"error","message":"Server error","timestamp":"2014-10-11T13:12:30.986Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-11T13:13:42.961Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-11T13:13:42.982Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-11T13:19:18.214Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-11T13:19:18.235Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-11T13:29:55.413Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-11T13:29:55.451Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-11T13:34:49.473Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-11T13:34:49.494Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-11T13:35:21.554Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-11T13:35:21.576Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-11T13:35:55.057Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-11T13:35:55.095Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-11T13:37:58.354Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-11T13:37:58.413Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-11T13:38:30.625Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-11T13:38:30.694Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-11T13:41:52.778Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-11T13:41:52.804Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"1500383602351","path":"_id","level":"error","timestamp":"2014-10-11T14:12:01.854Z"}
+{"level":"error","message":"Server error","timestamp":"2014-10-11T14:12:01.855Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-11T14:14:34.012Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-11T14:14:34.035Z"}
+{"level":"error","message":"Server error","timestamp":"2014-10-11T14:26:17.911Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"1470445853120","path":"_id","level":"error","timestamp":"2014-10-11T14:26:17.910Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"1470445853120","path":"_id","level":"error","timestamp":"2014-10-11T14:26:33.223Z"}
+{"level":"error","message":"Server error","timestamp":"2014-10-11T14:26:33.224Z"}
+{"message":"","name":"ValidationError","errors":{"tagName":{"message":"Path `tagName` is required.","name":"ValidatorError","path":"tagName","type":"required"},"userId":{"message":"Path `userId` is required.","name":"ValidatorError","path":"userId","type":"required"}},"level":"error","timestamp":"2014-10-11T15:35:48.882Z"}
+{"message":"","name":"ValidationError","errors":{"userId":{"message":"Path `userId` is required.","name":"ValidatorError","path":"userId","type":"required"}},"level":"error","timestamp":"2014-10-11T15:36:07.551Z"}
+{"message":"","name":"CastError","type":"ObjectId","value":"tset","path":"userId","level":"error","timestamp":"2014-10-11T15:36:20.216Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-11T15:36:40.272Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-11T15:39:19.245Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-11T15:40:55.830Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-11T15:42:30.352Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-11T15:43:57.467Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-11T15:43:57.493Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-11T15:45:47.551Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-11T15:45:47.604Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-11T15:47:18.063Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-11T15:47:18.086Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-10-11T15:55:53.645Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-11T19:37:58.949Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-11T19:37:58.979Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-11T19:41:29.076Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-11T19:41:29.100Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-11T19:43:51.882Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-11T19:43:51.905Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-11T20:10:25.369Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-11T20:10:25.394Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-11T20:12:06.313Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-11T20:12:06.338Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-11T20:32:19.415Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-11T20:32:19.440Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-11T20:33:58.029Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-11T20:33:58.078Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-11T20:34:44.459Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-11T20:34:44.481Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-10-11T20:43:59.605Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-10-11T20:44:02.634Z"}
+{"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-10-11T21:01:06.275Z"}

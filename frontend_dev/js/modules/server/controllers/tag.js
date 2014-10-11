@@ -43,10 +43,13 @@ define([
                             _this.def.reject('Cannot find tag');
                             return false;
                         }else{
-                            tag.set({
-                                tagName: newTagName,
-                                label: 'edit'
-                            });
+
+                            var data = {
+                                tagName: newTagName
+                            }
+                            if( tag.get('label') === '') data.label = 'edit';
+
+                            tag.set(data);
 
                             $.when(tag.saveTag()).done( function(){
                                 _this.def.resolve();
@@ -60,7 +63,7 @@ define([
                 remove: function(){
                     var _this = this;
 
-                    //remove tag
+                    //todo: remove tag
                     $.when(
                         App.Database.TagModel.removeById(this.data._id),
                         App.Database.TransactionModel.removeTagById(this.data._id)

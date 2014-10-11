@@ -1,5 +1,6 @@
 require([
     'app',
+    'persistence',
     'bootstrap',
 
     /*entities*/

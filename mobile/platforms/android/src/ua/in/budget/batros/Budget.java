@@ -22,12 +22,16 @@ package ua.in.budget.batros;
 import android.os.Bundle;
 import org.apache.cordova.*;
 
+import android.os.Build;
+import android.webkit.WebView;
+
 public class Budget extends CordovaActivity
 {
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
         // Set by <content src="index.html" /> in config.xml
         loadUrl(launchUrl);
     }

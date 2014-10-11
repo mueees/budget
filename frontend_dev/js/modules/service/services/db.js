@@ -31,8 +31,8 @@ define([
                     )
                         .done(function(transactions, tags){
                             def.resolve({
-                                transactions: transactions,
-                                tags: tags
+                                transactions: transactions.toJSON() || [],
+                                tags: tags.toJSON() || []
                             })
                         })
                         .fail(function(){
@@ -78,6 +78,7 @@ define([
                             }
                             transaction.set({
                                 _id: data.idActual,
+                                _idBefore: data.idBefore,
                                 label: ''
                             });
                             $.when(transaction.saveTransaction())
@@ -126,26 +127,16 @@ define([
 
                     $.when(App.Database.TransactionCollection.getAllTransactions())
                         .then(function(transactions){
-
                             var transactionToSave = [];
 
                             transactions.each( function(transaction){
                                 var tags = transaction.get('tags');
-                                var isChange = false;
                                 _.each(updateInfo, function(oneTagUpdate){
-                                    var index = $.inArray(oneTagUpdate.idBefore, tags);
-                                    if( index != -1 ){
-                                        isChange = true;
-                                        tags.splice(index, 1, oneTagUpdate.idActual);
+                                    if( oneTagUpdate.idBefore == tags ){
+                                        transaction.set('tags', oneTagUpdate.idActual);
+                                        transactionToSave.push(transaction);
                                     }
                                 })
-
-                                if(isChange) {
-                                    transaction.set({
-                                        tags: tags
-                                    });
-                                    transactionToSave.push(transaction);
-                                }
                             })
 
                             var methods = [];
@@ -207,6 +198,7 @@ define([
                             }
                             tag.set({
                                 _id: data.idActual,
+                                _idBefore: data.idBefore,
                                 label: null
                             });
                             $.when(tag.saveTag())
@@ -268,6 +260,7 @@ define([
 
                 editOrCreateTag: function(tag){
                     var def = $.Deferred();
+
                     var tag = new App.Database.TagModel(tag);
                     $.when(tag.saveTag())
                         .done(function(){

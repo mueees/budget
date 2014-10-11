@@ -25,7 +25,7 @@ define([
                     var _this = this;
                     var transaction = new App.Database.TransactionModel({
                         count: this.data.count || 0,
-                        date: new Date(this.data.date),
+                        date: moment.utc(this.data.date),
                         comment: this.data.comment || "",
                         tags: this.data.tags || []
                     });
@@ -50,8 +50,8 @@ define([
                             if( _this.data.count ) newData.count = _this.data.count;
                             if( _this.data.comment ) newData.comment = _this.data.comment;
                             if( _this.data.tags ) newData.tags = _this.data.tags;
-                            if( _this.data.date ) newData.date = new Date(_this.data.date);
-                            newData.label = 'edit';
+                            if( _this.data.date ) newData.date = moment.utc(_this.data.date);
+                            if( transaction.get('label') === '') newData.label = 'edit';
 
                             transaction.set(newData);
 
@@ -95,23 +95,23 @@ define([
                             (new App.Database.TransactionCollection()).getTransactionList(this.data.period),
                             (new App.Database.TagCollection()).getTags()
                         ).done(function(transactions, tags){
-
                             var result = [];
 
-                            _.each(transactions, function(transaction){
-                                var resultTags = [];
-                                _.each(transaction.get('tags'), function(transactionTagId){
-                                    var result = {
-                                        id: transactionTagId + ''
-                                    };
-                                    tags.each(function(tag){
-                                        if(tag.get('_id')+'' == transactionTagId+'') {
-                                            result.tagName = tag.get('tagName');
+                            transactions.each(function(transaction){
+                                var tagItem;
+                                var tagId = transaction.get('tags') + '';
+
+
+                                tags.each(function(tag){
+                                    if(tag.get('_id')+'' == tagId) {
+                                        tagItem = {
+                                            _id: tagId,
+                                            tagName: tag.get('tagName')
                                         }
-                                    })
-                                    resultTags.push(result);
+                                        return;
+                                    }
                                 })
-                                transaction.set('tags', resultTags);
+                                transaction.set('tags', tagItem);
                                 result.push(transaction.toJSON());
                             })
 

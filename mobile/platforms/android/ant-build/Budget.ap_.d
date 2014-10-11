@@ -30,6 +30,7 @@
 /home/mue/web/projects/budget/mobile/platforms/android/assets/www \
 /home/mue/web/projects/budget/mobile/platforms/android/assets/_where-is-www.txt \
 /home/mue/web/projects/budget/mobile/platforms/android/assets/www/js \
+/home/mue/web/projects/budget/mobile/platforms/android/assets/www/plugins \
 /home/mue/web/projects/budget/mobile/platforms/android/assets/www/index.html \
 /home/mue/web/projects/budget/mobile/platforms/android/assets/www/css \
 /home/mue/web/projects/budget/mobile/platforms/android/assets/www/img \
@@ -38,6 +39,9 @@
 /home/mue/web/projects/budget/mobile/platforms/android/assets/www/cordova_plugins.js \
 /home/mue/web/projects/budget/mobile/platforms/android/assets/www/js/script.js \
 /home/mue/web/projects/budget/mobile/platforms/android/assets/www/js/require.js \
+/home/mue/web/projects/budget/mobile/platforms/android/assets/www/plugins/com.brodysoft.sqlitePlugin \
+/home/mue/web/projects/budget/mobile/platforms/android/assets/www/plugins/com.brodysoft.sqlitePlugin/www \
+/home/mue/web/projects/budget/mobile/platforms/android/assets/www/plugins/com.brodysoft.sqlitePlugin/www/SQLitePlugin.js \
 /home/mue/web/projects/budget/mobile/platforms/android/assets/www/css/style.css \
 /home/mue/web/projects/budget/mobile/platforms/android/assets/www/img/logo.png \
 /home/mue/web/projects/budget/mobile/platforms/android/assets/www/img/mobile.png \

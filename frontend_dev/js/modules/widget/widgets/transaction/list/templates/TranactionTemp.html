@@ -1,9 +1,7 @@
 <td>
-    <% if(tags.length) {%>
-        <% _.each(tags, function(tag){%>
+    <% if(tags.tagName) {%>
         <span class="glyphicon glyphicon-tag"></span>
-        <span class="value"><%= tag.tagName %></span>
-        <%}) %>
+        <span class="value"><%= tags.tagName %></span>
     <%}else{%>
         <span class="glyphicon glyphicon-tag"></span>
         <span class="value">-</span>
@@ -15,6 +13,3 @@
 <td>
     <span class="glyphicon glyphicon-chevron-right"></span>
 </td>
-
-
-

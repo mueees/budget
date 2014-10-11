@@ -6,8 +6,9 @@ define([
     'app',
     'config',
     'async',
+    'moment',
     './base'
-], function($, _, Backbone, Marionette, App, config, async){
+], function($, _, Backbone, Marionette, App, config, async, moment){
 
     App.module("Database", {
 
@@ -17,15 +18,7 @@ define([
 
             Database.TagModel = Database.BaseModel.extend({
 
-                storeName: 'Tags',
-
-                dbOptions: {
-                    indexes: [
-                        {
-                            name: '_id'
-                        }
-                    ]
-                },
+                tableName: 'tags', // table name
 
                 defaults: {
 
@@ -51,162 +44,129 @@ define([
                 },
 
                 saveTag: function(){
+                    var _this = this;
+                    var arg = arguments;
+
                     if( !this.get('_id') ){
                         return this.createNew(arguments);
                     } else{
-                        return this.editTag(arguments);
+                        if( this.get('_idBefore') ){
+                            //we have this tag now
+                            return this.editTag(arguments);
+                        }else{
+                            var def = $.Deferred();
+
+                            //check, does we have this tag or no ?
+                            $.when(Database.TagModel.findById(this.get('_id')))
+                                .done(function(tag){
+                                    if(tag){
+                                        // if we have tag now, so we just edit them
+                                        $.when(_this.editTag(arg))
+                                            .done(function(){
+                                                def.resolve();
+                                            })
+                                            .fail(function(){def.reject()})
+                                    }else{
+                                        // if we don'thave tag now, so we just create them
+                                        $.when(_this.createNew(arg))
+                                            .done(function(){
+                                                def.resolve();
+                                            })
+                                            .fail(function(){def.reject()})
+                                    }
+                                })
+                                .fail(function(){
+                                    def.reject();
+                                })
+
+                            return def.promise();
+                        }
                     }
+
                 },
 
                 createNew: function(options){
                     var _this = this;
                     var def = new $.Deferred();
-                    var _id = this._generateId();
+                    var _id = this.get('_id') || this._generateId();
+                    var label = (this.get('label') || this.get('label') === '') ? this.get('label') : 'create';
+                    var momentDate = moment.utc();
+
+
                     this.set('_id', _id);
+                    this.set('updated_at', momentDate);
 
-                    var data = {
-                        tagName: this.get('tagName'),
-                        updated_at: new Date(),
-                        _id: this.get('_id'),
-                        label: 'create'
-                    }
+                    var data = [
+                        this.get('_id'),
+                        this.get('tagName'),
+                        this.convertMomentDateToDatetime(momentDate),
+                        label
+                    ];
 
-                    $.when(this.connect()).done(function(){
-                        _this.db.put(data, function(){
-                            def.resolve(_this);
-                        }, function(error){
-                            alert('createNew tag error');
-                            def.reject(error);
-                        })
-                    }).fail(function(err){
-                        alert('connect tag error');
+                    var sql = "INSERT INTO " + this.tableName + " ( _id, tagName, updated_at, label ) VALUES(?, ?, ?, ?)";
+
+                    this.makeRequest(sql, data, function(tx, results){
+                        def.resolve(_this)
+                    }, function(tx, err){
                         alert(err);
-                        def.reject(error);
+                        def.reject();
                     });
 
                     return def.promise();
                 },
 
                 editTag: function(options){
-
                     var _this = this;
                     var def = new $.Deferred();
+                    var idForUpdate = this.get('_idBefore') || this.get('_id');
 
-                    var data = {
-                        tagName: this.get('tagName'),
-                        label: this.get('label'),
-                        updated_at: new Date(),
-                        _id: this.get('_id')
-                    };
+                    var data = [
+                        this.get('_id'),
+                        this.get('tagName'),
+                        this.convertMomentDateToDatetime(this.get('updated_at')),
+                        this.get('label')
+                    ];
 
-                    if( this.get('id') ) data.id = this.get('id');
-                    if(_.isString(data.updated_at) ) data.updated_at = new Date(data.updated_at);
+                    var sql = "UPDATE " + this.tableName + " SET _id=?, tagName=?, updated_at=?, label=? WHERE _id=" + "'"+idForUpdate+"'";
 
-                    var methods = [];
-
-                    if( !this.get('id') ) {
-                        //get id and then save tag
-                        methods.push(function(cb){
-                            $.when(_this.getIdBy_Id())
-                                .done(function(id){
-                                    if(id) data.id = id;
-                                    cb(null);
-                                })
-                                .fail(function(){
-                                    cb(1);
-                                })
-                        })
-                    }
-
-                    methods.push(function(cb){
-                        $.when(_this.connect())
-                            .done(function(){
-                                _this.db.put(data, function(){
-                                    cb(null)
-                                }, function(error){
-                                    cb(error);
-                                })
-                            })
-                            .fail(function(error){
-                                cb(error);
-                            })
+                    this.makeRequest(sql, data, function(tx, results){
+                        def.resolve(_this)
+                    }, function(){
+                        def.reject();
                     });
 
-                    async.waterfall(methods, function(err){
-                        if(err){
-                            def.reject();
-                            return false;
-                        }
-
-                        def.resolve(_this);
-                    });
-
-                    return def.promise();
-                },
-
-                getIdBy_Id: function(){
-                    var _this = this;
-                    var _id =  this.get('_id');
-                    var def = $.Deferred();
-                    $.when(this.connect())
-                        .done(function(){
-                            var range = _this.db.makeKeyRange({
-                                lower: _id,
-                                upper: _id
-                            });
-                            _this.db.query(function(tags, cursor, transaction){
-                                var result;
-                                if( tags.length ){
-                                    result = tags[0].id;
-                                }
-                                def.resolve(result);
-                            }, {
-                                order: 'DESC',
-                                index: '_id',
-                                keyRange: range
-                            })
-                        })
                     return def.promise();
                 },
 
                 getData: function(){
                     var _this = this;
-                    var _id =  this.get('_id');
                     var def = $.Deferred();
-                    var result = null;
-                    $.when(this.connect()).done(function(){
-                        var range = _this.db.makeKeyRange({
-                            lower: _id,
-                            upper: _id
-                        });
-                        _this.db.iterate(function(tag, cursor, transaction){
-                            result = new App.Database.TagModel(tag);
-                        }, {
-                            order: 'DESC',
-                            index: '_id',
-                            keyRange: range,
-                            onEnd: function(){
-                                def.resolve(result);
-                            }
-                        })
-                    })
+                    var sql = "SELECT * FROM " + this.tableName + " WHERE _id=" + "'"+this.get('_id')+"'";
+
+                    this.makeRequest(sql, [], function(tx, results){
+                        var data = _this.collectResult(results);
+                        var tag;
+                        if(data[0]){
+                            tag = new App.Database.TagModel(data[0]);
+                        }
+                        def.resolve(tag);
+                    }, function(){
+                        def.reject();
+                    });
                     return def.promise();
                 },
 
                 removeFromLocalDb: function(){
                     var def = new $.Deferred();
-                    var id = this.get('id');
                     var _this = this;
 
-                    $.when(this.connect()).done(function(){
-                        _this.db.remove(id, function(){
-                            def.resolve();
-                        }, function(){
-                            def.reject();
-                        });
-                    }).fail(function(){
+                    var sql = "DELETE FROM "+ this.tableName +" WHERE _id=" + "'"+this.get('_id')+"'";
+
+                    this.makeRequest(sql, [], function(tx, results){
+                        def.resolve(_this)
+                    }, function(){
                         def.reject();
-                    })
+                    });
 
                     return def.promise();
                 }
@@ -283,40 +243,27 @@ define([
 
             Database.TagCollection = Database.BaseCollection.extend({
 
-                dbOptions: {
-                    indexes: [
-                        {
-                            name: '_id'
-                        }
-                    ]
-                },
-
-                storeName: 'Tags',
+                tableName: 'tags',
 
                 model: Database.TagModel,
 
                 initialize: function(attributes, options) {
-                    //Database.BaseCollection.prototype.initialize.apply(this, arguments);
+                    Database.BaseCollection.prototype.initialize.apply(this, arguments);
                 },
 
                 getTags: function(){
                     var _this = this;
                     var def = new $.Deferred();
 
-                    $.when(this.connect())
-                        .done(function(){
-                            _this.db.getAll(function(data){
-                                var result = new App.Database.TagCollection();
-                                _.each(data, function(tag){
-                                    if(tag.label != 'remove') result.add(tag);
-                                });
+                    var sql = "SELECT * FROM "+ this.tableName +" WHERE label != 'remove'";
 
-                                def.resolve(result);
-                            }, function(){});
-                        })
-                        .fail(function(){
-                            def.reject(arguments);
-                        });
+                    this.makeRequest(sql, [], function(tx, results){
+                        var data = _this.collectResult(results);
+                        _this.add(data);
+                        def.resolve(_this);
+                    }, function(){
+                        def.reject();
+                    });
 
                     return def.promise();
                 },
@@ -325,17 +272,15 @@ define([
                     var _this = this;
                     var def = new $.Deferred();
 
-                    $.when(this.connect())
-                        .done(function(){
-                            _this.db.getAll(function(data){
-                                var tags = new App.Database.TagCollection();
-                                tags.add(data);
-                                def.resolve(tags);
-                            }, function(){});
-                        })
-                        .fail(function(){
-                            def.reject(arguments);
-                        });
+                    var sql = "SELECT * FROM " + this.tableName;
+
+                    this.makeRequest(sql, [], function(tx, results){
+                        var data = _this.collectResult(results);
+                        _this.add(data);
+                        def.resolve(_this);
+                    }, function(){
+                        def.reject();
+                    });
 
                     return def.promise();
                 },
@@ -343,26 +288,16 @@ define([
                 getChangingData: function(){
                     var _this = this;
                     var def = new $.Deferred();
-                    $.when(this.connect())
-                        .done(function(){
-                            _this.db.query(function(tags, cursor, transaction){
 
-                                var changingTags = _.filter(tags, function(tag){
-                                    if (tag.label){
-                                        return tag;
-                                    }
-                                });
-                                _this.add(changingTags);
-                                def.resolve(_this);
+                    var sql = "SELECT * FROM " + this.tableName + " WHERE label <> ''";
 
-                            }, {
-                                order: 'DESC',
-                                index: '_id'
-                            })
-                        })
-                        .fail(function(){
-                            def.reject();
-                        });
+                    this.makeRequest(sql, [], function(tx, results){
+                        var data = _this.collectResult(results);
+                        _this.add(data);
+                        def.resolve(_this);
+                    }, function(tx, err){
+                        def.reject();
+                    });
 
                     return def.promise();
                 }
