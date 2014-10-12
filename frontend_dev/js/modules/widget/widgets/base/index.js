@@ -35,6 +35,7 @@ define([
                     this.collection = this.getCollection();
                     this.layout = this.getLayout();
                     this.View = this.getView();
+                    this.viewOptions = this.getViewOptions();
                     this.view = null;
 
                     log('Initialized');
@@ -45,6 +46,10 @@ define([
                 },
 
                 getView: function(){},
+
+                getViewOptions: function(){
+                    return {};
+                },
 
                 subscribe: function(){},
 
@@ -66,7 +71,8 @@ define([
                 showView: function(){
                     this.view = new this.View({
                         model: this.model,
-                        collection: this.collection
+                        collection: this.collection,
+                        viewOptions: this.viewOptions
                     });
                     this.layout.main.show(this.view);
                     this.subscribe();

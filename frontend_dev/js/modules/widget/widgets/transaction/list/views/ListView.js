@@ -19,9 +19,22 @@ define([
 
         events: {},
 
-        initialize: function(){
+        itemViewOptions: function(){
+            return {
+                isExtendMode: this.isExtendMode
+            }
+        },
+
+        initialize: function(options){
+            this.isExtendMode = options.viewOptions.isExtendMode;
             this.collection = this.model.get('data');
             this.listenTo(this.model, 'change', this.changeHandler);
+        },
+
+        serializeData: function(){
+            var data = this.model.toJSON();
+            data.isExtendMode = this.isExtendMode;
+            return data;
         },
 
         changeHandler: function(){

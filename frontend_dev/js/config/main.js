@@ -1,8 +1,8 @@
 define([], function(){
 
     var serverConfig = Budget || {};
-    var prefix = Budget.prefix || "";
-    var db = 'local' || Budget.db || "";
+    var prefix = serverConfig.data.prefix || "";
+    var environment = serverConfig.data.environment;
 
     return {
         data: {
@@ -11,13 +11,14 @@ define([], function(){
                 email: serverConfig.user.email,
                 id: serverConfig.user.id
             },
-            db: db,
+            environment: environment,
 
             dbOptions: {
                 db_name: "budget",
                 version: '1',
                 description: 'Budget local database',
-                dbSize: 30 * 1024 * 1024 //30Mb
+                dbSize: 30 * 1024 * 1024, //30Mb
+                provider: (environment == "mobile") ? 'sqlite' : ''
             }
         },
         reqres: {
@@ -49,12 +50,17 @@ define([], function(){
             'service:db:removeTransactionById': 'service:db:removeTransactionById',
             'service:db:editOrCreateTag': 'service:db:editOrCreateTag',
             'service:db:editOrCreateTransaction': 'service:db:editOrCreateTransaction',
-            'service:db:updateTagIdInTransactions': 'service:db:updateTagIdInTransactions'
+            'service:db:updateTagIdInTransactions': 'service:db:updateTagIdInTransactions',
+
+            'service:auth:logout': 'service:auth:logout'
         },
 
         storage: {
             "lastUpdate": 'lastUpdate',
-            "isInitDatabase" : "isInitDatabase"
+            "isInitDatabase" : "isInitDatabase",
+            user: {
+                'email': 'email'
+            }
         },
 
         commands: {
@@ -77,8 +83,8 @@ define([], function(){
 
         api: {
             signup: prefix + '/api/user/signup',
-            signin: prefix +'/api/user/signin',
-            logout: prefix +"api/user/logout",
+            signin: prefix + '/api/user/signin',
+            logout: prefix + "/api/user/logout",
 
             //tag
             tagCreate: prefix +'/api/tag/create',

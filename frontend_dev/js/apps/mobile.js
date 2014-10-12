@@ -12,11 +12,14 @@ require([
     'entities/statistics/transactionsList',
 
     /*modules*/
-    'modules/log/module',
+
+    //mobile
     'modules/server/module',
     'modules/database/module',
-    'modules/service/module',
     'modules/sync/module',
+    //all
+    'modules/log/module',
+    'modules/service/module',
     'modules/widget/module',
     'modules/component/module',
     'modules/notice/module',
@@ -26,6 +29,7 @@ require([
     'modules/behaviors/module',
 
     /*main modules*/
+    'apps/initialize/module',
     'apps/route/module',
     'apps/main/module',
     'apps/report/module',

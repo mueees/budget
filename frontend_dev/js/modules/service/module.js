@@ -5,7 +5,8 @@ define([
     'app',
     'config',
 
-    './services/db'
+    './services/db',
+    './services/auth'
 
 ], function(jQuery, Backbone, Marionette, App, config){
 

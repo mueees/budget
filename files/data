@@ -41,3 +41,8 @@ logout
 
 chromium-browser --disable-web-security
 ripple emulate --path platforms/android/assets/www
+
+
+Для разработки в браузере в index.jade
+- добавить environment = mobile
+- app/mobile

@@ -13,7 +13,7 @@ function getLogger( module ){
                 level:  "info",
                 label: pathModule
             }),
-            new winston.transports.File({ filename: __dirname + '/logRequest.log', level: 'debug'  })
+            new winston.transports.File({ filename: __dirname + '/logRequest.log', level: 'info'  })
         ]
     });
 }

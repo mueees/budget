@@ -17,7 +17,6 @@ define([
 
             Database.initDatabase = function(){
                 var def = $.Deferred();
-
                 Database.db.transaction(function(tx){
                     tx.executeSql("DROP TABLE IF EXISTS `tags`");
                     tx.executeSql("CREATE TABLE `tags` (_id unique, tagName, updated_at, label)");
@@ -27,11 +26,29 @@ define([
                 });
 
                 return def.promise();
-            }
+            };
+
+            Database.removeDatabase = function(){
+                var def = $.Deferred();
+                Database.db.transaction(function(tx){
+                    tx.executeSql("DROP TABLE IF EXISTS `tags`");
+                    tx.executeSql("DROP TABLE IF EXISTS `transactions`" );
+                    def.resolve();
+                });
+
+                return def.promise();
+            };
 
             App.on('initialize:before', function(){
+                //window.sqlitePlugin.openDatabase
+                //window.openDatabase
 
-                Database.db = window.sqlitePlugin.openDatabase(
+                var provider = window;
+                if(config.data.dbOptions.provider == "sqlite"){
+                    provider = (window.sqlitePlugin) ? window.sqlitePlugin : window;
+                }
+
+                Database.db = provider.openDatabase(
                     config.data.dbOptions.db_name,
                     config.data.dbOptions.version,
                     config.data.dbOptions.description,

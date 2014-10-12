@@ -94,7 +94,17 @@ module.exports = function(grunt) {
             }
         },
 
+        //for Ripple development
+        exec:{
+            run:{
+                command:"cd ./mobile; cordova run android",
+                stdout:true,
+                stderror:true
+            }
+        },
+
         watch: {
+
             develop: {
                 tasks: ['develop'],
                 files: [
@@ -119,6 +129,13 @@ module.exports = function(grunt) {
         'stylus',
         'concat'
     ]);
+
+    grunt.registerTask('md', [
+        'production:mobile',
+        'exec:run'
+    ]);
+
+
 
     grunt.registerTask('production:web', [
         'clean:public_web',

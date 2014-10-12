@@ -36,6 +36,12 @@ define([
                     return ListView;
                 },
 
+                getViewOptions: function(){
+                    return {
+                        isExtendMode: (config.data.environment != 'mobile') ? true : false
+                    }
+                },
+
                 subscribe: function(){
                     this.listenTo(this.view, 'chooseTransaction', this.chooseTransactionHandler);
                 },

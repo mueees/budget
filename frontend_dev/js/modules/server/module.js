@@ -20,7 +20,6 @@ define([
             var Controller = Marionette.Controller.extend({
                 initialize: function(options){
                     this.server = options.server;
-                    this.db = options.db;
 
                     this.initRouting();
                 },
@@ -117,24 +116,17 @@ define([
             });
 
             App.on('initialize:before', function(){
-                if( config.data.db == "local" ){
-
-                    if(!storage.get(config.storage['isInitDatabase'])){
-                        $.when(App.Database.initDatabase()).then(function(){
-                             new Controller({
-                                server: server,
-                                db: config.data.db
-                            });
-                            storage.set(config.storage['isInitDatabase'], true);
-                        })
-                    }else{
+                if(!storage.get(config.storage['isInitDatabase'])){
+                    $.when(App.Database.initDatabase()).then(function(){
                         new Controller({
-                            server: server,
-                            db: config.data.db
+                            server: server
                         });
-                    }
+                        storage.set(config.storage['isInitDatabase'], true);
+                    })
                 }else{
-                    server.enable(false);
+                    new Controller({
+                        server: server
+                    });
                 }
             })
         }

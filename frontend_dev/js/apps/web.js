@@ -1,6 +1,5 @@
 require([
     'app',
-    'persistence',
     'bootstrap',
 
     /*entities*/
@@ -14,10 +13,7 @@ require([
 
     /*modules*/
     'modules/log/module',
-    'modules/server/module',
-    'modules/database/module',
     'modules/service/module',
-    'modules/sync/module',
     'modules/widget/module',
     'modules/component/module',
     'modules/notice/module',

@@ -20,10 +20,14 @@ define([
             'click': "chooseTransaction"
         },
 
-        initialize: function(){},
+        initialize: function(options){
+            this.isExtendMode = options.isExtendMode;
+        },
 
         serializeData: function(){
             var data = this.model.toJSON();
+            data.isExtendMode = this.isExtendMode;
+
             var format = "DD MMMM";
             data.dateLabel = moment(data.date).format(format);
             return data;

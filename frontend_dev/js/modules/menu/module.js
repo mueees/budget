@@ -65,7 +65,11 @@ define([
                     var path = this.model.get('path');
 
                     if( path == "logout" ){
-                        App.redirect( config.api.logout );
+                        if( config.data.environment == "mobile"){
+                            App.reqres.request(config.reqres['service:auth:logout']);
+                        }else{
+                            App.redirect( config.api.logout );
+                        }
                     }else{
                         App.navigate('#' + path, {trigger: true});
                     }

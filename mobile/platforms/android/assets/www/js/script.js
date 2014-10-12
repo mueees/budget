@@ -8916,8 +8916,8 @@ define('app',[
 define('config',[], function(){
 
     var serverConfig = Budget || {};
-    var prefix = Budget.prefix || "";
-    var db = 'local' || Budget.db || "";
+    var prefix = serverConfig.data.prefix || "";
+    var environment = serverConfig.data.environment;
 
     return {
         data: {
@@ -8926,13 +8926,14 @@ define('config',[], function(){
                 email: serverConfig.user.email,
                 id: serverConfig.user.id
             },
-            db: db,
+            environment: environment,
 
             dbOptions: {
                 db_name: "budget",
                 version: '1',
                 description: 'Budget local database',
-                dbSize: 30 * 1024 * 1024 //30Mb
+                dbSize: 30 * 1024 * 1024, //30Mb
+                provider: (environment == "mobile") ? 'sqlite' : ''
             }
         },
         reqres: {
@@ -8964,12 +8965,17 @@ define('config',[], function(){
             'service:db:removeTransactionById': 'service:db:removeTransactionById',
             'service:db:editOrCreateTag': 'service:db:editOrCreateTag',
             'service:db:editOrCreateTransaction': 'service:db:editOrCreateTransaction',
-            'service:db:updateTagIdInTransactions': 'service:db:updateTagIdInTransactions'
+            'service:db:updateTagIdInTransactions': 'service:db:updateTagIdInTransactions',
+
+            'service:auth:logout': 'service:auth:logout'
         },
 
         storage: {
             "lastUpdate": 'lastUpdate',
-            "isInitDatabase" : "isInitDatabase"
+            "isInitDatabase" : "isInitDatabase",
+            user: {
+                'email': 'email'
+            }
         },
 
         commands: {
@@ -8992,8 +8998,8 @@ define('config',[], function(){
 
         api: {
             signup: prefix + '/api/user/signup',
-            signin: prefix +'/api/user/signin',
-            logout: prefix +"api/user/logout",
+            signin: prefix + '/api/user/signin',
+            logout: prefix + "/api/user/logout",
 
             //tag
             tagCreate: prefix +'/api/tag/create',
@@ -9745,44 +9751,6 @@ define('entities/statistics/transactionsList',[
         }
     })
 
-
-});
-define('modules/log/module',[
-    'underscore',
-    'marionette',
-    'app',
-    'config'
-], function(_, Marionette, App, config){
-
-    App.module("Log", {
-
-        startWithParent: true,
-
-        define: function( Log, App, Marionette, $, _ ){
-
-            function getLogInstance(moduleName){
-                var module = moduleName;
-                return function (message){
-                    if(!config.showLog) return false;
-                    var isObject = _.isPlainObject(message);
-                    if( isObject ){
-                        console.log(module + ' : ');
-                        console.log(message);
-                    }else{
-                        console.log(module + ' : ' + message);
-                    }
-                }
-            }
-
-            var controller = {
-                getLog: function(moduleName){
-                    return getLogInstance(moduleName);
-                }
-            }
-            App.reqres.setHandler("getLog", controller.getLog);
-
-        }
-    })
 
 });
 ;(function(win){
@@ -13330,7 +13298,6 @@ define('modules/database/module',[
 
             Database.initDatabase = function(){
                 var def = $.Deferred();
-
                 Database.db.transaction(function(tx){
                     tx.executeSql("DROP TABLE IF EXISTS `tags`");
                     tx.executeSql("CREATE TABLE `tags` (_id unique, tagName, updated_at, label)");
@@ -13340,11 +13307,29 @@ define('modules/database/module',[
                 });
 
                 return def.promise();
-            }
+            };
+
+            Database.removeDatabase = function(){
+                var def = $.Deferred();
+                Database.db.transaction(function(tx){
+                    tx.executeSql("DROP TABLE IF EXISTS `tags`");
+                    tx.executeSql("DROP TABLE IF EXISTS `transactions`" );
+                    def.resolve();
+                });
+
+                return def.promise();
+            };
 
             App.on('initialize:before', function(){
+                //window.sqlitePlugin.openDatabase
+                //window.openDatabase
 
-                Database.db = window.sqlitePlugin.openDatabase(
+                var provider = window;
+                if(config.data.dbOptions.provider == "sqlite"){
+                    provider = (window.sqlitePlugin) ? window.sqlitePlugin : window;
+                }
+
+                Database.db = provider.openDatabase(
                     config.data.dbOptions.db_name,
                     config.data.dbOptions.version,
                     config.data.dbOptions.description,
@@ -13628,7 +13613,6 @@ define('modules/server/module',[
             var Controller = Marionette.Controller.extend({
                 initialize: function(options){
                     this.server = options.server;
-                    this.db = options.db;
 
                     this.initRouting();
                 },
@@ -13725,29 +13709,370 @@ define('modules/server/module',[
             });
 
             App.on('initialize:before', function(){
-                if( config.data.db == "local" ){
-
-                    if(!storage.get(config.storage['isInitDatabase'])){
-                        $.when(App.Database.initDatabase()).then(function(){
-                             new Controller({
-                                server: server,
-                                db: config.data.db
-                            });
-                            storage.set(config.storage['isInitDatabase'], true);
-                        })
-                    }else{
+                if(!storage.get(config.storage['isInitDatabase'])){
+                    $.when(App.Database.initDatabase()).then(function(){
                         new Controller({
-                            server: server,
-                            db: config.data.db
+                            server: server
                         });
-                    }
+                        storage.set(config.storage['isInitDatabase'], true);
+                    })
                 }else{
-                    server.enable(false);
+                    new Controller({
+                        server: server
+                    });
                 }
             })
         }
     })
 
+
+});
+define('modules/sync/module',[
+    'jquery',
+    'backbone',
+    'marionette',
+    'app',
+    'config',
+    'backbone.server',
+    'storage',
+    'async'
+], function(jQuery, Backbone, Marionette, App, config, server, storage, async){
+
+    App.module("Sync", {
+
+        startWithParent: true,
+
+        define: function( Sync, App, Backbone, Marionette, $, _ ){
+
+            var SyncController = Marionette.Controller.extend({
+                initialize: function(){
+                    _.bindAll(this, "serverClient",
+                        "updateSCState",
+                        "updateTransactions");
+                },
+
+                sync: function(){
+                    var def = $.Deferred();
+                    var _this = this;
+                    App.execute(config.commands['notify:showNotify:side'], {text: 'Synchronization...', isAutoHide: false});
+
+                    this.clientServer()
+                        .then(this.serverClient )
+                        .done(function(){
+                            _this.doneSync();
+                            def.resolve();
+                        })
+                        .fail(function(){
+                            _this.failSync();
+                            def.reject();
+                        });
+
+                    return def.promise();
+                },
+
+                doneSync: function(){
+                    App.execute(config.commands['notify:clearAllNotify:side']);
+                    App.execute(config.commands['notify:showNotify:side'], {text: 'Synchronization done'});
+                },
+
+                failSync: function(){
+                    App.execute(config.commands['notify:clearAllNotify:side']);
+                    App.execute(config.commands['notify:showNotify:side'], {text: 'Synchronization failed'});
+                },
+
+                //client - server sync
+
+                clientServer: function(){
+                    var def = $.Deferred();
+
+                    App.reqres.request(config.reqres['service:db:getChangingData'])
+                        .then( this.clientServer_send )
+                        .then( this.updateCSState )
+                        .done(function(){
+                            def.resolve();
+                        })
+                        .fail(function(){
+                            def.reject();
+                        });
+
+                    return def.promise();
+                },
+
+                clientServer_send: function(changingData){
+                    return $.ajax({
+                        type: "POST",
+                        url: config.api.sync.clientServer,
+                        data: JSON.stringify(changingData)
+                    });
+                },
+
+                updateCSState: function(updateInfo){
+                    var def = $.Deferred();
+
+                    var methods = [];
+                    methods.push(function(cb){
+                        $.when(App.reqres.request(config.reqres['service:db:resetTagEditLabel']))
+                            .done(function(){cb(null);})
+                    })
+                    methods.push(function(cb){
+                        $.when(App.reqres.request(config.reqres['service:db:updateTagsId'], updateInfo.newTagId))
+                            .done(function(){cb(null);})
+                    })
+                    methods.push(function(cb){
+                        $.when(App.reqres.request(config.reqres['service:db:removeRemovedTag']))
+                            .done(function(){cb(null);})
+                    })
+                    methods.push(function(cb){
+                        $.when( App.reqres.request(config.reqres['service:db:resetTransactionEditLabel']) )
+                            .done(function(){cb(null);})
+                    })
+
+                    methods.push(function(cb){
+                        $.when( App.reqres.request(config.reqres['service:db:updateTransactionsId'], updateInfo.newTransactionId) )
+                            .done(function(){cb(null);})
+                    })
+
+                    methods.push(function(cb){
+                        $.when( App.reqres.request(config.reqres['service:db:removeRemovedTransactions']) )
+                            .done(function(){cb(null);})
+                    })
+
+                    methods.push(function(cb){
+                        $.when( App.reqres.request(config.reqres['service:db:updateTagIdInTransactions'], updateInfo.newTagId) )
+                            .done(function(){cb(null);})
+                    })
+
+                    async.waterfall(methods, function(err){
+                        if(err){
+                            return def.reject();
+                        }
+                        def.resolve();
+                    });
+
+                    return def.promise();
+                },
+
+                //server - client sync
+
+                serverClient: function(){
+                    var def = $.Deferred();
+
+                    $.when( this.server_send() )
+                        .then( this.updateSCState )
+                        .done(function(){
+                            def.resolve();
+                        })
+                        .fail(function(){
+                            def.reject();
+                        })
+
+                    return def.promise();
+                },
+
+                server_send: function(){
+                    return $.ajax({
+                        type: "POST",
+                        url: config.api.sync.serverClient,
+                        data: JSON.stringify({
+                            lastUpdate: storage.get(config.storage['lastUpdate'])
+                        })
+                    });
+                },
+
+                updateSCState: function(data){
+                    var def = $.Deferred();
+                    var _this = this;
+
+                    this.updateTags(data.tags)
+                        .then(function(){
+                            return _this.updateTransactions(data.transactions);
+                        })
+                        .done(function(){
+                            def.resolve();
+                        })
+                        .fail(function(){
+                            def.reject();
+                        });
+
+                    return def.promise();
+                },
+
+                //sync tags
+
+                updateTags: function(tags){
+                    var def = $.Deferred();
+
+                    var methods = [];
+                    _.each(tags, function(tag){
+                        tag.label = '';
+                        var isDeleted = _.clone(tag.isDeleted);
+                        delete tag.isDeleted;
+
+                        if( isDeleted ){
+                            delete tag.isDeleted;
+
+                            methods.push(function(cb){
+                                $.when(App.reqres.request(config.reqres['service:db:removeTagById'], tag._id))
+                                    .done(function(){
+                                        cb(null);
+                                    })
+                                    .fail(function(){
+                                        cb(1);
+                                    })
+                            })
+                        }else{
+                            methods.push(function(cb){
+                                $.when(App.reqres.request(config.reqres['service:db:editOrCreateTag'], tag))
+                                    .done(function(){
+                                        cb(null);
+                                    })
+                                    .fail(function(){
+                                        cb(1);
+                                    });
+                            })
+                        }
+
+                    });
+
+                    async.parallel(methods, function(err){
+                        if(err){
+                            return def.reject();
+                        }
+                        def.resolve();
+                    });
+
+                    return def.promise();
+                },
+
+                updateTransactions: function(transactions){
+                    var def = $.Deferred();
+
+                    var methods = [];
+                    _.each(transactions, function(transaction){
+                        transaction.label = '';
+                        var isDeleted = _.clone(transaction.isDeleted);
+                        delete transaction.isDeleted;
+
+                        if( isDeleted ){
+                            methods.push(function(cb){
+                                $.when(App.reqres.request(config.reqres['service:db:removeTransactionById'], transaction._id))
+                                    .done(function(){
+                                        cb(null);
+                                    })
+                                    .fail(function(){
+                                        cb(1);
+                                    })
+                            })
+                        }else{
+                            methods.push(function(cb){
+                                $.when(App.reqres.request(config.reqres['service:db:editOrCreateTransaction'], transaction))
+                                    .done(function(){
+                                        cb(null);
+                                    })
+                                    .fail(function(){
+                                        cb(1);
+                                    });
+                            })
+                        }
+
+                    });
+
+                    async.parallel(methods, function(err){
+                        if(err){
+                            return def.reject();
+                        }
+                        def.resolve();
+                    });
+
+                    return def.promise();
+                }
+            });
+
+            var Controller = Marionette.Controller.extend({
+                initialize: function(options){
+                    this.syncController = false;
+
+                    if(storage.get(config.storage['lastUpdate'])){
+                        this.lastUpdate = storage.get(config.storage['lastUpdate']);
+                    }else{
+                        this.lastUpdate = 0;
+                        storage.set(config.storage['lastUpdate'], 0);
+                    }
+
+                    this.subscribe();
+                },
+
+                subscribe: function(){
+                    this.listenTo(App.channels.main, config.channels['sync'], this.sync);
+                },
+
+                sync: function(){
+                    if( this.syncController ) return false;
+
+                    var _this = this;
+
+                    this.syncController = new SyncController();
+
+                    this.syncController.sync()
+                        .done(function(){
+                            _this.syncController.close();
+                            _this.syncController = false;
+
+                            var time = moment.utc();
+                            storage.set(config.storage['lastUpdate'], time.toDate().getTime());
+                        })
+                        .fail(function(){
+                            _this.syncController.close();
+                            _this.syncController = false;
+                        }).always(function(){
+                            App.reloadCurrentApp();
+                        })
+                }
+            });
+
+            App.on('initialize:before', function(){
+                new Controller({});
+            })
+        }
+    })
+
+});
+define('modules/log/module',[
+    'underscore',
+    'marionette',
+    'app',
+    'config'
+], function(_, Marionette, App, config){
+
+    App.module("Log", {
+
+        startWithParent: true,
+
+        define: function( Log, App, Marionette, $, _ ){
+
+            function getLogInstance(moduleName){
+                var module = moduleName;
+                return function (message){
+                    if(!config.showLog) return false;
+                    var isObject = _.isPlainObject(message);
+                    if( isObject ){
+                        console.log(module + ' : ');
+                        console.log(message);
+                    }else{
+                        console.log(module + ' : ' + message);
+                    }
+                }
+            }
+
+            var controller = {
+                getLog: function(moduleName){
+                    return getLogInstance(moduleName);
+                }
+            }
+            App.reqres.setHandler("getLog", controller.getLog);
+
+        }
+    })
 
 });
 define('modules/service/services/db',[
@@ -14082,6 +14407,51 @@ define('modules/service/services/db',[
     })
 
 });
+define('modules/service/services/auth',[
+    'jquery',
+    'backbone',
+    'marionette',
+    'app',
+    'config',
+    'async',
+    'storage'
+
+], function(jQuery, Backbone, Marionette, App, config, async, storage){
+
+    App.module("Service.Auth", {
+
+        startWithParent: true,
+
+        define: function( Auth, App, Backbone, Marionette, $, _ ){
+
+            var Controller = Marionette.Controller.extend({
+
+                initialize: function(){
+                },
+
+                logout: function(){
+                    App.Database.removeDatabase().then(function(){
+                        storage.set(config.storage.user['email'], '');
+                        storage.set(config.storage['lastUpdate'], 0);
+                        storage.set(config.storage['isInitDatabase'], 0);
+                        App.redirect(config.api.logout, {trigger: true});
+                    })
+                }
+
+            });
+
+            App.on('initialize:before', function(){
+                var controller = new Controller();
+
+                App.reqres.setHandler(config.reqres['service:auth:logout'], controller.logout);
+
+            })
+
+
+        }
+    })
+
+});
 define('modules/service/module',[
     'jquery',
     'backbone',
@@ -14089,7 +14459,8 @@ define('modules/service/module',[
     'app',
     'config',
 
-    './services/db'
+    './services/db',
+    './services/auth'
 
 ], function(jQuery, Backbone, Marionette, App, config){
 
@@ -14098,318 +14469,6 @@ define('modules/service/module',[
         startWithParent: true,
 
         define: function( Widget, App, Backbone, Marionette, $, _ ){}
-    })
-
-});
-define('modules/sync/module',[
-    'jquery',
-    'backbone',
-    'marionette',
-    'app',
-    'config',
-    'backbone.server',
-    'storage',
-    'async'
-], function(jQuery, Backbone, Marionette, App, config, server, storage, async){
-
-    App.module("Sync", {
-
-        startWithParent: true,
-
-        define: function( Sync, App, Backbone, Marionette, $, _ ){
-
-            var SyncController = Marionette.Controller.extend({
-                initialize: function(){
-                    _.bindAll(this, "serverClient",
-                        "updateSCState",
-                        "updateTransactions");
-                },
-
-                sync: function(){
-                    var def = $.Deferred();
-                    var _this = this;
-                    App.execute(config.commands['notify:showNotify:side'], {text: 'Synchronization...', isAutoHide: false});
-
-                    this.clientServer()
-                        .then(this.serverClient )
-                        .done(function(){
-                            _this.doneSync();
-                            def.resolve();
-                        })
-                        .fail(function(){
-                            _this.failSync();
-                            def.reject();
-                        });
-
-                    return def.promise();
-                },
-
-                doneSync: function(){
-                    App.execute(config.commands['notify:clearAllNotify:side']);
-                    App.execute(config.commands['notify:showNotify:side'], {text: 'Synchronization done'});
-                },
-
-                failSync: function(){
-                    App.execute(config.commands['notify:clearAllNotify:side']);
-                    App.execute(config.commands['notify:showNotify:side'], {text: 'Synchronization failed'});
-                },
-
-                //client - server sync
-
-                clientServer: function(){
-                    var def = $.Deferred();
-
-                    App.reqres.request(config.reqres['service:db:getChangingData'])
-                        .then( this.clientServer_send )
-                        .then( this.updateCSState )
-                        .done(function(){
-                            def.resolve();
-                        })
-                        .fail(function(){
-                            def.reject();
-                        });
-
-                    return def.promise();
-                },
-
-                clientServer_send: function(changingData){
-                    return $.ajax({
-                        type: "POST",
-                        url: config.api.sync.clientServer,
-                        data: JSON.stringify(changingData)
-                    });
-                },
-
-                updateCSState: function(updateInfo){
-                    var def = $.Deferred();
-
-                    var methods = [];
-                    methods.push(function(cb){
-                        $.when(App.reqres.request(config.reqres['service:db:resetTagEditLabel']))
-                            .done(function(){cb(null);})
-                    })
-                    methods.push(function(cb){
-                        $.when(App.reqres.request(config.reqres['service:db:updateTagsId'], updateInfo.newTagId))
-                            .done(function(){cb(null);})
-                    })
-                    methods.push(function(cb){
-                        $.when(App.reqres.request(config.reqres['service:db:removeRemovedTag']))
-                            .done(function(){cb(null);})
-                    })
-                    methods.push(function(cb){
-                        $.when( App.reqres.request(config.reqres['service:db:resetTransactionEditLabel']) )
-                            .done(function(){cb(null);})
-                    })
-
-                    methods.push(function(cb){
-                        $.when( App.reqres.request(config.reqres['service:db:updateTransactionsId'], updateInfo.newTransactionId) )
-                            .done(function(){cb(null);})
-                    })
-
-                    methods.push(function(cb){
-                        $.when( App.reqres.request(config.reqres['service:db:removeRemovedTransactions']) )
-                            .done(function(){cb(null);})
-                    })
-
-                    methods.push(function(cb){
-                        $.when( App.reqres.request(config.reqres['service:db:updateTagIdInTransactions'], updateInfo.newTagId) )
-                            .done(function(){cb(null);})
-                    })
-
-                    async.waterfall(methods, function(err){
-                        if(err){
-                            return def.reject();
-                        }
-                        def.resolve();
-                    });
-
-                    return def.promise();
-                },
-
-                //server - client sync
-
-                serverClient: function(){
-                    var def = $.Deferred();
-
-                    $.when( this.server_send() )
-                        .then( this.updateSCState )
-                        .done(function(){
-                            def.resolve();
-                        })
-                        .fail(function(){
-                            def.reject();
-                        })
-
-                    return def.promise();
-                },
-
-                server_send: function(){
-                    return $.ajax({
-                        type: "POST",
-                        url: config.api.sync.serverClient,
-                        data: JSON.stringify({
-                            lastUpdate: storage.get(config.storage['lastUpdate'])
-                        })
-                    });
-                },
-
-                updateSCState: function(data){
-                    var def = $.Deferred();
-                    var _this = this;
-
-                    this.updateTags(data.tags)
-                        .then(function(){
-                            return _this.updateTransactions(data.transactions);
-                        })
-                        .done(function(){
-                            def.resolve();
-                        })
-                        .fail(function(){
-                            def.reject();
-                        });
-
-                    return def.promise();
-                },
-
-                //sync tags
-
-                updateTags: function(tags){
-                    var def = $.Deferred();
-
-                    var methods = [];
-                    _.each(tags, function(tag){
-                        tag.label = '';
-                        var isDeleted = _.clone(tag.isDeleted);
-                        delete tag.isDeleted;
-
-                        if( isDeleted ){
-                            delete tag.isDeleted;
-
-                            methods.push(function(cb){
-                                $.when(App.reqres.request(config.reqres['service:db:removeTagById'], tag._id))
-                                    .done(function(){
-                                        cb(null);
-                                    })
-                                    .fail(function(){
-                                        cb(1);
-                                    })
-                            })
-                        }else{
-                            methods.push(function(cb){
-                                $.when(App.reqres.request(config.reqres['service:db:editOrCreateTag'], tag))
-                                    .done(function(){
-                                        cb(null);
-                                    })
-                                    .fail(function(){
-                                        cb(1);
-                                    });
-                            })
-                        }
-
-                    });
-
-                    async.parallel(methods, function(err){
-                        if(err){
-                            return def.reject();
-                        }
-                        def.resolve();
-                    });
-
-                    return def.promise();
-                },
-
-                updateTransactions: function(transactions){
-                    var def = $.Deferred();
-
-                    var methods = [];
-                    _.each(transactions, function(transaction){
-                        transaction.label = '';
-                        var isDeleted = _.clone(transaction.isDeleted);
-                        delete transaction.isDeleted;
-
-                        if( isDeleted ){
-                            methods.push(function(cb){
-                                $.when(App.reqres.request(config.reqres['service:db:removeTransactionById'], transaction._id))
-                                    .done(function(){
-                                        cb(null);
-                                    })
-                                    .fail(function(){
-                                        cb(1);
-                                    })
-                            })
-                        }else{
-                            methods.push(function(cb){
-                                $.when(App.reqres.request(config.reqres['service:db:editOrCreateTransaction'], transaction))
-                                    .done(function(){
-                                        cb(null);
-                                    })
-                                    .fail(function(){
-                                        cb(1);
-                                    });
-                            })
-                        }
-
-                    });
-
-                    async.parallel(methods, function(err){
-                        if(err){
-                            return def.reject();
-                        }
-                        def.resolve();
-                    });
-
-                    return def.promise();
-                }
-            });
-
-            var Controller = Marionette.Controller.extend({
-                initialize: function(options){
-                    this.syncController = false;
-
-                    if(storage.get(config.storage['lastUpdate'])){
-                        this.lastUpdate = storage.get(config.storage['lastUpdate']);
-                    }else{
-                        this.lastUpdate = 0;
-                        storage.set(config.storage['lastUpdate'], 0);
-                    }
-
-                    this.subscribe();
-                },
-
-                subscribe: function(){
-                    this.listenTo(App.channels.main, config.channels['sync'], this.sync);
-                },
-
-                sync: function(){
-                    if( this.syncController ) return false;
-
-                    var _this = this;
-
-                    this.syncController = new SyncController();
-
-                    this.syncController.sync()
-                        .done(function(){
-                            _this.syncController.close();
-                            _this.syncController = false;
-
-                            var time = moment.utc();
-                            storage.set(config.storage['lastUpdate'], time.toDate().getTime());
-                        })
-                        .fail(function(){
-                            _this.syncController.close();
-                            _this.syncController = false;
-                        }).always(function(){
-                            App.reloadCurrentApp();
-                        })
-                }
-            });
-
-            App.on('initialize:before', function(){
-                if( config.data.db == "local" ){
-                    var controller = new Controller({});
-                }
-            })
-        }
     })
 
 });
@@ -17391,7 +17450,11 @@ define('modules/menu/module',[
                     var path = this.model.get('path');
 
                     if( path == "logout" ){
-                        App.redirect( config.api.logout );
+                        if( config.data.environment == "mobile"){
+                            App.reqres.request(config.reqres['service:auth:logout']);
+                        }else{
+                            App.redirect( config.api.logout );
+                        }
                     }else{
                         App.navigate('#' + path, {trigger: true});
                     }
@@ -17597,6 +17660,34 @@ define('modules/behaviors/module',[
         define: function( Behaviors, App, Backbone, Marionette, $, _ ){}
     })
 
+
+});
+define('apps/initialize/module',[
+    'jquery',
+    'backbone',
+    'marionette',
+    'app',
+    'config',
+    'async',
+    'storage'
+], function(jQuery, Backbone, Marionette, App, config, async, storage){
+    App.module("Initialize", {
+
+        startWithParent: true,
+
+        define: function( Initialize, App, Backbone, Marionette, $, _ ){
+
+            App.on('initialize:before', function(){
+
+                //THIS MODULE ENABLE ONLY FOR MOBILE CLIENT
+
+                var emailFromLocalStorage = storage.get(config.storage.user['email']);
+                if( emailFromLocalStorage && !config.data.user.email ) config.data.user.email = emailFromLocalStorage;
+
+            })
+
+        }
+    })
 
 });
 define('apps/route/module',[
@@ -18426,9 +18517,10 @@ define('apps/landing/module',[
     'marionette',
     'app',
     'config',
+    'storage',
 
     './views/Layout'
-], function(jQuery, Backbone, Marionette, App, config, Layout){
+], function(jQuery, Backbone, Marionette, App, config, storage, Layout){
 
     App.module("Landing", {
 
@@ -18442,7 +18534,6 @@ define('apps/landing/module',[
                 initialize: function(options){
                     this.region = options.region;
                 },
-
                 start: function(){
                     this.layout = new Layout();
                     this.region.show(this.layout);
@@ -18462,6 +18553,8 @@ define('apps/landing/module',[
 
                 signInHandler: function(user){
                     config.data.user.email = user.get('email');
+                    storage.set(config.storage.user['email'], user.get('email'));
+
                     App.navigate('#report/main', {trigger: true});
                     setTimeout(function(){
                         App.execute(config.commands['notify:showNotify:side'], {text: 'Welcome to account.'});
@@ -18808,11 +18901,14 @@ require([
     'entities/statistics/transactionsList',
 
     /*modules*/
-    'modules/log/module',
+
+    //mobile
     'modules/server/module',
     'modules/database/module',
-    'modules/service/module',
     'modules/sync/module',
+    //all
+    'modules/log/module',
+    'modules/service/module',
     'modules/widget/module',
     'modules/component/module',
     'modules/notice/module',
@@ -18822,6 +18918,7 @@ require([
     'modules/behaviors/module',
 
     /*main modules*/
+    'apps/initialize/module',
     'apps/route/module',
     'apps/main/module',
     'apps/report/module',

@@ -302,9 +302,7 @@ define([
             });
 
             App.on('initialize:before', function(){
-                if( config.data.db == "local" ){
-                    var controller = new Controller({});
-                }
+                new Controller({});
             })
         }
     })

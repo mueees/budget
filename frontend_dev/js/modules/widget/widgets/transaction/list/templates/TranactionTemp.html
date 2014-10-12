@@ -9,7 +9,11 @@
 </td>
 <td><%=  count  %></td>
 <td><%=  dateLabel  %></td>
-<td><%=  comment  %></td>
-<td>
-    <span class="glyphicon glyphicon-chevron-right"></span>
-</td>
+
+<% if(isExtendMode) { %>
+    <td><%=  comment  %></td>
+    <td>
+        <span class="glyphicon glyphicon-chevron-right"></span>
+    </td>
+<% } %>
+

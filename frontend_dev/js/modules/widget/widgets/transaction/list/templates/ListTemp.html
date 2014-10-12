@@ -4,7 +4,10 @@
         <th>Tag</th>
         <th>Count</th>
         <th>Date</th>
-        <th>Comment</th>
+        <% if(isExtendMode) { %>
+            <th>Comment</th>
+            <th></th>
+        <% } %>
     </tr>
     </thead>
     <tbody></tbody>

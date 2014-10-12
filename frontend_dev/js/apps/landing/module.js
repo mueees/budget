@@ -4,9 +4,10 @@ define([
     'marionette',
     'app',
     'config',
+    'storage',
 
     './views/Layout'
-], function(jQuery, Backbone, Marionette, App, config, Layout){
+], function(jQuery, Backbone, Marionette, App, config, storage, Layout){
 
     App.module("Landing", {
 
@@ -20,7 +21,6 @@ define([
                 initialize: function(options){
                     this.region = options.region;
                 },
-
                 start: function(){
                     this.layout = new Layout();
                     this.region.show(this.layout);
@@ -40,6 +40,8 @@ define([
 
                 signInHandler: function(user){
                     config.data.user.email = user.get('email');
+                    storage.set(config.storage.user['email'], user.get('email'));
+
                     App.navigate('#report/main', {trigger: true});
                     setTimeout(function(){
                         App.execute(config.commands['notify:showNotify:side'], {text: 'Welcome to account.'});

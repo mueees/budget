@@ -31,8 +31,12 @@ passport.use(new LocalStrategy(
             function(cb){
                 UserModel.isHaveUser(email, cb);
             }, function(user, cb){
-                if( !user ){ return cb('Unknown email address')}
+                if( !user ){ 
+                    logger.info('Unknown email address')
+                    return cb('Unknown email address')
+                }
                 if(!UserModel.comparePassword(password, user)){
+                    logger.info('Invalid Password', {user: user});
                     return cb('Invalid Password');
                 }
                 switch(user.status){
@@ -40,6 +44,7 @@ passport.use(new LocalStrategy(
                         return cb(null, user);
                         break;
                     case 400:
+                        logger.info('User not confirmed. Please check email', {user: user});
                         return cb("User not confirmed. Please check email");
                         break;
                 }
