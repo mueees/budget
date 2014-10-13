@@ -56,10 +56,10 @@ Transaction.statics.removeTagById = function(tagId, userId, cb){
         },
 
         {
-            $pull: {
-                tag: null
-            },
-            updated_at: Date.now()
+            $set: {
+                tag: null,
+                updated_at: Date.now()
+            }
         },
 
         {multi: true},
