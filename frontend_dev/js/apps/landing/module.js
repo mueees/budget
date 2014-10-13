@@ -34,6 +34,14 @@ define([
                     this.listenTo(this.signWidget, "signIn", this.signInHandler);
                 },
 
+                initDb: function(){
+                    if(!storage.get(config.storage['isInitDatabase'])){
+                        $.when(App.Database.initDatabase()).then(function(){
+                            storage.set(config.storage['isInitDatabase'], true);
+                        });
+                    }
+                },
+
                 signUpHandler: function(user){
                     App.execute(config.commands['notify:showNotify:side'], {text: 'Please verify your email.'});
                 },
@@ -41,6 +49,8 @@ define([
                 signInHandler: function(user){
                     config.data.user.email = user.get('email');
                     storage.set(config.storage.user['email'], user.get('email'));
+
+                    this.initDb();
 
                     App.navigate('#report/main', {trigger: true});
                     setTimeout(function(){

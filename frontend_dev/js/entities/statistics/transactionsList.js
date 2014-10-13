@@ -32,7 +32,6 @@ define([
 
                 parse: function(response){
                     if( response && response.data ){
-                        debugger
 
                         _.map(response.data, function(transaction){
                             transaction.date = new Date(transaction.date);

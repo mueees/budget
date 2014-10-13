@@ -9398,7 +9398,7 @@ define('entities/transaction',[
 
                 defaults: {
                     count: null,
-                    tags: [],
+                    tag: '',
                     date: new Date(),
                     comment: ''
                 },
@@ -9413,7 +9413,7 @@ define('entities/transaction',[
                     var model =  this.toJSON();
                     var data = {
                         count: model.count,
-                        tags: model.tags,
+                        tag: model.tag,
                         date: model.date,
                         comment: model.comment
                     };
@@ -9441,7 +9441,7 @@ define('entities/transaction',[
                     var data = {
                         _id: model._id,
                         count: model.count,
-                        tags: model.tags,
+                        tag: model.tag,
                         date: model.date,
                         comment: model.comment
                     };
@@ -12812,7 +12812,7 @@ define('modules/database/entities/transaction',[
 
                     comment: '',
 
-                    tags: [],
+                    tag: null,
 
                     //create
                     //edit
@@ -12879,14 +12879,14 @@ define('modules/database/entities/transaction',[
                     var data = [
                         this.get('_id'),
                         this.get('count'),
-                        this.get('tags'),
+                        this.get('tag'),
                         this.convertMomentDateToDatetime( this.get('date') ),
                         this.convertMomentDateToDatetime( this.get('updated_at') ),
                         this.get('comment'),
                         this.get('label')
                     ];
 
-                    var sql = "UPDATE " + this.tableName + " SET _id=?, count=?, tags = ?, date=?,  updated_at=?, comment=?, label=? WHERE _id=" + "'"+idForUpdate+"'";
+                    var sql = "UPDATE " + this.tableName + " SET _id=?, count=?, tag = ?, date=?,  updated_at=?, comment=?, label=? WHERE _id=" + "'"+idForUpdate+"'";
 
                     this.makeRequest(sql, data, function(tx, results){
                         def.resolve(_this)
@@ -12914,14 +12914,14 @@ define('modules/database/entities/transaction',[
                     var data = [
                         _id,
                         model.count,
-                        model.tags,
+                        model.tag,
                         this.convertMomentDateToDatetime(dateMoment),
                         this.convertMomentDateToDatetime(momentDate),
                         model.comment,
                         label
                     ];
 
-                    var sql = "INSERT INTO " + this.tableName + " ( _id, count, tags, date, updated_at, comment, label ) VALUES(?, ?, ?, ?, ?, ?, ?)";
+                    var sql = "INSERT INTO " + this.tableName + " ( _id, count, tag, date, updated_at, comment, label ) VALUES(?, ?, ?, ?, ?, ?, ?)";
 
                     this.makeRequest(sql, data, function(tx, results){
                         def.resolve(_this);
@@ -12929,36 +12929,6 @@ define('modules/database/entities/transaction',[
                         def.reject(err);
                     });
 
-                    return def.promise();
-                },
-
-                getIdBy_Id: function(){
-                    var _this = this;
-                    var _id =  this.get('_id');
-                    var def = new $.Deferred();
-                    var result;
-
-                    $.when(this.connect()).done(function(){
-                        var range = _this.db.makeKeyRange({
-                            lower: _id,
-                            upper: _id
-                        });
-
-                        _this.db.query(function(transactions, cursor, transaction){
-                            var result;
-                            if( transactions.length ){
-                                result = transactions[0].id;
-                            }
-                            def.resolve(result);
-                        }, {
-                            order: 'DESC',
-                            index: '_id',
-                            keyRange: range,
-                            onEnd: function(){
-                                def.resolve(result);
-                            }
-                        })
-                    })
                     return def.promise();
                 },
 
@@ -12970,12 +12940,12 @@ define('modules/database/entities/transaction',[
 
                     this.makeRequest(sql, [], function(tx, results){
                         var data = _this.collectResult(results);
-                        var tag;
+                        var transaction;
                         if(data[0]){
-                            tag = new App.Database.TransactionModel(data[0]);
+                            transaction = new App.Database.TransactionModel(data[0]);
                         }
 
-                        def.resolve(tag);
+                        def.resolve(transaction);
                     }, function(tx, err){
                         alert(err);
                         def.reject();
@@ -13009,7 +12979,6 @@ define('modules/database/entities/transaction',[
                 $.when(transaction.getData()).done(function(transaction){
                     def.resolve(transaction);
                 }).fail(function(tx, err){
-                    alert(err);
                     def.reject();
                 });
 
@@ -13018,7 +12987,6 @@ define('modules/database/entities/transaction',[
 
             Database.TransactionModel.removeById = function(_id){
                 var def = new $.Deferred();
-                var _this = this;
 
                 $.when(App.Database.TransactionModel.findById(_id)).done(function(transaction){
                     if(!transaction){
@@ -13056,7 +13024,7 @@ define('modules/database/entities/transaction',[
 
                     transactions.each(function(transaction){
                         transaction.set({
-                            'tags': '',
+                            'tag': '',
                             updated_at:  moment.utc()
                         });
 
@@ -13135,7 +13103,7 @@ define('modules/database/entities/transaction',[
                     var _this = this;
                     var def = new $.Deferred();
 
-                    var sql = "SELECT * FROM " + this.tableName + " WHERE tags = '"+ tagId +"'";
+                    var sql = "SELECT * FROM " + this.tableName + " WHERE tag = '"+ tagId +"'";
 
                     this.makeRequest(sql, [], function(tx, results){
                         var data = _this.collectResult(results);
@@ -13302,7 +13270,7 @@ define('modules/database/module',[
                     tx.executeSql("DROP TABLE IF EXISTS `tags`");
                     tx.executeSql("CREATE TABLE `tags` (_id unique, tagName, updated_at, label)");
                     tx.executeSql("DROP TABLE IF EXISTS `transactions`" );
-                    tx.executeSql("CREATE TABLE `transactions` (_id unique, count, date, updated_at, comment, tags, label)");
+                    tx.executeSql("CREATE TABLE `transactions` (_id unique, count, date, updated_at, comment, tag, label)");
                     def.resolve();
                 });
 
@@ -13490,7 +13458,7 @@ define('modules/server/controllers/transaction',[
                         count: this.data.count || 0,
                         date: moment.utc(this.data.date),
                         comment: this.data.comment || "",
-                        tags: this.data.tags || []
+                        tag: this.data.tag || ''
                     });
 
                     $.when(transaction.saveTransaction()).done(function(){
@@ -13512,7 +13480,7 @@ define('modules/server/controllers/transaction',[
                             var newData = {};
                             if( _this.data.count ) newData.count = _this.data.count;
                             if( _this.data.comment ) newData.comment = _this.data.comment;
-                            if( _this.data.tags ) newData.tags = _this.data.tags;
+                            newData.tag = _this.data.tag || '';
                             if( _this.data.date ) newData.date = moment.utc(_this.data.date);
                             if( transaction.get('label') === '') newData.label = 'edit';
 
@@ -13562,8 +13530,7 @@ define('modules/server/controllers/transaction',[
 
                             transactions.each(function(transaction){
                                 var tagItem;
-                                var tagId = transaction.get('tags') + '';
-
+                                var tagId = transaction.get('tag') + '';
 
                                 tags.each(function(tag){
                                     if(tag.get('_id')+'' == tagId) {
@@ -13573,10 +13540,11 @@ define('modules/server/controllers/transaction',[
                                         }
                                         return;
                                     }
-                                })
-                                transaction.set('tags', tagItem);
+                                });
+
+                                transaction.set('tag', tagItem);
                                 result.push(transaction.toJSON());
-                            })
+                            });
 
                             _this.def.resolve({
                                 data: result
@@ -13715,7 +13683,7 @@ define('modules/server/module',[
                             server: server
                         });
                         storage.set(config.storage['isInitDatabase'], true);
-                    })
+                    });
                 }else{
                     new Controller({
                         server: server
@@ -14431,10 +14399,11 @@ define('modules/service/services/auth',[
 
                 logout: function(){
                     App.Database.removeDatabase().then(function(){
+                        config.data.user.email = null;
                         storage.set(config.storage.user['email'], '');
                         storage.set(config.storage['lastUpdate'], 0);
                         storage.set(config.storage['isInitDatabase'], 0);
-                        App.redirect(config.api.logout, {trigger: true});
+                        App.navigate("#landing", {trigger: true});
                     })
                 }
 
@@ -15652,7 +15621,7 @@ define('modules/widget/widgets/transaction/add/views/AddView',[
         getData: function(){
             var data = Backbone.Syphon.serialize(this);
             var tag = this.ui.tags.find('.active').data('id');
-            data.tags = (tag) ? tag + "" : '';
+            data.tag = (tag) ? tag + "" : '';
             data.date = new Date(data.date);
             return data;
         },
@@ -15740,7 +15709,7 @@ define('modules/widget/widgets/transaction/add/index',[
 
 });
 
-define('text!modules/widget/widgets/transaction/edit/templates/EditTemp.html',[],function () { return '<h3 class="page-header">Edit transaction</h3>\n\n<form class="form-horizontal">\n    <fieldset>\n        <div class="form-group">\n            <div class="col-lg-10">\n                <input name="count" value="<%= transaction.count %>" type="number" class="form-control" id="count" placeholder="Count">\n            </div>\n            <div class="col-lg-10">\n                <div class="calculator">\n                    <div class="row small-grid-row">\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="1" type="button" class="btn btn-default">1</button>\n                        </div>\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="2" type="button" class="btn btn-default">2</button>\n                        </div>\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="3" type="button" class="btn btn-default">3</button>\n                        </div>\n                    </div>\n                    <div class="row small-grid-row">\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="4" type="button" class="btn btn-default">4</button>\n                        </div>\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="5" type="button" class="btn btn-default">5</button>\n                        </div>\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="6" type="button" class="btn btn-default">6</button>\n                        </div>\n                    </div>\n                    <div class="row small-grid-row">\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="7" type="button" class="btn btn-default">7</button>\n                        </div>\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="8" type="button" class="btn btn-default">8</button>\n                        </div>\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="9" type="button" class="btn btn-default">9</button>\n                        </div>\n                    </div>\n                    <div class="row small-grid-row">\n                        <div class="col-xs-4 small-grid ">\n                            <button data-value="clear" type="button" class="btn btn-default clear">clear</button>\n                        </div>\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="0" type="button" class="btn btn-default">0</button>\n                        </div>\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="backspace" type="button" class="btn btn-default backspace">\n                                <span class="text glyphicon glyphicon-chevron-left" ></span>\n                            </button>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n        <div class="form-group">\n            <div class="col-lg-10">\n                <ul class="tags">\n                    <% _.each(tags, function(tag){ %>\n                    <li data-id="<%= tag._id %>" class=" <%=  (tag._id == transaction.tags)? \'active\': \'\' %> ">\n                        <button type="button" class="btn btn-default ">\n                            <span class="glyphicon glyphicon-tag"></span>\n                            <span class="text"><%= tag.tagName %></span>\n                        </button>\n                    </li>\n                    <% }) %>\n                </ul>\n            </div>\n        </div>\n\n        <div class="form-group hidden-xs comment-container">\n            <div class="col-lg-10">\n                <textarea  name="comment" class="form-control" rows="3" id="comment" placeholder="Comment"><%= transaction.comment %></textarea>\n            </div>\n        </div>\n\n        <div class="form-group visible-xs comment-toggle">\n            <div class="col-lg-10">\n                <button type="button" class="btn btn-default comment">Comment</button>\n            </div>\n        </div>\n\n        <div class="form-group">\n            <div class="col-lg-10">\n                <input name="date" type="date" class="form-control" value="<%= date%>"  placeholder="Date"/>\n            </div>\n        </div>\n\n        <div class="messages"></div>\n\n        <div class="form-group">\n            <div class="col-lg-10">\n                <button type="button" class="btn btn-danger deleteBtn">Remove</button>\n                <button type="button" class="btn btn-default cancelBtn">Cancel</button>\n                <button type="submit" class="btn btn-primary editBtn">Edit</button>\n            </div>\n        </div>\n    </fieldset>\n</form>';});
+define('text!modules/widget/widgets/transaction/edit/templates/EditTemp.html',[],function () { return '<h3 class="page-header">Edit transaction</h3>\n\n<form class="form-horizontal">\n    <fieldset>\n        <div class="form-group">\n            <div class="col-lg-10">\n                <input name="count" value="<%= transaction.count %>" type="number" class="form-control" id="count" placeholder="Count">\n            </div>\n            <div class="col-lg-10">\n                <div class="calculator">\n                    <div class="row small-grid-row">\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="1" type="button" class="btn btn-default">1</button>\n                        </div>\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="2" type="button" class="btn btn-default">2</button>\n                        </div>\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="3" type="button" class="btn btn-default">3</button>\n                        </div>\n                    </div>\n                    <div class="row small-grid-row">\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="4" type="button" class="btn btn-default">4</button>\n                        </div>\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="5" type="button" class="btn btn-default">5</button>\n                        </div>\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="6" type="button" class="btn btn-default">6</button>\n                        </div>\n                    </div>\n                    <div class="row small-grid-row">\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="7" type="button" class="btn btn-default">7</button>\n                        </div>\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="8" type="button" class="btn btn-default">8</button>\n                        </div>\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="9" type="button" class="btn btn-default">9</button>\n                        </div>\n                    </div>\n                    <div class="row small-grid-row">\n                        <div class="col-xs-4 small-grid ">\n                            <button data-value="clear" type="button" class="btn btn-default clear">clear</button>\n                        </div>\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="0" type="button" class="btn btn-default">0</button>\n                        </div>\n                        <div class="col-xs-4 small-grid">\n                            <button data-value="backspace" type="button" class="btn btn-default backspace">\n                                <span class="text glyphicon glyphicon-chevron-left" ></span>\n                            </button>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n        <div class="form-group">\n            <div class="col-lg-10">\n                <ul class="tags">\n                    <% _.each(tags, function(tag){ %>\n                    <li data-id="<%= tag._id %>" class=" <%=  (tag._id == transaction.tag)? \'active\': \'\' %> ">\n                        <button type="button" class="btn btn-default ">\n                            <span class="glyphicon glyphicon-tag"></span>\n                            <span class="text"><%= tag.tagName %></span>\n                        </button>\n                    </li>\n                    <% }) %>\n                </ul>\n            </div>\n        </div>\n\n        <div class="form-group hidden-xs comment-container">\n            <div class="col-lg-10">\n                <textarea  name="comment" class="form-control" rows="3" id="comment" placeholder="Comment"><%= transaction.comment %></textarea>\n            </div>\n        </div>\n\n        <div class="form-group visible-xs comment-toggle">\n            <div class="col-lg-10">\n                <button type="button" class="btn btn-default comment">Comment</button>\n            </div>\n        </div>\n\n        <div class="form-group">\n            <div class="col-lg-10">\n                <input name="date" type="date" class="form-control" value="<%= date%>"  placeholder="Date"/>\n            </div>\n        </div>\n\n        <div class="messages"></div>\n\n        <div class="form-group">\n            <div class="col-lg-10">\n                <button type="button" class="btn btn-danger deleteBtn">Remove</button>\n                <button type="button" class="btn btn-default cancelBtn">Cancel</button>\n                <button type="submit" class="btn btn-primary editBtn">Edit</button>\n            </div>\n        </div>\n    </fieldset>\n</form>';});
 
 define('modules/widget/widgets/transaction/edit/views/EditView',[
     'marionette',
@@ -15828,7 +15797,7 @@ define('modules/widget/widgets/transaction/edit/views/EditView',[
         getData: function(){
             var data = Backbone.Syphon.serialize(this);
             var tag = this.ui.tags.find('.active').data('id');
-            data.tags = (tag) ? tag + "" : "";
+            data.tag = (tag) ? tag + "" : "";
 
             data.date = new Date(data.date);
             return data;
@@ -15953,7 +15922,7 @@ define('modules/widget/widgets/transaction/edit/index',[
 define('text!modules/widget/widgets/transaction/list/templates/ListTemp.html',[],function () { return '<table class="table table-hover budget-table table-striped">\n    <thead>\n    <tr>\n        <th>Tag</th>\n        <th>Count</th>\n        <th>Date</th>\n        <% if(isExtendMode) { %>\n            <th>Comment</th>\n            <th></th>\n        <% } %>\n    </tr>\n    </thead>\n    <tbody></tbody>\n</table>';});
 
 
-define('text!modules/widget/widgets/transaction/list/templates/TranactionTemp.html',[],function () { return '<td>\n    <% if(tags.tagName) {%>\n        <span class="glyphicon glyphicon-tag"></span>\n        <span class="value"><%= tags.tagName %></span>\n    <%}else{%>\n        <span class="glyphicon glyphicon-tag"></span>\n        <span class="value">-</span>\n    <% }%>\n</td>\n<td><%=  count  %></td>\n<td><%=  dateLabel  %></td>\n\n<% if(isExtendMode) { %>\n    <td><%=  comment  %></td>\n    <td>\n        <span class="glyphicon glyphicon-chevron-right"></span>\n    </td>\n<% } %>\n\n';});
+define('text!modules/widget/widgets/transaction/list/templates/TranactionTemp.html',[],function () { return '<td>\n    <% if(tag && tag.tagName) {%>\n        <span class="glyphicon glyphicon-tag"></span>\n        <span class="value"><%= tag.tagName %></span>\n    <%}else{%>\n        <span class="glyphicon glyphicon-tag"></span>\n        <span class="value">-</span>\n    <% }%>\n</td>\n<td><%=  count  %></td>\n<td><%=  dateLabel  %></td>\n\n<% if(isExtendMode) { %>\n    <td><%=  comment  %></td>\n    <td>\n        <span class="glyphicon glyphicon-chevron-right"></span>\n    </td>\n<% } %>\n\n';});
 
 define('modules/widget/widgets/transaction/list/views/Transaction',[
     'marionette',
@@ -15993,7 +15962,7 @@ define('modules/widget/widgets/transaction/list/views/Transaction',[
 
 });
 
-define('text!modules/widget/widgets/transaction/list/templates/NoTransaction.html',[],function () { return 'No transaction';});
+define('text!modules/widget/widgets/transaction/list/templates/NoTransaction.html',[],function () { return 'No transactiontagName';});
 
 define('modules/widget/widgets/transaction/list/views/NoTransaction',[
     'marionette',
@@ -18582,6 +18551,14 @@ define('apps/landing/module',[
                     this.listenTo(this.signWidget, "signIn", this.signInHandler);
                 },
 
+                initDb: function(){
+                    if(!storage.get(config.storage['isInitDatabase'])){
+                        $.when(App.Database.initDatabase()).then(function(){
+                            storage.set(config.storage['isInitDatabase'], true);
+                        });
+                    }
+                },
+
                 signUpHandler: function(user){
                     App.execute(config.commands['notify:showNotify:side'], {text: 'Please verify your email.'});
                 },
@@ -18589,6 +18566,8 @@ define('apps/landing/module',[
                 signInHandler: function(user){
                     config.data.user.email = user.get('email');
                     storage.set(config.storage.user['email'], user.get('email'));
+
+                    this.initDb();
 
                     App.navigate('#report/main', {trigger: true});
                     setTimeout(function(){

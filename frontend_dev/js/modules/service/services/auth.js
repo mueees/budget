@@ -22,10 +22,11 @@ define([
 
                 logout: function(){
                     App.Database.removeDatabase().then(function(){
+                        config.data.user.email = null;
                         storage.set(config.storage.user['email'], '');
                         storage.set(config.storage['lastUpdate'], 0);
                         storage.set(config.storage['isInitDatabase'], 0);
-                        App.redirect(config.api.logout, {trigger: true});
+                        App.navigate("#landing", {trigger: true});
                     })
                 }
 

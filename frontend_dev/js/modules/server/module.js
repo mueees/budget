@@ -122,7 +122,7 @@ define([
                             server: server
                         });
                         storage.set(config.storage['isInitDatabase'], true);
-                    })
+                    });
                 }else{
                     new Controller({
                         server: server
