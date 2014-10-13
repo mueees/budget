@@ -29,7 +29,7 @@ define([
 
                 defaults: {
                     count: null,
-                    tags: [],
+                    tag: '',
                     date: new Date(),
                     comment: ''
                 },
@@ -44,7 +44,7 @@ define([
                     var model =  this.toJSON();
                     var data = {
                         count: model.count,
-                        tags: model.tags,
+                        tag: model.tag,
                         date: model.date,
                         comment: model.comment
                     };
@@ -72,7 +72,7 @@ define([
                     var data = {
                         _id: model._id,
                         count: model.count,
-                        tags: model.tags,
+                        tag: model.tag,
                         date: model.date,
                         comment: model.comment
                     };

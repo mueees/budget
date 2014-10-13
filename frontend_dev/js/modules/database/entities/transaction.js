@@ -29,7 +29,7 @@ define([
 
                     comment: '',
 
-                    tags: [],
+                    tag: null,
 
                     //create
                     //edit
@@ -96,14 +96,14 @@ define([
                     var data = [
                         this.get('_id'),
                         this.get('count'),
-                        this.get('tags'),
+                        this.get('tag'),
                         this.convertMomentDateToDatetime( this.get('date') ),
                         this.convertMomentDateToDatetime( this.get('updated_at') ),
                         this.get('comment'),
                         this.get('label')
                     ];
 
-                    var sql = "UPDATE " + this.tableName + " SET _id=?, count=?, tags = ?, date=?,  updated_at=?, comment=?, label=? WHERE _id=" + "'"+idForUpdate+"'";
+                    var sql = "UPDATE " + this.tableName + " SET _id=?, count=?, tag = ?, date=?,  updated_at=?, comment=?, label=? WHERE _id=" + "'"+idForUpdate+"'";
 
                     this.makeRequest(sql, data, function(tx, results){
                         def.resolve(_this)
@@ -131,14 +131,14 @@ define([
                     var data = [
                         _id,
                         model.count,
-                        model.tags,
+                        model.tag,
                         this.convertMomentDateToDatetime(dateMoment),
                         this.convertMomentDateToDatetime(momentDate),
                         model.comment,
                         label
                     ];
 
-                    var sql = "INSERT INTO " + this.tableName + " ( _id, count, tags, date, updated_at, comment, label ) VALUES(?, ?, ?, ?, ?, ?, ?)";
+                    var sql = "INSERT INTO " + this.tableName + " ( _id, count, tag, date, updated_at, comment, label ) VALUES(?, ?, ?, ?, ?, ?, ?)";
 
                     this.makeRequest(sql, data, function(tx, results){
                         def.resolve(_this);
@@ -146,36 +146,6 @@ define([
                         def.reject(err);
                     });
 
-                    return def.promise();
-                },
-
-                getIdBy_Id: function(){
-                    var _this = this;
-                    var _id =  this.get('_id');
-                    var def = new $.Deferred();
-                    var result;
-
-                    $.when(this.connect()).done(function(){
-                        var range = _this.db.makeKeyRange({
-                            lower: _id,
-                            upper: _id
-                        });
-
-                        _this.db.query(function(transactions, cursor, transaction){
-                            var result;
-                            if( transactions.length ){
-                                result = transactions[0].id;
-                            }
-                            def.resolve(result);
-                        }, {
-                            order: 'DESC',
-                            index: '_id',
-                            keyRange: range,
-                            onEnd: function(){
-                                def.resolve(result);
-                            }
-                        })
-                    })
                     return def.promise();
                 },
 
@@ -187,12 +157,12 @@ define([
 
                     this.makeRequest(sql, [], function(tx, results){
                         var data = _this.collectResult(results);
-                        var tag;
+                        var transaction;
                         if(data[0]){
-                            tag = new App.Database.TransactionModel(data[0]);
+                            transaction = new App.Database.TransactionModel(data[0]);
                         }
 
-                        def.resolve(tag);
+                        def.resolve(transaction);
                     }, function(tx, err){
                         alert(err);
                         def.reject();
@@ -226,7 +196,6 @@ define([
                 $.when(transaction.getData()).done(function(transaction){
                     def.resolve(transaction);
                 }).fail(function(tx, err){
-                    alert(err);
                     def.reject();
                 });
 
@@ -235,7 +204,6 @@ define([
 
             Database.TransactionModel.removeById = function(_id){
                 var def = new $.Deferred();
-                var _this = this;
 
                 $.when(App.Database.TransactionModel.findById(_id)).done(function(transaction){
                     if(!transaction){
@@ -273,7 +241,7 @@ define([
 
                     transactions.each(function(transaction){
                         transaction.set({
-                            'tags': '',
+                            'tag': '',
                             updated_at:  moment.utc()
                         });
 
@@ -352,7 +320,7 @@ define([
                     var _this = this;
                     var def = new $.Deferred();
 
-                    var sql = "SELECT * FROM " + this.tableName + " WHERE tags = '"+ tagId +"'";
+                    var sql = "SELECT * FROM " + this.tableName + " WHERE tag = '"+ tagId +"'";
 
                     this.makeRequest(sql, [], function(tx, results){
                         var data = _this.collectResult(results);

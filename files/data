@@ -46,3 +46,4 @@ ripple emulate --path platforms/android/assets/www
 Для разработки в браузере в index.jade
 - добавить environment = mobile
 - app/mobile
+В mobile.js вызываьть метод App.start на прямую

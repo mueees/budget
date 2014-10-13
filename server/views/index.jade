@@ -14,7 +14,7 @@ block js_scripts
                 email: false
             },
             data: {
-                environment: '' //mobile
+                environment: 'mobile' //mobile
             }
         };
 
@@ -32,5 +32,5 @@ block js_scripts
         script(type='text/javascript' src='js/vendor/libs/require/require.js')
         script(type='text/javascript').
             requirejs(['js/config'], function(){
-                require(['apps/web'], function(){})
+                require(['apps/mobile'], function(){})
             })

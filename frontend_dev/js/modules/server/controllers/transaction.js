@@ -27,7 +27,7 @@ define([
                         count: this.data.count || 0,
                         date: moment.utc(this.data.date),
                         comment: this.data.comment || "",
-                        tags: this.data.tags || []
+                        tag: this.data.tag || ''
                     });
 
                     $.when(transaction.saveTransaction()).done(function(){
@@ -49,7 +49,7 @@ define([
                             var newData = {};
                             if( _this.data.count ) newData.count = _this.data.count;
                             if( _this.data.comment ) newData.comment = _this.data.comment;
-                            if( _this.data.tags ) newData.tags = _this.data.tags;
+                            newData.tag = _this.data.tag || '';
                             if( _this.data.date ) newData.date = moment.utc(_this.data.date);
                             if( transaction.get('label') === '') newData.label = 'edit';
 
@@ -99,8 +99,7 @@ define([
 
                             transactions.each(function(transaction){
                                 var tagItem;
-                                var tagId = transaction.get('tags') + '';
-
+                                var tagId = transaction.get('tag') + '';
 
                                 tags.each(function(tag){
                                     if(tag.get('_id')+'' == tagId) {
@@ -110,10 +109,11 @@ define([
                                         }
                                         return;
                                     }
-                                })
-                                transaction.set('tags', tagItem);
+                                });
+
+                                transaction.set('tag', tagItem);
                                 result.push(transaction.toJSON());
-                            })
+                            });
 
                             _this.def.resolve({
                                 data: result

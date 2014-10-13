@@ -16,7 +16,7 @@ var controller = {
             userId: req.user._id,
             count: data.count,
             comment: data.comment,
-            tags: data.tags
+            tag: data.tag || null
         });
 
         if(data.date) transaction.date = data.date;
@@ -55,7 +55,7 @@ var controller = {
         TransactionModel.findById( data._id, function ( err, transaction ){
             if( data.count ) transaction.count = data.count;
             if( data.comment ) transaction.comment = data.comment;
-            if( data.tags ) transaction.tags = data.tags;
+            transaction.tag = data.tag  || null;
             if( data.date ) transaction.date = data.date;
             transaction.updated_at = Date.now();
 
@@ -68,6 +68,7 @@ var controller = {
                 res.send({
                     _id: transaction._id
                 });
+
                 //next(transaction);
             });
         });
@@ -90,12 +91,12 @@ var controller = {
         var data = req.body;
         var period = data.period;
         var userId = req.user.id;
-        var tags = data.tags || [];
+        var tag = data.tag || [];
 
         TransactionModel.getTransactions({
             period: period,
             userId: userId,
-            tags: tags
+            tag: tag
         }, function(err, transactions){
             if(err){
                 logger.error(err);
@@ -156,19 +157,19 @@ var controller = {
             var tags = results[1];
 
             _.each(transactions, function(transaction){
-                var resultTags = [];
-                _.each(transaction.tags, function(transactionTagId){
-                    var result = {
-                        id: transactionTagId + ''
-                    };
-                    _.each(tags, function(tag){
-                        if(tag._id+'' == transactionTagId+'') {
-                            result.tagName = tag.tagName;
-                        }
-                    })
-                    resultTags.push(result);
-                })
-                transaction.tags = resultTags;
+                var resultTag = {
+                    _id: transaction.tag
+                };
+
+                _.each(tags, function(tag){
+                    if(tag._id+'' == transaction.tag+'') {
+                        resultTag.tagName = tag.tagName;
+                        return;
+                    }
+                });
+
+
+                transaction.tag = resultTag;
 
                 result.push(transaction);
             })
@@ -194,7 +195,7 @@ var controller = {
             }else{
                 res.send({
                     _id: transaction._id,
-                    tags: transaction.tags,
+                    tag: transaction.tag,
                     date: transaction.date,
                     count: transaction.count,
                     comment: transaction.comment
@@ -235,7 +236,7 @@ var controller = {
                     count: countByTag.count
                 };
                 if( countByTag._id ){
-                    data.tagId = countByTag._id[0];
+                    data.tagId = countByTag._id;
 
                     _.each(tags, function(tag){
                         if(tag._id+'' == data.tagId+'') {

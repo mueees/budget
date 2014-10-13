@@ -14915,6 +14915,7 @@ define('modules/widget/widgets/base/index',[
                     this.collection = this.getCollection();
                     this.layout = this.getLayout();
                     this.View = this.getView();
+                    this.viewOptions = this.getViewOptions();
                     this.view = null;
 
                     log('Initialized');
@@ -14925,6 +14926,10 @@ define('modules/widget/widgets/base/index',[
                 },
 
                 getView: function(){},
+
+                getViewOptions: function(){
+                    return {};
+                },
 
                 subscribe: function(){},
 
@@ -14946,7 +14951,8 @@ define('modules/widget/widgets/base/index',[
                 showView: function(){
                     this.view = new this.View({
                         model: this.model,
-                        collection: this.collection
+                        collection: this.collection,
+                        viewOptions: this.viewOptions
                     });
                     this.layout.main.show(this.view);
                     this.subscribe();
@@ -15944,10 +15950,10 @@ define('modules/widget/widgets/transaction/edit/index',[
 
 });
 
-define('text!modules/widget/widgets/transaction/list/templates/ListTemp.html',[],function () { return '<table class="table table-hover budget-table table-striped">\n    <thead>\n    <tr>\n        <th>Tag</th>\n        <th>Count</th>\n        <th>Date</th>\n        <th>Comment</th>\n    </tr>\n    </thead>\n    <tbody></tbody>\n</table>';});
+define('text!modules/widget/widgets/transaction/list/templates/ListTemp.html',[],function () { return '<table class="table table-hover budget-table table-striped">\n    <thead>\n    <tr>\n        <th>Tag</th>\n        <th>Count</th>\n        <th>Date</th>\n        <% if(isExtendMode) { %>\n            <th>Comment</th>\n            <th></th>\n        <% } %>\n    </tr>\n    </thead>\n    <tbody></tbody>\n</table>';});
 
 
-define('text!modules/widget/widgets/transaction/list/templates/TranactionTemp.html',[],function () { return '<td>\n    <% if(tags.tagName) {%>\n        <span class="glyphicon glyphicon-tag"></span>\n        <span class="value"><%= tags.tagName %></span>\n    <%}else{%>\n        <span class="glyphicon glyphicon-tag"></span>\n        <span class="value">-</span>\n    <% }%>\n</td>\n<td><%=  count  %></td>\n<td><%=  dateLabel  %></td>\n<td><%=  comment  %></td>\n<td>\n    <span class="glyphicon glyphicon-chevron-right"></span>\n</td>';});
+define('text!modules/widget/widgets/transaction/list/templates/TranactionTemp.html',[],function () { return '<td>\n    <% if(tags.tagName) {%>\n        <span class="glyphicon glyphicon-tag"></span>\n        <span class="value"><%= tags.tagName %></span>\n    <%}else{%>\n        <span class="glyphicon glyphicon-tag"></span>\n        <span class="value">-</span>\n    <% }%>\n</td>\n<td><%=  count  %></td>\n<td><%=  dateLabel  %></td>\n\n<% if(isExtendMode) { %>\n    <td><%=  comment  %></td>\n    <td>\n        <span class="glyphicon glyphicon-chevron-right"></span>\n    </td>\n<% } %>\n\n';});
 
 define('modules/widget/widgets/transaction/list/views/Transaction',[
     'marionette',
@@ -15971,10 +15977,14 @@ define('modules/widget/widgets/transaction/list/views/Transaction',[
             'click': "chooseTransaction"
         },
 
-        initialize: function(){},
+        initialize: function(options){
+            this.isExtendMode = options.isExtendMode;
+        },
 
         serializeData: function(){
             var data = this.model.toJSON();
+            data.isExtendMode = this.isExtendMode;
+
             var format = "DD MMMM";
             data.dateLabel = moment(data.date).format(format);
             return data;
@@ -16019,9 +16029,22 @@ define('modules/widget/widgets/transaction/list/views/ListView',[
 
         events: {},
 
-        initialize: function(){
+        itemViewOptions: function(){
+            return {
+                isExtendMode: this.isExtendMode
+            }
+        },
+
+        initialize: function(options){
+            this.isExtendMode = options.viewOptions.isExtendMode;
             this.collection = this.model.get('data');
             this.listenTo(this.model, 'change', this.changeHandler);
+        },
+
+        serializeData: function(){
+            var data = this.model.toJSON();
+            data.isExtendMode = this.isExtendMode;
+            return data;
         },
 
         changeHandler: function(){
@@ -16107,6 +16130,7 @@ define('widgetBase/index',[
                     this.collection = this.getCollection();
                     this.layout = this.getLayout();
                     this.View = this.getView();
+                    this.viewOptions = this.getViewOptions();
                     this.view = null;
 
                     log('Initialized');
@@ -16117,6 +16141,10 @@ define('widgetBase/index',[
                 },
 
                 getView: function(){},
+
+                getViewOptions: function(){
+                    return {};
+                },
 
                 subscribe: function(){},
 
@@ -16138,7 +16166,8 @@ define('widgetBase/index',[
                 showView: function(){
                     this.view = new this.View({
                         model: this.model,
-                        collection: this.collection
+                        collection: this.collection,
+                        viewOptions: this.viewOptions
                     });
                     this.layout.main.show(this.view);
                     this.subscribe();
@@ -16242,6 +16271,12 @@ define('modules/widget/widgets/transaction/list/index',[
 
                 getView: function(){
                     return ListView;
+                },
+
+                getViewOptions: function(){
+                    return {
+                        isExtendMode: (config.data.environment != 'mobile') ? true : false
+                    }
                 },
 
                 subscribe: function(){

@@ -25,7 +25,7 @@ var Transaction = new Schema({
         default: ''
     },
 
-    tags: [Schema.Types.ObjectId],
+    tag: Schema.Types.ObjectId,
 
     updated_at: {
         type: Date,
@@ -52,14 +52,12 @@ Transaction.statics.removeTagById = function(tagId, userId, cb){
     this.update(
         {
             userId: userId,
-            tags: {
-                $in: [tagId]
-            }
+            tag: tagId
         },
 
         {
             $pull: {
-                tags: tagId
+                tag: ''
             },
             updated_at: Date.now()
         },
@@ -161,7 +159,7 @@ Transaction.statics.getTotalsByTag = function(period, userId, cb){
         },
         {
             $group: {
-                _id: '$tags',
+                _id: '$tag',
                 count: {
                     $sum: '$count'
                 }
@@ -214,7 +212,7 @@ Transaction.statics.getTransactionList = function(period, userId, cb){
         _id: 1,
         comment: 1,
         count: 1,
-        tags: 1,
+        tag: 1,
         date: 1
     }
 

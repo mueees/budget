@@ -19,8 +19,8 @@ TransactionController.prototype.updateTagsId = function(createdTagId){
     _.map(this.transactions, function(transaction){
 
         _.each(createdTagId, function(createdTag){
-            if(transaction.tags == createdTag.idBefore){
-                transaction.tags = createdTag.idActual;
+            if(transaction.tag == createdTag.idBefore){
+                transaction.tag = createdTag.idActual;
             }
         })
 
@@ -29,21 +29,21 @@ TransactionController.prototype.updateTagsId = function(createdTagId){
     });
 };
 
-TransactionController.prototype.filterTags = function(tags){
+TransactionController.prototype.filterTags = function(tag){
     var deferred = Q.defer();
 
     //todo: tags rename to tagId
-    if(!tags){
+    if(!tag){
         deferred.resolve();
     }else{
-        TagModel.isHasTag(tags, this.userId, function(err, tag){
+        TagModel.isHasTag(tag, this.userId, function(err, tag){
             if(err){
                 logger.error(err);
                 return deferred.reject(err);
             }
 
             if( tag && !tag.isDeleted ) {
-                return deferred.resolve(tags);
+                return deferred.resolve(tag);
             }else{
                 return deferred.resolve();
             }
@@ -56,12 +56,12 @@ TransactionController.prototype.filterTags = function(tags){
 TransactionController.prototype._create = function(currentTransaction, cb){
     var _this = this;
 
-    this.filterTags(currentTransaction.tags).then(function(tags){
+    this.filterTags(currentTransaction.tag).then(function(tag){
         var transaction = new TransactionModel({
             date: new Date(currentTransaction.date),
             userId: _this.userId,
             count: currentTransaction.count,
-            tags: tags
+            tag: tag
         });
 
         async.waterfall([
@@ -118,7 +118,7 @@ TransactionController.prototype._edit = function(currentTransaction, cb){
         if( !transaction || transaction.isDeleted ) return cb(null);
 
         if( currentTransaction.count ) transaction.count = currentTransaction.count;
-        if( currentTransaction.tags ) transaction.tags = currentTransaction.tags;
+        if( currentTransaction.tag ) transaction.tag = currentTransaction.tag;
         transaction.updated_at = Date.now();
 
         transaction.save( function ( err, transaction){

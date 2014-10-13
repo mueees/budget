@@ -61,7 +61,7 @@
             <div class="col-lg-10">
                 <ul class="tags">
                     <% _.each(tags, function(tag){ %>
-                    <li data-id="<%= tag._id %>" class=" <%=  (tag._id == transaction.tags)? 'active': '' %> ">
+                    <li data-id="<%= tag._id %>" class=" <%=  (tag._id == transaction.tag)? 'active': '' %> ">
                         <button type="button" class="btn btn-default ">
                             <span class="glyphicon glyphicon-tag"></span>
                             <span class="text"><%= tag.tagName %></span>

@@ -38,6 +38,7 @@ require([
     'apps/transaction/module'
 
 ], function(App){
+    App.start();
     document.addEventListener("deviceready", function(){
         App.start();
     }, false);

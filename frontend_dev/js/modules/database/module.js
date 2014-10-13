@@ -21,7 +21,7 @@ define([
                     tx.executeSql("DROP TABLE IF EXISTS `tags`");
                     tx.executeSql("CREATE TABLE `tags` (_id unique, tagName, updated_at, label)");
                     tx.executeSql("DROP TABLE IF EXISTS `transactions`" );
-                    tx.executeSql("CREATE TABLE `transactions` (_id unique, count, date, updated_at, comment, tags, label)");
+                    tx.executeSql("CREATE TABLE `transactions` (_id unique, count, date, updated_at, comment, tag, label)");
                     def.resolve();
                 });
 

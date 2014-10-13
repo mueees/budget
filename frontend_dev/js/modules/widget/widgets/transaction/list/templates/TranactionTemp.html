@@ -1,7 +1,7 @@
 <td>
-    <% if(tags.tagName) {%>
+    <% if(tag && tag.tagName) {%>
         <span class="glyphicon glyphicon-tag"></span>
-        <span class="value"><%= tags.tagName %></span>
+        <span class="value"><%= tag.tagName %></span>
     <%}else{%>
         <span class="glyphicon glyphicon-tag"></span>
         <span class="value">-</span>
