@@ -12316,11 +12316,11 @@ define('modules/database/entities/base',[
             Database.BaseModel = Backbone.Model.extend({
                 initialize: function(attributes){
                     this.db = null;
-                    if(_.isString(attributes.updated_at)){
+                    if(attributes && _.isString(attributes.updated_at)){
                         this.set('updated_at', moment.utc(attributes.updated_at));
                     }
 
-                    if(_.isString(attributes.date)){
+                    if(attributes && _.isString(attributes.date)){
                         this.set('date', moment.utc(attributes.date));
                     }
 
@@ -12329,6 +12329,7 @@ define('modules/database/entities/base',[
 
                 connect: function(){
                     this.db = Database.db;
+                    this.makeRequest = Database.makeRequest;
                 },
 
                 convertMomentDateToDatetime: function(momentDate){
@@ -12337,13 +12338,6 @@ define('modules/database/entities/base',[
 
                 convertDatetimeToMomentDate: function(datetime){
                     return moment(datetime);
-                },
-
-                makeRequest: function(sql, param, success, error){
-                    if(config.showLog) console.log('sql: ' + sql);
-                    this.db.transaction(function(tx){
-                        tx.executeSql(sql, param, success, error);
-                    });
                 },
 
                 collectResult: function(results){
@@ -12369,13 +12363,7 @@ define('modules/database/entities/base',[
 
                 connect: function(){
                     this.db = Database.db;
-                },
-
-                makeRequest: function(sql, param, success, error){
-                    if(config.showLog) console.log('sql: ' + sql);
-                    this.db.transaction(function(tx){
-                        tx.executeSql(sql, param, success, error);
-                    });
+                    this.makeRequest = Database.makeRequest;
                 },
 
                 convertMomentDateToDatetime: function(momentDate){
@@ -12709,6 +12697,10 @@ define('modules/database/entities/tag',[
                 }
             });
 
+            Database.TagCollection.getTags = function(){
+                return (new App.Database.TagCollection()).getTags();
+            }
+
             Database.TagCollection.getChangingData = function(){
                 var def = $.Deferred();
 
@@ -12797,6 +12789,7 @@ define('modules/database/entities/transaction',[
         startWithParent: true,
 
         define: function( Database, App, Backbone, Marionette, $, _ ){
+
 
             Database.TransactionModel = Database.BaseModel.extend({
 
@@ -12953,6 +12946,35 @@ define('modules/database/entities/transaction',[
                     return def.promise();
                 },
 
+                getTotals: function(period){
+                    var _this = this;
+                    var def = new $.Deferred();
+                    var sql = "SELECT SUM(count) as total FROM "+ this.tableName +" WHERE label != 'remove' AND datetime(date) > datetime('"+period.start+"') AND datetime(date) < datetime('"+period.end+"')";
+
+                    this.makeRequest(sql, [], function(tx, results){
+                        var data = _this.collectResult(results)[0];
+                        if(!data.total) data.total = 0;
+                        def.resolve(data);
+                    }, function(tx, err){
+                        def.reject();
+                    });
+                    return def.promise();
+                },
+
+                getTotalsByTag: function(period){
+                    var _this = this;
+                    var def = new $.Deferred();
+                    var sql = "SELECT SUM(count) as total, tag FROM "+ this.tableName +" WHERE label != 'remove' AND datetime(date) > datetime('"+period.start+"') AND datetime(date) < datetime('"+period.end+"') GROUP BY tag";
+
+                    this.makeRequest(sql, [], function(tx, results){
+                        var data = _this.collectResult(results);
+                        def.resolve(data);
+                    }, function(tx, err){
+                        def.reject();
+                    });
+                    return def.promise();
+                },
+
                 removeFromLocalDb: function(){
                     var def = new $.Deferred();
                     var _this = this;
@@ -13069,6 +13091,14 @@ define('modules/database/entities/transaction',[
                     });
 
                 return def.promise();
+            };
+
+            Database.TransactionModel.getTotals = function(period){
+                return (new Database.TransactionModel()).getTotals(period);
+            };
+
+            Database.TransactionModel.getTotalsByTag = function(period){
+                return (new Database.TransactionModel()).getTotalsByTag(period);
             };
 
             Database.TransactionCollection = Database.BaseCollection.extend({
@@ -13270,7 +13300,7 @@ define('modules/database/module',[
                     tx.executeSql("DROP TABLE IF EXISTS `tags`");
                     tx.executeSql("CREATE TABLE `tags` (_id unique, tagName, updated_at, label)");
                     tx.executeSql("DROP TABLE IF EXISTS `transactions`" );
-                    tx.executeSql("CREATE TABLE `transactions` (_id unique, count, date, updated_at, comment, tag, label)");
+                    tx.executeSql("CREATE TABLE `transactions` (_id unique, count int, date, updated_at, comment, tag, label)");
                     def.resolve();
                 });
 
@@ -13287,6 +13317,15 @@ define('modules/database/module',[
 
                 return def.promise();
             };
+
+            Database.makeRequest = function(sql, param, success, error){
+                if(config.showLog) console.log('sql: ' + sql);
+                Database.db.transaction(function(tx){
+                    tx.executeSql(sql, param, success, error);
+                });
+            };
+
+
 
             App.on('initialize:before', function(){
                 //window.sqlitePlugin.openDatabase
@@ -13523,9 +13562,9 @@ define('modules/server/controllers/transaction',[
                 transactionList: function(){
                     var _this = this;
                     $.when(
-                            (new App.Database.TransactionCollection()).getTransactionList(this.data.period),
-                            (new App.Database.TagCollection()).getTags()
-                        ).done(function(transactions, tags){
+                        (new App.Database.TransactionCollection()).getTransactionList(this.data.period),
+                        (new App.Database.TagCollection()).getTags()
+                    ).done(function(transactions, tags){
                             var result = [];
 
                             transactions.each(function(transaction){
@@ -13552,6 +13591,52 @@ define('modules/server/controllers/transaction',[
                         }).fail(function(){
                             _this.def.reject();
                         });
+                },
+
+                total: function(){
+                    var _this = this;
+                    $.when(App.Database.TransactionModel.getTotals(this.data.period))
+                        .done(function(data){
+                            _this.def.resolve(data)
+                        })
+                        .fail(function(){
+                            _this.def.reject();
+                        })
+
+                },
+
+                totalByTag: function(){
+                    var _this = this;
+
+                    $.when(
+                        App.Database.TransactionModel.getTotalsByTag(this.data.period),
+                        App.Database.TagCollection.getTags()
+                    )
+                        .done(function(totalByTags, tags){
+                            var result = [];
+                            _.each(totalByTags, function(totalByTag){
+                                var data = {
+                                    count: totalByTag.total
+                                };
+                                if( totalByTag.tag ){
+                                    data.tagId = totalByTag.tag;
+
+                                    tags.each(function(tag){
+                                        if(tag.get('_id') == data.tagId) {
+                                            data.tagName = tag.get('tagName');
+                                        }
+                                    })
+                                }
+                                result.push(data);
+                            });
+                            result = _.sortBy(result, function(obj){ return Math.max(obj.count*1); });
+                            result.reverse();
+                            _this.def.resolve({data:result});
+
+                        })
+                        .fail(function(err){
+                            _this.def.reject();
+                        })
                 }
             });
         }
@@ -13671,7 +13756,29 @@ define('modules/server/module',[
                                 (new Server.TransactionController({context: context,def: def})).transactionList();
                                 return def.promise();
                             }
+                        },
+
+                        //statistic
+                        getTotalValue: {
+                            urlExp: config.api.statistic.total,
+                            httpMethod: "POST",
+                            handler: function(context){
+                                var def = new $.Deferred();
+                                (new Server.TransactionController({context: context,def: def})).total();
+                                return def.promise();
+                            }
+                        },
+
+                        getTotalByTag: {
+                            urlExp: config.api.statistic.totalByTag,
+                            httpMethod: "POST",
+                            handler: function(context){
+                                var def = new $.Deferred();
+                                (new Server.TransactionController({context: context,def: def})).totalByTag();
+                                return def.promise();
+                            }
                         }
+
                     });
                 }
             });
@@ -14398,13 +14505,27 @@ define('modules/service/services/auth',[
                 },
 
                 logout: function(){
-                    App.Database.removeDatabase().then(function(){
-                        config.data.user.email = null;
-                        storage.set(config.storage.user['email'], '');
-                        storage.set(config.storage['lastUpdate'], 0);
-                        storage.set(config.storage['isInitDatabase'], 0);
-                        App.navigate("#landing", {trigger: true});
+
+                    var notice = App.reqres.request(config.reqres["notice:get"], {
+                        title: "Logout action",
+                        text: "Attention. All data will be deleted.",
+                        textPrimary: "Logout",
+                        isCloseAuto: true
+                    });
+
+                    App.modal.show(notice);
+
+                    notice.on('accept', function(){
+                        App.Database.removeDatabase().then(function(){
+                            config.data.user.email = null;
+                            storage.set(config.storage.user['email'], '');
+                            storage.set(config.storage['lastUpdate'], 0);
+                            storage.set(config.storage['isInitDatabase'], 0);
+                            App.navigate("#landing", {trigger: true});
+                        })
                     })
+
+
                 }
 
             });
@@ -17371,6 +17492,13 @@ define('modules/menu/views/MenuView',[
 
             if( path == 'sync' ){
                 this.model.trigger('sync');
+                this.model.set('isOpen', false);
+                return false;
+            }
+
+            if( path == 'logout' ){
+                this.model.trigger('logout');
+                this.model.set('isOpen', false);
                 return false;
             }
 
@@ -17430,6 +17558,8 @@ define('modules/menu/module',[
                     this.listenTo(this.model, "sync", function(){
                         App.channels.main.trigger(config.channels['sync']);
                     });
+                    this.listenTo(this.model, "logout", this.logoutHandler);
+
                     this.listenTo(this.model, "change:path", this.pathHandler);
                     this.listenTo(this.model, "change:isOpen", this.isOpenHandler);
                     $(window).on('resize', this.resizeHandler);
@@ -17450,19 +17580,17 @@ define('modules/menu/module',[
                     }
                 },
 
+                logoutHandler: function(){
+                    if( config.data.environment == "mobile"){
+                        App.reqres.request(config.reqres['service:auth:logout']);
+                    }else{
+                        App.redirect( config.api.logout );
+                    }
+                },
+
                 pathHandler: function(){
                     var path = this.model.get('path');
-
-                    if( path == "logout" ){
-                        if( config.data.environment == "mobile"){
-                            App.reqres.request(config.reqres['service:auth:logout']);
-                        }else{
-                            App.redirect( config.api.logout );
-                        }
-                    }else{
-                        App.navigate('#' + path, {trigger: true});
-                    }
-
+                    App.navigate('#' + path, {trigger: true});
                 },
 
                 setMenu: function(path, options){

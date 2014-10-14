@@ -143,3 +143,5 @@
 {"status":404,"url":"/favicon.ico","level":"warn","message":"","timestamp":"2014-10-14T19:28:53.492Z"}
 {"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-14T19:48:38.745Z"}
 {"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-14T19:48:38.773Z"}
+{"level":"info","message":"Web server listening: 5001","timestamp":"2014-10-14T20:03:47.056Z"}
+{"level":"info","message":"Mongoose open connection: mongodb://127.0.0.1/budget_dev","timestamp":"2014-10-14T20:03:47.081Z"}
