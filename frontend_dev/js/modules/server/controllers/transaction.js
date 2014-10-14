@@ -92,9 +92,9 @@ define([
                 transactionList: function(){
                     var _this = this;
                     $.when(
-                            (new App.Database.TransactionCollection()).getTransactionList(this.data.period),
-                            (new App.Database.TagCollection()).getTags()
-                        ).done(function(transactions, tags){
+                        (new App.Database.TransactionCollection()).getTransactionList(this.data.period),
+                        (new App.Database.TagCollection()).getTags()
+                    ).done(function(transactions, tags){
                             var result = [];
 
                             transactions.each(function(transaction){
@@ -121,6 +121,52 @@ define([
                         }).fail(function(){
                             _this.def.reject();
                         });
+                },
+
+                total: function(){
+                    var _this = this;
+                    $.when(App.Database.TransactionModel.getTotals(this.data.period))
+                        .done(function(data){
+                            _this.def.resolve(data)
+                        })
+                        .fail(function(){
+                            _this.def.reject();
+                        })
+
+                },
+
+                totalByTag: function(){
+                    var _this = this;
+
+                    $.when(
+                        App.Database.TransactionModel.getTotalsByTag(this.data.period),
+                        App.Database.TagCollection.getTags()
+                    )
+                        .done(function(totalByTags, tags){
+                            var result = [];
+                            _.each(totalByTags, function(totalByTag){
+                                var data = {
+                                    count: totalByTag.total
+                                };
+                                if( totalByTag.tag ){
+                                    data.tagId = totalByTag.tag;
+
+                                    tags.each(function(tag){
+                                        if(tag.get('_id') == data.tagId) {
+                                            data.tagName = tag.get('tagName');
+                                        }
+                                    })
+                                }
+                                result.push(data);
+                            });
+                            result = _.sortBy(result, function(obj){ return Math.max(obj.count*1); });
+                            result.reverse();
+                            _this.def.resolve({data:result});
+
+                        })
+                        .fail(function(err){
+                            _this.def.reject();
+                        })
                 }
             });
         }

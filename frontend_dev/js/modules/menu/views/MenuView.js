@@ -38,6 +38,13 @@ define([
 
             if( path == 'sync' ){
                 this.model.trigger('sync');
+                this.model.set('isOpen', false);
+                return false;
+            }
+
+            if( path == 'logout' ){
+                this.model.trigger('logout');
+                this.model.set('isOpen', false);
                 return false;
             }
 

@@ -41,6 +41,8 @@ define([
                     this.listenTo(this.model, "sync", function(){
                         App.channels.main.trigger(config.channels['sync']);
                     });
+                    this.listenTo(this.model, "logout", this.logoutHandler);
+
                     this.listenTo(this.model, "change:path", this.pathHandler);
                     this.listenTo(this.model, "change:isOpen", this.isOpenHandler);
                     $(window).on('resize', this.resizeHandler);
@@ -61,19 +63,17 @@ define([
                     }
                 },
 
+                logoutHandler: function(){
+                    if( config.data.environment == "mobile"){
+                        App.reqres.request(config.reqres['service:auth:logout']);
+                    }else{
+                        App.redirect( config.api.logout );
+                    }
+                },
+
                 pathHandler: function(){
                     var path = this.model.get('path');
-
-                    if( path == "logout" ){
-                        if( config.data.environment == "mobile"){
-                            App.reqres.request(config.reqres['service:auth:logout']);
-                        }else{
-                            App.redirect( config.api.logout );
-                        }
-                    }else{
-                        App.navigate('#' + path, {trigger: true});
-                    }
-
+                    App.navigate('#' + path, {trigger: true});
                 },
 
                 setMenu: function(path, options){

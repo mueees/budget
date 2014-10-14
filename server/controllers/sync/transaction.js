@@ -61,6 +61,7 @@ TransactionController.prototype._create = function(currentTransaction, cb){
             date: new Date(currentTransaction.date),
             userId: _this.userId,
             count: currentTransaction.count,
+            comment: currentTransaction.comment,
             tag: tag
         });
 

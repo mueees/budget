@@ -21,13 +21,27 @@ define([
                 },
 
                 logout: function(){
-                    App.Database.removeDatabase().then(function(){
-                        config.data.user.email = null;
-                        storage.set(config.storage.user['email'], '');
-                        storage.set(config.storage['lastUpdate'], 0);
-                        storage.set(config.storage['isInitDatabase'], 0);
-                        App.navigate("#landing", {trigger: true});
+
+                    var notice = App.reqres.request(config.reqres["notice:get"], {
+                        title: "Logout action",
+                        text: "Attention. All data will be deleted.",
+                        textPrimary: "Logout",
+                        isCloseAuto: true
+                    });
+
+                    App.modal.show(notice);
+
+                    notice.on('accept', function(){
+                        App.Database.removeDatabase().then(function(){
+                            config.data.user.email = null;
+                            storage.set(config.storage.user['email'], '');
+                            storage.set(config.storage['lastUpdate'], 0);
+                            storage.set(config.storage['isInitDatabase'], 0);
+                            App.navigate("#landing", {trigger: true});
+                        })
                     })
+
+
                 }
 
             });

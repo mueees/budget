@@ -21,7 +21,7 @@ define([
                     tx.executeSql("DROP TABLE IF EXISTS `tags`");
                     tx.executeSql("CREATE TABLE `tags` (_id unique, tagName, updated_at, label)");
                     tx.executeSql("DROP TABLE IF EXISTS `transactions`" );
-                    tx.executeSql("CREATE TABLE `transactions` (_id unique, count, date, updated_at, comment, tag, label)");
+                    tx.executeSql("CREATE TABLE `transactions` (_id unique, count int, date, updated_at, comment, tag, label)");
                     def.resolve();
                 });
 
@@ -38,6 +38,15 @@ define([
 
                 return def.promise();
             };
+
+            Database.makeRequest = function(sql, param, success, error){
+                if(config.showLog) console.log('sql: ' + sql);
+                Database.db.transaction(function(tx){
+                    tx.executeSql(sql, param, success, error);
+                });
+            };
+
+
 
             App.on('initialize:before', function(){
                 //window.sqlitePlugin.openDatabase

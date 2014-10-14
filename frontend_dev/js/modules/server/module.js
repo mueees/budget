@@ -110,7 +110,29 @@ define([
                                 (new Server.TransactionController({context: context,def: def})).transactionList();
                                 return def.promise();
                             }
+                        },
+
+                        //statistic
+                        getTotalValue: {
+                            urlExp: config.api.statistic.total,
+                            httpMethod: "POST",
+                            handler: function(context){
+                                var def = new $.Deferred();
+                                (new Server.TransactionController({context: context,def: def})).total();
+                                return def.promise();
+                            }
+                        },
+
+                        getTotalByTag: {
+                            urlExp: config.api.statistic.totalByTag,
+                            httpMethod: "POST",
+                            handler: function(context){
+                                var def = new $.Deferred();
+                                (new Server.TransactionController({context: context,def: def})).totalByTag();
+                                return def.promise();
+                            }
                         }
+
                     });
                 }
             });

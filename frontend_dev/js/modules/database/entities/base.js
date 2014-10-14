@@ -17,11 +17,11 @@ define([
             Database.BaseModel = Backbone.Model.extend({
                 initialize: function(attributes){
                     this.db = null;
-                    if(_.isString(attributes.updated_at)){
+                    if(attributes && _.isString(attributes.updated_at)){
                         this.set('updated_at', moment.utc(attributes.updated_at));
                     }
 
-                    if(_.isString(attributes.date)){
+                    if(attributes && _.isString(attributes.date)){
                         this.set('date', moment.utc(attributes.date));
                     }
 
@@ -30,6 +30,7 @@ define([
 
                 connect: function(){
                     this.db = Database.db;
+                    this.makeRequest = Database.makeRequest;
                 },
 
                 convertMomentDateToDatetime: function(momentDate){
@@ -38,13 +39,6 @@ define([
 
                 convertDatetimeToMomentDate: function(datetime){
                     return moment(datetime);
-                },
-
-                makeRequest: function(sql, param, success, error){
-                    if(config.showLog) console.log('sql: ' + sql);
-                    this.db.transaction(function(tx){
-                        tx.executeSql(sql, param, success, error);
-                    });
                 },
 
                 collectResult: function(results){
@@ -70,13 +64,7 @@ define([
 
                 connect: function(){
                     this.db = Database.db;
-                },
-
-                makeRequest: function(sql, param, success, error){
-                    if(config.showLog) console.log('sql: ' + sql);
-                    this.db.transaction(function(tx){
-                        tx.executeSql(sql, param, success, error);
-                    });
+                    this.makeRequest = Database.makeRequest;
                 },
 
                 convertMomentDateToDatetime: function(momentDate){

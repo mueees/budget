@@ -303,6 +303,10 @@ define([
                 }
             });
 
+            Database.TagCollection.getTags = function(){
+                return (new App.Database.TagCollection()).getTags();
+            }
+
             Database.TagCollection.getChangingData = function(){
                 var def = $.Deferred();
 

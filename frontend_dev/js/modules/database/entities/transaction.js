@@ -15,6 +15,7 @@ define([
 
         define: function( Database, App, Backbone, Marionette, $, _ ){
 
+
             Database.TransactionModel = Database.BaseModel.extend({
 
                 tableName: 'transactions',
@@ -170,6 +171,35 @@ define([
                     return def.promise();
                 },
 
+                getTotals: function(period){
+                    var _this = this;
+                    var def = new $.Deferred();
+                    var sql = "SELECT SUM(count) as total FROM "+ this.tableName +" WHERE label != 'remove' AND datetime(date) > datetime('"+period.start+"') AND datetime(date) < datetime('"+period.end+"')";
+
+                    this.makeRequest(sql, [], function(tx, results){
+                        var data = _this.collectResult(results)[0];
+                        if(!data.total) data.total = 0;
+                        def.resolve(data);
+                    }, function(tx, err){
+                        def.reject();
+                    });
+                    return def.promise();
+                },
+
+                getTotalsByTag: function(period){
+                    var _this = this;
+                    var def = new $.Deferred();
+                    var sql = "SELECT SUM(count) as total, tag FROM "+ this.tableName +" WHERE label != 'remove' AND datetime(date) > datetime('"+period.start+"') AND datetime(date) < datetime('"+period.end+"') GROUP BY tag";
+
+                    this.makeRequest(sql, [], function(tx, results){
+                        var data = _this.collectResult(results);
+                        def.resolve(data);
+                    }, function(tx, err){
+                        def.reject();
+                    });
+                    return def.promise();
+                },
+
                 removeFromLocalDb: function(){
                     var def = new $.Deferred();
                     var _this = this;
@@ -286,6 +316,14 @@ define([
                     });
 
                 return def.promise();
+            };
+
+            Database.TransactionModel.getTotals = function(period){
+                return (new Database.TransactionModel()).getTotals(period);
+            };
+
+            Database.TransactionModel.getTotalsByTag = function(period){
+                return (new Database.TransactionModel()).getTotalsByTag(period);
             };
 
             Database.TransactionCollection = Database.BaseCollection.extend({
